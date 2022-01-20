@@ -1,0 +1,7 @@
+TB diagnosed (clinical)
+	RifS-TB treatment
+		Survives
+		Dies
+	No TB treatment
+		Survives 
+		Dies

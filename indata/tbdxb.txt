@@ -1,0 +1,15 @@
+TB diagnosed (bacteriological)
+	RifS-TB diagnosed
+		RifS-TB treatment
+			Survives 
+			Dies
+		No TB treatment
+			Survives 
+			Dies
+	RifR-TB diagnosed
+		RifR-TB treatment
+			Survives 
+			Dies
+		No TB treatment
+			Survives 
+			Dies

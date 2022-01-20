@@ -1,0 +1,4 @@
+No TB diagnosed
+	No TB treatment
+		Survives 
+		Dies
