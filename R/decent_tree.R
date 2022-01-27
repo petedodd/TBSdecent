@@ -7,72 +7,51 @@ library(data.table)
 library(glue)
 
 
-## === outcomes ===
-notbtxo <- txt2tree(here('indata/tbnotx.txt')) #no tx
+## === outcomes subtree ===
+notbdxo <- txt2tree(here('indata/tbnotx.txt')) #no tx
 tbtxb <- txt2tree(here('indata/tbdxb.txt')) #bac+
 tbtxc <- txt2tree(here('indata/tbdxc.txt')) #clin
 
 ## default prob/cost:
-notbtxo$Set(p=1)
+notbdxo$Set(p=1)
 tbtxb$Set(p=1)
 tbtxc$Set(p=1)
-notbtxo$Set(cost=0)
+notbdxo$Set(cost=0)
 tbtxb$Set(cost=0)
 tbtxc$Set(cost=0)
 
 ## set probabilities
+## NOTE these namings actually get overwritten by CSV read-ins below
 ## -- clinical:
-tbtxc$`No TB treatment`$p <- 'ptltfu'
-tbtxc$`No TB treatment`$Dies$p <- 'cfr_notx'
-tbtxc$`No TB treatment`$Survives$p <- '1-cfr_notx'
-tbtxc$`RifS-TB treatment`$p <- '1-ptltfu'
-tbtxc$`RifS-TB treatment`$Dies$p <- 'cfr_tx'
-tbtxc$`RifS-TB treatment`$Survives$p <- '1-cfr_tx'
+tbtxc$`No TB treatment`$p <- 'p.ptltfu'
+tbtxc$`No TB treatment`$Dies$p <- 'p.cfr.notx'
+tbtxc$`No TB treatment`$Survives$p <- '1-p.cfr.notx'
+tbtxc$`RifS-TB treatment`$p <- '1-p.ptltfu'
+tbtxc$`RifS-TB treatment`$Dies$p <- 'p.cfr.tx'
+tbtxc$`RifS-TB treatment`$Survives$p <- '1-p.cfr.tx'
 
 ## -- bac:
+## tx
+tbtxb$`TB treatment`$p <- '1-p.ptltfu'
 ## RS
-tbtxb$`RifS-TB diagnosed`$p <- '1-p.rr'
-tbtxb$`RifS-TB diagnosed`$`RifS-TB treatment`$p <- '1-ptltfu'
-tbtxb$`RifS-TB diagnosed`$`RifS-TB treatment`$Survives$p <- '1-cfr_tx'
-tbtxb$`RifS-TB diagnosed`$`RifS-TB treatment`$Dies$p <- 'cfr_tx'
-tbtxb$`RifS-TB diagnosed`$`No TB treatment`$p <- 'ptltfu'
-tbtxb$`RifS-TB diagnosed`$`No TB treatment`$Dies$p <- 'cfr_notx'
-tbtxb$`RifS-TB diagnosed`$`No TB treatment`$Survives$p <- '1-cfr_notx'
-
-## RR NOTE atm using same outcomes
-tbtxb$`RifR-TB diagnosed`$p <- 'p.rr'
-tbtxb$`RifR-TB diagnosed`$`RifR-TB treatment`$p <- '1-ptltfu'
-tbtxb$`RifR-TB diagnosed`$`RifR-TB treatment`$Survives$p <- '1-cfr_tx'
-tbtxb$`RifR-TB diagnosed`$`RifR-TB treatment`$Dies$p <- 'cfr_tx'
-tbtxb$`RifR-TB diagnosed`$`No TB treatment`$p <- 'ptltfu'
-tbtxb$`RifR-TB diagnosed`$`No TB treatment`$Dies$p <- 'cfr_notx'
-tbtxb$`RifR-TB diagnosed`$`No TB treatment`$Survives$p <- '1-cfr_notx'
+tbtxb$`TB treatment`$`RifS-TB treatment`$p <- '1-p.rr'
+tbtxb$`TB treatment`$`RifS-TB treatment`$Survives$p <- '1-p.cfr.tx'
+tbtxb$`TB treatment`$`RifS-TB treatment`$Dies$p <- 'p.cfr.tx'
+## RR
+tbtxb$`TB treatment`$`RifR-TB treatment`$p <- 'p.rr'
+tbtxb$`TB treatment`$`RifR-TB treatment`$Survives$p <- '1-p.cfr.tx'
+tbtxb$`TB treatment`$`RifR-TB treatment`$Dies$p <- 'p.cfr.tx'
+## untreated
+tbtxb$`No TB treatment`$p <- 'p.ptltfu'
+tbtxb$`No TB treatment`$Survives$p <- '1-p.cfr.notx'
+tbtxb$`No TB treatment`$Dies$p <- 'p.cfr.notx'
 
 ## -- no tx:
-notbtxo$`No TB treatment`$Dies$p <- 'cfr_notx'
-notbtxo$`No TB treatment`$Survives$p <- '1-cfr_notx'
+notbdxo$`No TB treatment`$Dies$p <- 'p.cfr.notx'
+notbdxo$`No TB treatment`$Survives$p <- '1-p.cfr.notx'
 
-
-## ## set costs NOTE already included above
-## tbtxb$Set(check=1);tbtxb$Set(check=0,filterFun=function(x) length(x$children)>0)
-## tbtxc$Set(check=1);tbtxc$Set(check=0,filterFun=function(x) length(x$children)>0)
-## notbtxo$Set(check=1);notbtxo$Set(check=0,filterFun=function(x) length(x$children)>0)
-
-## print(tbtxb,'p','cost','check')
-## print(tbtxc,'p','cost','check')
-## print(notbtxo,'p','cost','check')
-
-## ## check
-## notbtxo.F <- makeTfuns(notbtxo,'check')
-## tbtxb.F <- makeTfuns(tbtxb,'check')
-## tbtxc.F <- makeTfuns(tbtxc,'check')
-
-## ## OK
-## test <- data.table(ptltfu=runif(1),cfr_notx=runif(1),cfr_tx=runif(1),p.rr=runif(1))
-## notbtxo.F$checkfun(test)
-## tbtxb.F$checkfun(test)
-## tbtxc.F$checkfun(test)
-
+## restrict to no TB tx (rather than dx)
+notbtxo <- top(notbdxo) #remove top
 
 
 ## ====== function to add outcomes & counters
@@ -82,12 +61,12 @@ AddOutcomes <- function(D){
   D$Set(cost=0)
 
   ## === merge to create final tree ===
-  MergeByName(D,notbtxo,'No TB diagnosed')
-  MergeByName(D,notbtxo,'All other patients')
+  MergeByName(D,notbtxo,'No TB diagnosed',leavesonly = TRUE) #NOTE need to restrict to leaves, although not necessary
+  MergeByName(D,notbtxo,'All other patients',leavesonly = TRUE) #NOTE need to restrict to leaves, although not necessary
+  MergeByName(D,notbtxo,'Unidentified presumptive TB',leavesonly = TRUE) #NOTE need to restrict to leaves, although not necessary
+  MergeByName(D,notbtxo,'Does not reach DH',leavesonly = TRUE) #NOTE need to restrict to leaves, although not necessary
   MergeByName(D,tbtxb,'TB diagnosed (bacteriological)')
   MergeByName(D,tbtxc,'TB diagnosed (clinical)')
-  MergeByName(D,notbtxo,'Unidentified presumptive TB')
-  MergeByName(D,notbtxo,'Does not reach DH')
 
   ## ===========  other counters
   ## check
@@ -102,10 +81,6 @@ AddOutcomes <- function(D){
   D$Set(lives=0)
   D$Set(lives=1,filterFun=function(x) (x$name=='Survives'))
 
-  ## referrals
-  D$Set(refers=0)
-  D$Set(refers=1,filterFun=function(x) grepl('Refer',x$name))
-
   ## dx clinical
   D$Set(dxc=0)
   D$Set(dxc=1,filterFun=function(x) x$name=='TB diagnosed (clinical)')
@@ -114,20 +89,30 @@ AddOutcomes <- function(D){
   D$Set(dxb=0)
   D$Set(dxb=1,
         filterFun=function(x)x$name=='TB diagnosed (bacteriological)')
+  ## ATT
+  D$Set(att=0)
+  D$Set(att=1,
+        filterFun=function(x)x$name %in% c('RifS-TB treatment','RifR-TB treatment'))
+
+  ## referrals
+  D$Set(refers=0)
+  D$Set(refers=1,filterFun=function(x) grepl('Refer',x$name))
 
   return(D)
 }
 
 
+print(SOC,'p','cost','deaths','lives','refers','dxc','dxb','att','check')
+
 ## === SOC
-SOC <- MSorg2tree(here('indata/SOC.txt'))
+SOC <- MSorg2tree(here('indata/dSOC.txt'))
 SOC <- top(SOC)
 print(SOC)
 ## merge in extras, write out
 SOC <- AddOutcomes(SOC)
 
 tree2file(SOC,filename = here('indata/CSV/SOC0.csv'),
-          'check','p','cost','deaths','lives','refers','dxc','dxb')
+          'p','cost','deaths','lives','refers','dxc','dxb','att','check')
 
 ## create version with probs/costs
 fn <- here('indata/CSV/SOC1.csv')
@@ -137,16 +122,16 @@ if(file.exists(fn)){
   SOC$Set(p=labz$p)
   SOC$Set(cost=labz$cost)
   tree2file(SOC,filename = here('indata/CSV/SOC2.csv'),
-            'check','p','cost','deaths','lives','refers','dxc','dxb')
+            'p','cost','deaths','lives','refers','dxc','dxb','att','check')
 }
 
 ## === IPD
-IPD <- MSorg2tree(here('indata/IPD.txt'))
+IPD <- MSorg2tree(here('indata/dIPD.txt'))
 IPD <- top(IPD)
 print(IPD)
 IPD <- AddOutcomes(IPD)
 tree2file(IPD,filename = here('indata/CSV/IPD0.csv'),
-          'check','p','cost','deaths','lives','refers','dxc','dxb')
+          'p','cost','deaths','lives','refers','dxc','dxb','att','check')
 
 ## create version with probs/costs
 fn <- here('indata/CSV/IPD1.csv')
@@ -156,16 +141,16 @@ if(file.exists(fn)){
     IPD$Set(p=labz$p)
     IPD$Set(cost=labz$cost)
   tree2file(IPD,filename = here('indata/CSV/IPD2.csv'),
-              'check','p','cost','deaths','lives','refers','dxc','dxb')
+            'p','cost','deaths','lives','refers','dxc','dxb','att','check')
 }
 
 ## === IDH
-IDH <- MSorg2tree(here('indata/IDH.txt'))
+IDH <- MSorg2tree(here('indata/dIDH.txt'))
 IDH <- top(IDH)
 print(IDH)
 IDH <- AddOutcomes(IDH)
 tree2file(IDH,filename = here('indata/CSV/IDH0.csv'),
-          'check','p','cost','deaths','lives','refers','dxc','dxb')
+          'p','cost','deaths','lives','refers','dxc','dxb','att','check')
 
 ## create version with probs/costs
 fn <- here('indata/CSV/IDH1.csv')
@@ -175,16 +160,16 @@ if(file.exists(fn)){
     IDH$Set(p=labz$p)
     IDH$Set(cost=labz$cost)
   tree2file(IDH,filename = here('indata/CSV/IDH2.csv'),
-              'check','p','cost','deaths','lives','refers','dxc','dxb')
+            'p','cost','deaths','lives','refers','dxc','dxb','att','check')
 }
 
 ## === IPH
-IPH <- MSorg2tree(here('indata/IPH.txt'))
+IPH <- MSorg2tree(here('indata/dIPH.txt'))
 IPH <- top(IPH)
 print(IPH)
 IPH <- AddOutcomes(IPH)
 tree2file(IPH,filename = here('indata/CSV/IPH0.csv'),
-          'check','p','cost','deaths','lives','refers','dxc','dxb')
+          'p','cost','deaths','lives','refers','dxc','dxb','att','check')
 
 ## create version with probs/costs
 fn <- here('indata/CSV/IPH1.csv')
@@ -194,18 +179,18 @@ if(file.exists(fn)){
     IPH$Set(p=labz$p)
     IPH$Set(cost=labz$cost)
   tree2file(IPH,filename = here('indata/CSV/IPH2.csv'),
-              'check','p','cost','deaths','lives','refers','dxc','dxb')
+            'p','cost','deaths','lives','refers','dxc','dxb','att','check')
 }
 
 
 ## make functions
-SOC.F <- makeTfuns(SOC,c('check','cost','deaths',
+SOC.F <- makeTfuns(SOC,c('check','cost','deaths','att',
                          'lives','refers','dxc','dxb'))
-IPD.F <- makeTfuns(IPD,c('check','cost','deaths',
+IPD.F <- makeTfuns(IPD,c('check','cost','deaths','att',
                          'lives','refers','dxc','dxb'))
-IDH.F <- makeTfuns(IDH,c('check','cost','deaths',
+IDH.F <- makeTfuns(IDH,c('check','cost','deaths','att',
                          'lives','refers','dxc','dxb'))
-IPH.F <- makeTfuns(IPH,c('check','cost','deaths',
+IPH.F <- makeTfuns(IPH,c('check','cost','deaths','att',
                          'lives','refers','dxc','dxb'))
 
 runallfuns <- function(Data,arm='all'){
@@ -346,4 +331,33 @@ IDH.F$checkfun(A) #NOTE OK
 SOC.F$checkfun(A) #NOTE OK
 
 
-## TODO port over model-runner, include model functions, simplify multirun
+## TODO port over model-runner, include model functions, simplify multirun; done SOC rest to do before removing SOC etc
+
+## ## running all function
+## runallfuns <- function(D,arm='both'){
+##   done <- FALSE
+##   if(arm=='INT' | arm=='both'){
+##     cat('Running functions for intervention arm:\n')
+##     for(nm in names(treefunsINT)){
+##       snm <- gsub('fun','',nm)
+##       snma <- paste0(snm,'INT')
+##       D[[snma]] <- treefunsINT[[nm]](D)
+##       cat(snm,' run...\n')
+##       done <- TRUE
+##     }
+##   }
+##   if(arm=='SOC' | arm=='both'){
+##     cat('Running functions for SOC arm:\n')
+##     for(nm in names(treefunsSOC)){
+##       snm <- gsub('fun','',nm)
+##       snma <- paste0(snm,'SOC')
+##       D[[snma]] <- treefunsSOC[[nm]](D)
+##       cat(snm,' run...\n')
+##       done <- TRUE
+##     }
+##   }
+##   if(!done)stop('Functions not run! Likely unrecognised arm supplied.')
+##   return(D)
+## }
+
+
