@@ -193,171 +193,103 @@ IDH.F <- makeTfuns(IDH,c('check','cost','deaths','att',
 IPH.F <- makeTfuns(IPH,c('check','cost','deaths','att',
                          'lives','refers','dxc','dxb'))
 
-runallfuns <- function(Data,arm='all'){
-    done <- FALSE
-    if(arm=='SOC'){
-        print('Running functions for SOC arm!')
-        Data$check.soc <- SOC.F$checkfun(Data); print('check run!')
-        Data$lives.soc <- SOC.F$livesfun(Data); print('lives run!')
-        Data$deaths.soc <- SOC.F$deathsfun(Data); print('deaths run!')
-        Data$cost.soc <- SOC.F$costfun(Data); print('costs run!')
-        Data$refers.soc <- SOC.F$refersfun(Data); print('refers run!')
-        Data$dxb.soc <- SOC.F$dxbfun(Data); print('dxb run!')
-        Data$dxc.soc <- SOC.F$dxcfun(Data); print('dxc run!')
-        done <- TRUE
+
+## running all function
+runallfuns <- function(D,arm='both'){
+  done <- FALSE
+  if(arm=='SOC' | arm=='all'){
+    cat('Running functions for SOC:\n')
+    for(nm in names(SOC.F)){
+      snm <- gsub('fun','',nm)
+      snma <- paste0(snm,'.soc')
+      D[[snma]] <- SOC.F[[nm]](D)
+      cat(snm,' run...\n')
+      done <- TRUE
     }
-    if(arm=='IPD'){
-        print('Running functions for IPD arm!')
-        Data$check.spd <- IPD.F$checkfun(Data); print('check run!')
-        Data$lives.spd <- IPD.F$livesfun(Data); print('lives run!')
-        Data$deaths.spd <- IPD.F$deathsfun(Data); print('deaths run!')
-        Data$cost.spd <- IPD.F$costfun(Data); print('costs run!')
-        Data$refers.spd <- IPD.F$refersfun(Data); print('refers run!')
-        Data$dxb.spd <- IPD.F$dxbfun(Data); print('dxb run!')
-        Data$dxc.spd <- IPD.F$dxcfun(Data); print('dxc run!')
-        done <- TRUE
+  }
+  if(arm=='IPD' | arm=='all'){
+    cat('Running functions for IPD:\n')
+    for(nm in names(IPD.F)){
+      snm <- gsub('fun','',nm)
+      snma <- paste0(snm,'.ipd')
+      D[[snma]] <- IPD.F[[nm]](D)
+      cat(snm,' run...\n')
+      done <- TRUE
     }
-    if(arm=='IDH'){
-        print('Running functions for IDH arm!')
-        Data$check.idh <- IDH.F$checkfun(Data); print('check run!')
-        Data$lives.idh <- IDH.F$livesfun(Data); print('lives run!')
-        Data$deaths.idh <- IDH.F$deathsfun(Data); print('deaths run!')
-        Data$cost.idh <- IDH.F$costfun(Data); print('costs run!')
-        Data$refers.idh <- IDH.F$refersfun(Data); print('refers run!')
-        Data$dxb.idh <- IDH.F$dxbfun(Data); print('dxb run!')
-        Data$dxc.idh <- IDH.F$dxcfun(Data); print('dxc run!')
-        done <- TRUE
+  }
+  if(arm=='IDH' | arm=='all'){
+    cat('Running functions for IDH:\n')
+    for(nm in names(IDH.F)){
+      snm <- gsub('fun','',nm)
+      snma <- paste0(snm,'.idh')
+      D[[snma]] <- IDH.F[[nm]](D)
+      cat(snm,' run...\n')
+      done <- TRUE
     }
-    if(arm=='IPH'){
-        print('Running functions for IPH arm!')
-        Data$check.iph <- IPH.F$checkfun(Data); print('check run!')
-        Data$lives.iph <- IPH.F$livesfun(Data); print('lives run!')
-        Data$deaths.iph <- IPH.F$deathsfun(Data); print('deaths run!')
-        Data$cost.iph <- IPH.F$costfun(Data); print('costs run!')
-        Data$refers.iph <- IPH.F$refersfun(Data); print('refers run!')
-        Data$dxb.iph <- IPH.F$dxbfun(Data); print('dxb run!')
-        Data$dxc.iph <- IPH.F$dxcfun(Data); print('dxc run!')
-        done <- TRUE
+  }
+
+  if(arm=='IPH' | arm=='all'){
+    cat('Running functions for IPH:\n')
+    for(nm in names(IPH.F)){
+      snm <- gsub('fun','',nm)
+      snma <- paste0(snm,'.iph')
+      D[[snma]] <- IPH.F[[nm]](D)
+      cat(snm,' run...\n')
+      done <- TRUE
     }
-    if(arm=='all'){
-        Data <- runallfuns(Data,arm='SOC') #standard of care
-        Data <- runallfuns(Data,arm='IPD') #soc, partially decent'd
-        Data <- runallfuns(Data,arm='IDH') #DH-focused intervention
-        Data <- runallfuns(Data,arm='IPH') #PHC-focused intervention
-        done <- TRUE
-    }
-    if(!done)stop('Functions not all run! Likely unrecognised arm supplied.')
-    return(Data)
+  }
+  if(!done)stop('Functions not run! Likely unrecognised arm supplied.')
+  return(D)
 }
 
 
 
+## --- CHECKS
+showAllParmz <- function(TREE){
+  B <- showParmz(TREE)
+  ## get calx
+  cx <- B$calcs
+  cx <- gsub("\\*|\\+|-|\\/|\\(|\\)"," ",cx)
+  cx <- paste(cx,collapse=" ")
+  cx <- strsplit(cx,split=" ")[[1]]
+  cx <- cx[cx!=""]
+  cx <- cx[cx!="1"]
+  ## get non calcs
+  cx <- c(cx,B$vars)
+  unique(cx)
+}
 
-
-## --- make functions
-
+makeTestData <- function(ncheck,vnames){
+  A <- data.table(vnames,value=runif(length(vnames)))
+  A <- A[rep(1:length(vnames),each=ncheck)]
+  idz <- rep(1:ncheck,length(vnames))
+  A[,id:=idz]
+  A[,value:=runif(nrow(A))]
+  dcast(A,id~vnames,value.var = 'value')
+}
 
 
 ## checking
-vrz.soc <- showParmz(SOC)$vars
-vrz.spd <- showParmz(IPD)$vars
-vrz.idh <- showParmz(IDH)$vars
-vrz.iph <- showParmz(IPH)$vars
+vrz.soc <- showAllParmz(SOC)
+vrz.spd <- showAllParmz(IPD)
+vrz.idh <- showAllParmz(IDH)
+vrz.iph <- showAllParmz(IPH)
 vrz <- c(vrz.soc,
          vrz.spd,
          vrz.idh,
          vrz.iph
          )
 vrz <- unique(vrz)
-vrz <- c(vrz,
-         'dh.prsmptv',
-         'phc.prsmptv',
-         'soc.dh.presumed',
-         'soc.dh.test',
-         'soc.dh.fracsp',
-         'soc.phc.presumed',
-         'soc.phc.referDH2',
-         'soc.phc.referDH',
-         'ipd.dh.presumed',
-         'ipd.dh.ptbc',
-         'ipd.dhref.ptbc',
-         'ipd.phc.presumed',
-         'ipd.phc.referDH',
-         'idh.dh.ptbc',
-         'idh.phc.presumed',
-         'idh.dh.presumed',
-         'iph.phc.presumed',
-         'iph.dh.presumed',
-         'iph.dh.ptbc',
-         'iph.phc.ptbc'
-         )
-
-
-
-## 
-ncheck <- 100
-A <- data.table(vrz,value=runif(length(vrz)))
-A <- A[rep(1:length(vrz),each=ncheck)]
-idz <- rep(1:ncheck,length(vrz))
-A[,id:=idz]
-A[,value:=runif(nrow(A))]
-## 
-A[,.N,by=vrz]
-A[,min(id),by=vrz]
-A[,max(id),by=vrz]
-## 
-A <- dcast(A,id~vrz,value.var = 'value')
-dim(A)
-## 
-## random test variables
-A <- data.table(vrz,value=runif(length(vrz)))
-## A <- dcast(A,.~vrz,value.var = 'value') #TODO
-A <- transpose(A,make.names = 'vrz')
-
-## A$ipd.p.phc <- 1 #bug when @ PHC
-## A$ipd.phc.presumed <- 1
-
-## A$dh.prsmptv <- 0
-
+A <- makeTestData(50,vrz)
 
 
 ## checks
-IPD.F$checkfun(A) #NOTE OK
-
+IPD.F$checkfun(A) #NOTE BUG
 IPH.F$checkfun(A) #NOTE OK
-
-IDH.F$checkfun(A) #NOTE OK
-
+IDH.F$checkfun(A) #NOTE BUG
 SOC.F$checkfun(A) #NOTE OK
 
 
-## TODO port over model-runner, include model functions, simplify multirun; done SOC rest to do before removing SOC etc
-
-## ## running all function
-## runallfuns <- function(D,arm='both'){
-##   done <- FALSE
-##   if(arm=='INT' | arm=='both'){
-##     cat('Running functions for intervention arm:\n')
-##     for(nm in names(treefunsINT)){
-##       snm <- gsub('fun','',nm)
-##       snma <- paste0(snm,'INT')
-##       D[[snma]] <- treefunsINT[[nm]](D)
-##       cat(snm,' run...\n')
-##       done <- TRUE
-##     }
-##   }
-##   if(arm=='SOC' | arm=='both'){
-##     cat('Running functions for SOC arm:\n')
-##     for(nm in names(treefunsSOC)){
-##       snm <- gsub('fun','',nm)
-##       snma <- paste0(snm,'SOC')
-##       D[[snma]] <- treefunsSOC[[nm]](D)
-##       cat(snm,' run...\n')
-##       done <- TRUE
-##     }
-##   }
-##   if(!done)stop('Functions not run! Likely unrecognised arm supplied.')
-##   return(D)
-## }
-
+## TODO port over model-runner, include model functions
+## TODO add showAllParmz to HE dtree, also tester and runall
 
