@@ -2,7 +2,7 @@ PHC-focused strategy
 	Present at DH
 		Systematic TB screening
 			Presumptive TB
-				Clinical exam + CXR + Xpert Ultra on NPA & stool
+				Clinical exam + CXR + Xpert Ultra on NPA & stool/sputum
 					TB diagnosed (bacteriological)
 					TB diagnosed (clinical)
 					Reassessed at 7 days
@@ -12,7 +12,7 @@ PHC-focused strategy
 	Present at PHC
 		Systematic TB screening
 			Presumptive TB
-				Clinical exam + Xpert Ultra on NPA & stool
+				Clinical exam + Xpert Ultra on NPA & stool/sputum
 					TB diagnosed (bacteriological)
 					TB diagnosed (clinical)
 					Reassessed at 7 days
