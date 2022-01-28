@@ -143,7 +143,7 @@ Partly-decentralized PHCs                                                      ,
          ¦           ¦   ¦       ¦--Survives                                   ,1-d.cfr.notx,0,0,1,0,0,0,0,1
          ¦           ¦   ¦       °--Dies                                       ,d.cfr.notx,0,1,0,0,0,0,0,1
          ¦           ¦   °--Reassessed at 7 days                               ,(1-d.ipd.dhreftest.test.ptbc)*(1-d.ipd.dhreftest.ptbxns),c.d.ipd.dh.sreassess7,0,0,0,0,0,0,0
-         ¦           ¦       ¦--TB diagnosed (clinical)                        ,d.ipd.dhref.test7.ptbc,0,0,0,0,1,0,0,0
+         ¦           ¦       ¦--TB diagnosed (clinical)                        ,d.ipd.dh.test7.ptbc,0,0,0,0,1,0,0,0
          ¦           ¦       ¦   ¦--RifS-TB treatment                          ,1-d.ptltfu,c.d.ipd.dh.rsATT,0,0,0,0,0,1,0
          ¦           ¦       ¦   ¦   ¦--Survives                               ,1-d.cfr.tx,0,0,1,0,0,0,0,1
          ¦           ¦       ¦   ¦   °--Dies                                   ,d.cfr.tx,0,1,0,0,0,0,0,1
