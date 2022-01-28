@@ -286,21 +286,8 @@ A <- makeTestData(50,vrz)
 ## checks
 IPD.F$checkfun(A) #NOTE OK
 IPH.F$checkfun(A) #NOTE OK
-IDH.F$checkfun(A) #NOTE BUG
+IDH.F$checkfun(A) #NOTE OK
 SOC.F$checkfun(A) #NOTE OK
-
-
-A[,d.ipd.pphc:=1]
-A[,d.phc.prsmptv:=1]
-A[,d.ipd.phc.presumed:=1]
-A[,d.ipd.phc.test:=1]
-A[,d.ipd.phc.ptbxsp:=0]
-A[,d.ipd.phc.test.ptbc:=0]
-A[,d.ipd.phc.test.referDH:=1]
-A[,d.ipd.dhreftest.ptbxns:=0]
-A[,d.ipd.dhreftest.test.ptbc:=0]
-## A[,d.ipd.dhref.test7.ptbc:=1]
-IPD.F$checkfun(A) #NOTE OK
 
 ## TODO port over model-runner, include model functions
 ## TODO add showAllParmz to HE dtree, also tester and runall

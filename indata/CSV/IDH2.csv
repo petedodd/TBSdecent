@@ -67,7 +67,7 @@ DH-focused strategy                                                        ,1,0,
          ¦       ¦   ¦   °--No TB treatment                                ,d.ptltfu,0,0,0,0,0,0,0,0
          ¦       ¦   ¦       ¦--Survives                                   ,1-d.cfr.notx,0,0,1,0,0,0,0,1
          ¦       ¦   ¦       °--Dies                                       ,d.cfr.notx,0,1,0,0,0,0,0,1
-         ¦       ¦   °--Reassessed at 7 days                               ,(1-d.idh.dh.ptbc)*(1-d.idh.dh.ptbxns),c.d.idh.dh.sreassess7,0,0,0,0,0,0,0
+         ¦       ¦   °--Reassessed at 7 days                               ,(1-d.idh.dh.test.ptbc)*(1-d.idh.dh.ptbxns),c.d.idh.dh.sreassess7,0,0,0,0,0,0,0
          ¦       ¦       ¦--TB diagnosed (clinical)                        ,d.idh.dh.test7.ptbc,0,0,0,0,1,0,0,0
          ¦       ¦       ¦   ¦--RifS-TB treatment                          ,1-d.ptltfu,c.d.idh.dh.rsATT,0,0,0,0,0,1,0
          ¦       ¦       ¦   ¦   ¦--Survives                               ,1-d.cfr.tx,0,0,1,0,0,0,0,1
