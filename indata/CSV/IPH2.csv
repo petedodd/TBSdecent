@@ -5,14 +5,14 @@ PHC-focused strategy                                                   ,1,0,0,0,
  ¦       ¦--Presumptive TB                                             ,d.dh.prsmptv*d.iph.dh.presumed,0,0,0,0,0,0,0,0
  ¦       ¦   °--Clinical exam + CXR + Xpert Ultra on NPA & stool/sputum,1,c.d.iph.dh.examCXRxns,0,0,0,0,0,0,0
  ¦       ¦       ¦--TB diagnosed (bacteriological)                     ,d.iph.dh.ptbxns,0,0,0,0,0,1,0,0
- ¦       ¦       ¦   ¦--RifS-TB diagnosed                              ,1-p.rr,0,0,0,0,0,0,0,0
+ ¦       ¦       ¦   ¦--RifS-TB diagnosed                              ,1-prr,0,0,0,0,0,0,0,0
  ¦       ¦       ¦   ¦   ¦--RifS-TB treatment                          ,1-d.ptltfu,c.d.iph.dh.rsATT,0,0,0,0,0,1,0
  ¦       ¦       ¦   ¦   ¦   ¦--Survives                               ,1-d.cfr.tx,0,0,1,0,0,0,0,1
  ¦       ¦       ¦   ¦   ¦   °--Dies                                   ,d.cfr.tx,0,1,0,0,0,0,0,1
  ¦       ¦       ¦   ¦   °--No TB treatment                            ,d.ptltfu,0,0,0,0,0,0,0,0
  ¦       ¦       ¦   ¦       ¦--Survives                               ,1-d.cfr.notx,0,0,1,0,0,0,0,1
  ¦       ¦       ¦   ¦       °--Dies                                   ,d.cfr.notx,0,1,0,0,0,0,0,1
- ¦       ¦       ¦   °--RifR-TB diagnosed                              ,p.rr,0,0,0,0,0,0,0,0
+ ¦       ¦       ¦   °--RifR-TB diagnosed                              ,prr,0,0,0,0,0,0,0,0
  ¦       ¦       ¦       ¦--RifR-TB treatment                          ,1-d.ptltfu,c.d.iph.dh.rrATT,0,0,0,0,0,1,0
  ¦       ¦       ¦       ¦   ¦--Survives                               ,1-d.cfr.tx,0,0,1,0,0,0,0,1
  ¦       ¦       ¦       ¦   °--Dies                                   ,d.cfr.tx,0,1,0,0,0,0,0,1
@@ -45,14 +45,14 @@ PHC-focused strategy                                                   ,1,0,0,0,
          ¦--Presumptive TB                                             ,d.phc.prsmptv*d.iph.phc.presumed,0,0,0,0,0,0,0,0
          ¦   °--Clinical exam + Xpert Ultra on NPA & stool/sputum      ,1,c.d.iph.phc.examxns,0,0,0,0,0,0,0
          ¦       ¦--TB diagnosed (bacteriological)                     ,d.iph.phc.ptbxns,0,0,0,0,0,1,0,0
-         ¦       ¦   ¦--RifS-TB diagnosed                              ,1-p.rr,0,0,0,0,0,0,0,0
+         ¦       ¦   ¦--RifS-TB diagnosed                              ,1-prr,0,0,0,0,0,0,0,0
          ¦       ¦   ¦   ¦--RifS-TB treatment                          ,1-d.ptltfu,c.d.iph.phc.rsATT,0,0,0,0,0,1,0
          ¦       ¦   ¦   ¦   ¦--Survives                               ,1-d.cfr.tx,0,0,1,0,0,0,0,1
          ¦       ¦   ¦   ¦   °--Dies                                   ,d.cfr.tx,0,1,0,0,0,0,0,1
          ¦       ¦   ¦   °--No TB treatment                            ,d.ptltfu,0,0,0,0,0,0,0,0
          ¦       ¦   ¦       ¦--Survives                               ,1-d.cfr.notx,0,0,1,0,0,0,0,1
          ¦       ¦   ¦       °--Dies                                   ,d.cfr.notx,0,1,0,0,0,0,0,1
-         ¦       ¦   °--RifR-TB diagnosed                              ,p.rr,0,0,0,0,0,0,0,0
+         ¦       ¦   °--RifR-TB diagnosed                              ,prr,0,0,0,0,0,0,0,0
          ¦       ¦       ¦--RifR-TB treatment                          ,1-d.ptltfu,c.d.iph.phc.rrATT,0,0,0,0,0,1,0
          ¦       ¦       ¦   ¦--Survives                               ,1-d.cfr.tx,0,0,1,0,0,0,0,1
          ¦       ¦       ¦   °--Dies                                   ,d.cfr.tx,0,1,0,0,0,0,0,1

@@ -1,5 +1,5 @@
 ## looking at tree 7
-## rm(list=ls())
+rm(list=ls())
 library(here)
 library(HEdtree)
 library(data.tree)
@@ -102,8 +102,6 @@ AddOutcomes <- function(D){
 }
 
 
-print(SOC,'p','cost','deaths','lives','refers','dxc','dxb','att','check')
-
 ## === SOC
 SOC <- MSorg2tree(here('indata/dSOC.txt'))
 SOC <- top(SOC)
@@ -119,6 +117,7 @@ fn <- here('indata/CSV/SOC1.csv')
 if(file.exists(fn)){
   ## read
   labz <- fread(fn)
+  labz$p <- gsub("p\\.rr","prr",labz$p) #NOTE fixing typo
   SOC$Set(p=labz$p)
   SOC$Set(cost=labz$cost)
   tree2file(SOC,filename = here('indata/CSV/SOC2.csv'),
@@ -136,10 +135,11 @@ tree2file(IPD,filename = here('indata/CSV/IPD0.csv'),
 ## create version with probs/costs
 fn <- here('indata/CSV/IPD1.csv')
 if(file.exists(fn)){
-    ## read
-    labz <- fread(fn)
-    IPD$Set(p=labz$p)
-    IPD$Set(cost=labz$cost)
+  ## read
+  labz <- fread(fn)
+  labz$p <- gsub("p\\.rr","prr",labz$p) #NOTE fixing typo
+  IPD$Set(p=labz$p)
+  IPD$Set(cost=labz$cost)
   tree2file(IPD,filename = here('indata/CSV/IPD2.csv'),
             'p','cost','deaths','lives','refers','dxc','dxb','att','check')
 }
@@ -155,10 +155,11 @@ tree2file(IDH,filename = here('indata/CSV/IDH0.csv'),
 ## create version with probs/costs
 fn <- here('indata/CSV/IDH1.csv')
 if(file.exists(fn)){
-    ## read
-    labz <- fread(fn)
-    IDH$Set(p=labz$p)
-    IDH$Set(cost=labz$cost)
+  ## read
+  labz <- fread(fn)
+  labz$p <- gsub("p\\.rr","prr",labz$p) #NOTE fixing typo
+  IDH$Set(p=labz$p)
+  IDH$Set(cost=labz$cost)
   tree2file(IDH,filename = here('indata/CSV/IDH2.csv'),
             'p','cost','deaths','lives','refers','dxc','dxb','att','check')
 }
@@ -174,10 +175,11 @@ tree2file(IPH,filename = here('indata/CSV/IPH0.csv'),
 ## create version with probs/costs
 fn <- here('indata/CSV/IPH1.csv')
 if(file.exists(fn)){
-    ## read
-    labz <- fread(fn)
-    IPH$Set(p=labz$p)
-    IPH$Set(cost=labz$cost)
+  ## read
+  labz <- fread(fn)
+  labz$p <- gsub("p\\.rr","prr",labz$p) #NOTE fixing typo
+  IPH$Set(p=labz$p)
+  IPH$Set(cost=labz$cost)
   tree2file(IPH,filename = here('indata/CSV/IPH2.csv'),
             'p','cost','deaths','lives','refers','dxc','dxb','att','check')
 }
@@ -227,7 +229,6 @@ runallfuns <- function(D,arm='both'){
       done <- TRUE
     }
   }
-
   if(arm=='IPH' | arm=='all'){
     cat('Running functions for IPH:\n')
     for(nm in names(IPH.F)){
