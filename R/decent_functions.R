@@ -127,13 +127,14 @@ AddSampleTests <- function(D){
 
 
 ## ========= OUTCOMES ===============
+## TODO - remove excess RNG here
 CFRtxY <- function(age,hiv=0,art=0){#NB optimized for clarity not speed
   if(length(age)>1 & length(hiv)==1) hiv <- rep(hiv,length(age))
   if(length(age)>1 & length(art)==1) art <- rep(art,length(age))
-  tmp <- PZ$ontxY$r(length(age))
-  tmp[age=='5-14'] <- PZ$ontxO$r(sum(age=='5-14'))  #NB this could be achieved in  the tree model
+  tmp <- P$ontxY$r(length(age))
+  tmp[age=='5-14'] <- P$ontxO$r(sum(age=='5-14'))  #NB this could be achieved in  the tree model
   ## hivartOR
-  Z <- PZ$hivartOR$r(length(age))
+  Z <- P$hivartOR$r(length(age))
   hor <- rep(1,length(age))
   tmp <- logit(tmp)                     #transform
   tmp[hiv>0] <- tmp[hiv>0]+Z[hiv>0,1]
@@ -151,12 +152,12 @@ CFRtxY <- function(age,hiv=0,art=0){#NB optimized for clarity not speed
 CFRtxN <- function(age,hiv=0,art=0){
   if(length(age)>1 & length(hiv)==1) hiv <- rep(hiv,length(age))
   if(length(age)>1 & length(art)==1) art <- rep(art,length(age))
-  tmp <- PZ$notxY$r(length(age))          #default a<5 and hiv=art=0
-  tmp[age!='5-14' & hiv>0 & art==0] <- PZ$notxHY$r(sum(age!='5-14' & hiv>0 & art==0)) #u5,HIV+,ART-
-  tmp[age!='5-14' & hiv>0 & art>0] <- PZ$notxHAY$r(sum(age!='5-14' & hiv>0 & art>0)) #u5,HIV+,ART+
-  tmp[age=='5-14'] <- PZ$notxO$r(sum(age=='5-14'))    #o5, HIV-ve
-  tmp[age=='5-14' & hiv>0 & art==0] <- PZ$notxHO$r(sum(age=='5-14' & hiv>0 & art==0)) #o5,HIV+,ART-
-  tmp[age=='5-14' & hiv>0 & art>0] <- PZ$notxHAO$r(sum(age=='5-14' & hiv>0 & art>0)) #o5,HIV+,ART+
+  tmp <- P$notxY$r(length(age))          #default a<5 and hiv=art=0
+  tmp[age!='5-14' & hiv>0 & art==0] <- P$notxHY$r(sum(age!='5-14' & hiv>0 & art==0)) #u5,HIV+,ART-
+  tmp[age!='5-14' & hiv>0 & art>0] <- P$notxHAY$r(sum(age!='5-14' & hiv>0 & art>0)) #u5,HIV+,ART+
+  tmp[age=='5-14'] <- P$notxO$r(sum(age=='5-14'))    #o5, HIV-ve
+  tmp[age=='5-14' & hiv>0 & art==0] <- P$notxHO$r(sum(age=='5-14' & hiv>0 & art==0)) #o5,HIV+,ART-
+  tmp[age=='5-14' & hiv>0 & art>0] <- P$notxHAO$r(sum(age=='5-14' & hiv>0 & art>0)) #o5,HIV+,ART+
   tmp
 }
 ## CFRtxN(1:10)                            #test
