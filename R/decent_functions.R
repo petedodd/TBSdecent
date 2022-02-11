@@ -4,6 +4,16 @@
 ## - costing for this
 ## - stool/sputum
 ## - flag assumption = groups for SA or pending data
+## 
+
+## ========= UTILITIES ===============
+logit <- function(x) log(odds(x))
+ilogit <- function(x) iodds(exp(x))
+odds <- function(x) x/(1-x)
+iodds <- function(x) x/(1+x)
+
+
+## ========= DIAGNOSIS ===============
 
 ## function for combining sample modality with bacteriological test
 ## to calculate the probablility bac+ TB is diagnosed
@@ -114,3 +124,97 @@ AddSampleTests <- function(D){
   d.iph.dhreftest7.ptbcxr:=ifelse(tb!='noTB',sens.clin,1-spec.clin)
 
 }
+
+
+## ========= OUTCOMES ===============
+CFRtxY <- function(age,hiv=0,art=0){#NB optimized for clarity not speed
+  if(length(age)>1 & length(hiv)==1) hiv <- rep(hiv,length(age))
+  if(length(age)>1 & length(art)==1) art <- rep(art,length(age))
+  tmp <- PZ$ontxY$r(length(age))
+  tmp[age=='5-14'] <- PZ$ontxO$r(sum(age=='5-14'))  #NB this could be achieved in  the tree model
+  ## hivartOR
+  Z <- PZ$hivartOR$r(length(age))
+  hor <- rep(1,length(age))
+  tmp <- logit(tmp)                     #transform
+  tmp[hiv>0] <- tmp[hiv>0]+Z[hiv>0,1]
+  tmp[art>0] <- tmp[art>0]+Z[art>0,2]
+  tmp <- ilogit(tmp)                    #inverse transform
+  tmp
+}
+## CFRtxY(1:10)                            #test
+## summary(CFRtxY(1:1e3))
+## summary(CFRtxY(1:1e3,hiv=1))
+## summary(CFRtxY(1:1e3,hiv=1,art=1))
+
+
+## == CFR off tx
+CFRtxN <- function(age,hiv=0,art=0){
+  if(length(age)>1 & length(hiv)==1) hiv <- rep(hiv,length(age))
+  if(length(age)>1 & length(art)==1) art <- rep(art,length(age))
+  tmp <- PZ$notxY$r(length(age))          #default a<5 and hiv=art=0
+  tmp[age!='5-14' & hiv>0 & art==0] <- PZ$notxHY$r(sum(age!='5-14' & hiv>0 & art==0)) #u5,HIV+,ART-
+  tmp[age!='5-14' & hiv>0 & art>0] <- PZ$notxHAY$r(sum(age!='5-14' & hiv>0 & art>0)) #u5,HIV+,ART+
+  tmp[age=='5-14'] <- PZ$notxO$r(sum(age=='5-14'))    #o5, HIV-ve
+  tmp[age=='5-14' & hiv>0 & art==0] <- PZ$notxHO$r(sum(age=='5-14' & hiv>0 & art==0)) #o5,HIV+,ART-
+  tmp[age=='5-14' & hiv>0 & art>0] <- PZ$notxHAO$r(sum(age=='5-14' & hiv>0 & art>0)) #o5,HIV+,ART+
+  tmp
+}
+## CFRtxN(1:10)                            #test
+## summary(CFRtxN(1:1e3))
+## summary(CFRtxN(1:1e3,hiv=1))
+## summary(CFRtxN(1:1e3,hiv=1,art=1))
+
+
+
+
+## add CFRs to data by side-effect
+AddCFRs <- function(D){
+  ## d.cfr.notx & d.cfr.tx
+  D[tb=='noTB',c('d.cfr.notx','d.cfr.tx'):=0] #NOTE neglect non-TB mortality
+  ## CFR on  ATT
+  D[tb!="noTB",d.cfr.tx:=CFRtxY(age,hiv,art)]
+  ## CFR w/o ATT
+  D[tb!="noTB",p.cfr.notx:=CFRtxN(age,hiv,art)]
+
+}
+
+
+## ======= COMBINED LABELLER ===========
+
+## combined function to add the labeks to the tree prior to calculations
+MakeTreeParms <- function(D){
+  ## -- use of other functions
+  AddSampleTests(D) #samples/tests
+  AddCFRs(D) #outcomes
+  ## -- other not covered above
+  ## some parms that are only !=0 for older children:
+  D[,d.ipd.phc.test:=ifelse(age=='5-14',d.ipd.phc.test.514,0)]
+  D[,d.soc.dh.fracsp:=ifelse(age=='5-14',d.soc.dh.fracsp.514,0)]
+  D[,d.soc.phc.test:=ifelse(age=='5-14',d.soc.phc.test.514,0)]
+}
+
+## ======= EPIDEMIOLOGY ===========
+## TODO - HIV/ART IRRs
+makeAttributes <- function(D){
+    nrep <- nrow(D)
+    D[,id:=1:nrep]
+    fx <- list(tb=tblevels,hiv=hivlevels,art=artlevels)
+    cofx <- expand.grid(fx)
+    cat('Attribute combinations used:\n')
+    print(cofx)
+    D <- D[rep(1:nrow(D),each=nrow(cofx))] #expand out data
+    D[,names(cofx):=cofx[rep(1:nrow(cofx),nrep),]]
+    ## age
+    D[,value:=ifelse(age=='5-14',1-d.F.u5,d.F.u5)] #NOTE value first set here
+    ## HIV/ART
+    D[age!='5-14',value:=value*ifelse(hiv==1,d.hivprev.u5,d.hivprev.u5)]
+    D[age=='5-14',value:=value*ifelse(hiv==1,d.hivprev.o5,d.hivprev.u5)]
+    D[hiv==1,value:=value*ifelse(art==1,d.artcov,1-d.artcov)]
+    ## TB
+    D[tb=='noTB',value:=value*d.dh.tbinprsmptv]
+    D[tb=='TB-',value:=value*d.dh.tbinprsmptv*(1-Fbc.u5)] #NOTE assuming no TB outside of presumptive?
+    D[tb=='TB+',value:=value*d.dh.tbinprsmptv*(Fbc.u5)]   #TODO need value swapouts to handle different cohorts
+    return(D)
+}
+
+## TODO bring runner from tree into this file to build in swap outs
