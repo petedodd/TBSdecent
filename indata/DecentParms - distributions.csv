@@ -1,0 +1,67 @@
+NAME,DISTRIBUTION,DESCRIPTION,SOURCE,NOTES,CATEGORY,"WORKING NOTES, QUERIES, ACTIONS"
+d.ptltfu,"B(3.6,68.4)",pre-treatment loss to follow up,assume 5% (95%uCI=10%),,Common,Bolded names col 1 are parms more funamental to corresponding labels
+d.idh.pphc,"B(31.5,3.5)",IDH: proportion of patients who initially present at PHC,assume 90 (95% 80-100),"Table 1, p6",Location,
+d.iph.pphc,"B(31.5,3.5)",IPH: proportion of patients who initially present at PHC,assume 90 (95% 80-100),"Table 1, p6",,
+d.ipd.pphc,"B(31.5,3.5)",IPD: proportion of patients who initially present at PHC,assume 90 (95% 80-100),"Table 1, p6",,
+d.soc.pphc,"B(31.5,3.5)",SOC: proportion of patients who initially present at PHC,assume 90 (95% 80-100),"Table 1, p6",,
+d.iph.phc.test7.referDH,1,IPH: people referred to DH from PHC due to ongoing symptoms at 7-day reassessment following bac- clin- initial test,,p17,,
+d.ipd.phc.test.referDH,"B(8,2)",IPD: people chosen to be referred to DH from PHC following bac- initial sputum test,Placeholder assumption 80%,p18,,Update with observation phase data
+d.ipd.phc.notest.referDH,"B(8,2)",IPD: people chosen to be referred to DH from PHC following initial clinical exam only,Placeholder assumption 80%,p18,,
+d.soc.phc.test.referDH,"B(8,2)",SOC: people chosen to be referred to DH from PHC following bac- initial sputum test,Placeholder assumption 80%,p18,,
+d.soc.phc.notest.referDH,"B(8,2)",SOC: people chosen to be referred to DH from PHC following initial clinical exam only,Placeholder assumption 80%,p18,,
+d.idh.rltfu,"B(4,6)","IDH: referral loss to follow up, all people with presumptive TB referred to DH",Placehold assumption 40%,see pp18-19,,Update with intervention phase data
+d.iph.rltfu,"B(4,6)","IDH: referral loss to follow up, people referred to DH from PHC due to ongoing symptoms at 7-day reassessment following bac- clin- initial test",Placehold assumption 40%,see pp18-19,,
+d.ipd.rltfu,"B(4,6)","IDH: referral loss to follow up, people chosen to be referred to DH from PHC following either clinical exam only or bac- sputum test",Placehold assumption 40%,see pp18-19,,
+d.soc.rltfu,"B(4,6)","SOC: referral loss to follow up, people chosen to be referred to DH from PHC following either clinical exam only or bac- sputum test",Placehold assumption 40%,see pp18-19,,
+d.dh.prsmptv,"B(2,8)",at DH: patients who fit the definition of presumptive TB,placeholder PJD - make age dpt?,move to epi??,Symptoms,Update with observation phase data
+d.phc.prsmptv,"B(2,8)",at PHC: patients who fit the definition of presumptive TB,placeholder PJD - make age dpt?,,,
+d.idh.dh.presumed,1,"IDH, at DH: people assessed as having presumptive TB at initial assessment (of those who fit the definition of presumptive TB)",assume 35 (20 - 75),"Table 2, p7",,100 % by defn
+d.idh.phc.presumed,1,"IDH, at PHC: people assessed as having presumptive TB at initial assessment (of those who fit the definition of presumptive TB)",assume 35 (20 - 75),"Table 2, p7",,
+d.iph.dh.presumed,1,"IPH, at DH: people assessed as having presumptive TB at initial assessment (of those who fit the definition of presumptive TB)",assume 35 (20 - 75),"Table 2, p7",,
+d.iph.phc.presumed,1,"IPH, at PHC: people assessed as having presumptive TB at initial assessment (of those who fit the definition of presumptive TB)",assume 35 (20 - 75),"Table 2, p7",,
+d.ipd.dh.presumed,1,"IPD, at DH: people assessed as having presumptive TB at initial assessment (of those who fit the definition of presumptive TB)",assume 35 (20 - 75),"Table 2, p7",,
+d.ipd.phc.presumed,1,"IPD, at PHC: people assessed as having presumptive TB at initial assessment (of those who fit the definition of presumptive TB)",assume 35 (20 - 75),"Table 2, p7",,
+d.soc.dh.presumed,"B(3.86157,7.171488)","SOC, at DH: people assessed as having presumptive TB at initial assessment (of those who fit the definition of presumptive TB)",assume 35 (20 - 75),"Table 2, p7",,To update with data
+d.soc.phc.presumed,"B(3.86157,7.171488)","SOC, at PHC: people assessed as having presumptive TB at initial assessment (of those who fit the definition of presumptive TB)",assume 35 (20 - 75),"Table 2, p7",,To update with data
+d.ipd.phc.test.514,"B(3.5,31.5)","IPD, at PHC: people receiving Xpert Ultra testing [on sputum], in people identified as having presumptive TB",assume 10 (0 - 20),"Table 7, p13 (=0 in u5)",Testing,MH check pls
+d.soc.dh.test,"B(7.453846,17.39231)","SOC, at DH: people receiving Xpert Ultra testing [either sputum or GA], in those identified as having presumptive TB",,"Table 7, p13",,
+d.soc.dh.fracsp.514,"B(1.3733,2.7467)","SOC, at DH: people receiving Xpert Ultra on a sputum sample, of those receiving any Xpert test [the remainder receiving it on a GA sample]",,"Table 7, p13",,
+d.soc.phc.test.514,"B(3.5,31.5)","SOC, at PHC: people receiving Xpert Ultra testing [on sputum], in those identified as having presumptive TB",assume 10 (0 - 20),"Table 7, p13 (=0 in u5)",,
+ES.poss.phc,"B(4.4375,13.3125)",% of patients identified as having presumptive TB who give an expectorated sputum sample,"O1 baseline assessment, expert opinion",table 4,Samples,
+ES.poss.dh,"B(9.2,13.8)",% of patients identified as having presumptive TB who give an expectorated sputum sample,O1 baseline assessment,table 4,,
+GA.poss.dh.o5,"B(3.5,31.5)",% of patients identified as having presumptive TB who give a GA sample,"O1 baseline assessment, expert opinion",table 5,,
+GA.poss.dh.u5,"B(3.5,31.5)",% of patients identified as having presumptive TB who give a GA sample: <5s,"O1 baseline assessment, expert opinion",table 5,,
+SMp.phc.o5,"B(3.25,18.4166666666667)",% of patients identified as having presumptive TB who receive smear microscopy on a sputum sample,"O1 baseline assessment, expert opinion",table 6,,
+SMp.dh.o5,"B(5.48888888888889,21.9555555555556)",% of patients identified as having presumptive TB who receive smear microscopy on a sputum sample,"O1 baseline assessment, expert opinion",table 6,,
+NPA.poss,"B(7,3)",% patients anywhere in whom NPA sample is possible,placeholder,,,
+ST.poss,"B(8,2)",% patients in whom Stool sample possible,placeholder,,,
+sens.xstool,"B(21.716911549042,13.5951397502133)",sensitivity of Xpert Ultra on stool in bac+ children,Kay 2020,table 9,Dx accuracy,
+spec.xstool,"B(480.118305785123,7.31144628099173)",specificity of Xpert Ultra stool in bac+ children,Kay 2020,table 10,,
+sens.xnpa,"B(14.876289210384,17.67576595457)",sensitivity of Xpert Ultra on NPA in bac+ children,Kay 2020,table 11,,
+spec.xnpa,"B(120.278188775511,3.08405612244899)",specificity of Xpert Ultra on NPA in bac+ children,Kay 2020,table 12,,
+sens.xga,"B(19.4209751059137,7.1831003816393)",sensitivity of Xpert on GA in bac+ children,Kay 2020,table 13,,
+spec.xga,"B(212.720785244704,4.11997443389335)",specificity of Xpert on GA in bac+ children,Kay 2020,table 14,,
+sens.xsputum,"B(103.163282735012,38.5445232196748)",sensitivity for C+ of Xpert on sputum,Kay 2020,table 15,,
+spec.xsputum,"B(520.629938271604,13.3494855967078)",specificity for C+ of Xpert on sputum,Kay 2020,table 16,,
+sens.msputum,"B(12.546144,35.708256)",sensitivity for C+ of SM on sputum,Detjen 2015,table 17,,Not used?
+spec.msputum,"B(791.025000000001,3.97500000000001)",specificity for C+ of SM on sputum,Detjen 2015,table 18,,Not used?
+spec.clin,"B(694.552101135748,76.3159356408868)",specificity of clinical dx,Marais 2006,table 10,,
+sens.clin,"B(492.167344045368,292.788547574039)",sensitivity of clinical dx,Marais 2006,table 10,,
+ontxY,"LN( -3.963316,0.6457913)",CFR children <5 on TB treatment,Jenkins et al 2017,used in d.cfr.tx,Outcomes,
+ontxO,"LN(-4.828314,0.4817445)",CFR children 5-14 on TB treatment,Jenkins et al 2017,used in d.cfr.tx,,
+hivartOR:mn,"MVN: [2.6375681, -0.5683867]","ORs of death on TB treatment, (OR HIV+ vs -) x (ART -/+): mean","Jenkins et al 2017, Dodd et al 2017",used in d.cfr.tx,,
+hivartOR:sg,"MVN: [[0.2325509,-0.2325509],[-0.2325509,0.6367345]]","ORs of death on TB treatment, (OR HIV+ vs -) x (ART -/+): variance","Jenkins et al 2017, Dodd et al 2017",used in d.cfr.tx,,
+notxY,"LN(-0.830113,0.08035318)",CFR children <5 without TB treatment,Jenkins et al 2017,used in d.cfr.tx,,
+notxO,"LN(-1.903809,0.1285165)",CFR children 5-14 without TB treatment,Jenkins et al 2017,used in d.cfr.notx,,
+notxHY,"B(77.13050,11.10817)",CFR children <5 without TB treatment (HIV+/ART-),Dodd et al 2017,used in d.cfr.notx,,
+notxHO,"B(19.59083,6.89700)",CFR children 5-14 without TB treatment (HIV+/ART-),Dodd et al 2017,used in d.cfr.notx,,
+notxHAY,"B(15.18683,12.87500)",CFR children <5 without TB treatment (HIV+/ART+),Dodd et al 2017,used in d.cfr.notx,,
+notxHAO,"B(10.43383,11.08417)",CFR children 5-14 without TB treatment (HIV+/ART+),Dodd et al 2017,used in d.cfr.notx,,
+prr,"B(2.1525,69.5975)",prevalence of rifampicin resistance in people with TB,assume 3% (SD=2%),,Epidemiology,
+d.dh.tbinprsmptv,"B(2,8)","at DH: of presumptive TB, fraction with TB",placeholder PJD - make age dpt?,,,
+d.phc.tbinprsmptv,"B(2,8)","at PHC: of presumptive TB, fraction with TB",placeholder PJD - make age dpt?,,,
+d.hivprev.u5,"B(2,8)",HIV prevalence <5,placeholder PJD ,,,Note no difference in cohort by DH vs PHC
+d.hivprev.o5,"B(2,8)",HIV prevalence >5,placeholder PJD ,,,
+d.artcov,"B(8,2)",ART coverage,placeholder PJD ,,,TODO - HIV/ART IRRs
+d.F.u5,"B(3,3)",fraction of presenting children under 5,placeholder PJD ,,,
+Fbc.u5,"B(17,23)",fraction of children bacteriologically confirmable,Zar,,,
