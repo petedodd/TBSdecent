@@ -51,7 +51,7 @@ Partly-decentralized PHCs                                                      ,
          ¦   ¦   ¦   °--No TB treatment                                        ,d.ptltfu,0,0,0,0,0,0,0,0
          ¦   ¦   ¦       ¦--Survives                                           ,1-d.cfr.notx,0,0,1,0,0,0,0,1
          ¦   ¦   ¦       °--Dies                                               ,d.cfr.notx,0,1,0,0,0,0,0,1
-         ¦   ¦   ¦--Refer to DH                                                ,d.ipd.phc.notest.referDH*(1-d.ipd.phc.notest.ptbc),0,0,0,1,0,0,0,0
+         ¦   ¦   ¦--Refer to DH                                                ,d.ipd.phc.notest.referDH*(1-d.ipd.phc.notest.ptbc),c.d.ipd.phc.refer,0,0,1,0,0,0,0
          ¦   ¦   ¦   ¦--Clinical exam + CXR + Xpert Ultra on NPA & stool/sputum,1-d.ipd.rltfu,c.d.ipd.dh.examCXRxns,0,0,0,0,0,0,0
          ¦   ¦   ¦   ¦   ¦--TB diagnosed (bacteriological)                     ,d.ipd.dhrefnotest.ptbxns,0,0,0,0,0,1,0,0
          ¦   ¦   ¦   ¦   ¦   ¦--RifS-TB diagnosed                              ,1-prr,0,0,0,0,0,0,0,0
@@ -118,7 +118,7 @@ Partly-decentralized PHCs                                                      ,
          ¦       ¦--No TB diagnosed                                            ,(1-d.ipd.phc.test.referDH)*(1-d.ipd.phc.test.ptbc)*(1-d.ipd.phc.ptbxsp),0,0,0,0,0,0,0,0
          ¦       ¦   ¦--Survives                                               ,1-d.cfr.notx,0,0,1,0,0,0,0,1
          ¦       ¦   °--Dies                                                   ,d.cfr.notx,0,1,0,0,0,0,0,1
-         ¦       °--Refer to DH                                                ,d.ipd.phc.test.referDH*(1-d.ipd.phc.test.ptbc)*(1-d.ipd.phc.ptbxsp),0,0,0,1,0,0,0,0
+         ¦       °--Refer to DH                                                ,d.ipd.phc.test.referDH*(1-d.ipd.phc.test.ptbc)*(1-d.ipd.phc.ptbxsp),c.d.ipd.phc.refer,0,0,1,0,0,0,0
          ¦           ¦--Clinical exam + CXR + Xpert Ultra on NPA & stool/sputum,1-d.ipd.rltfu,c.d.ipd.dh.examCXRxns,0,0,0,0,0,0,0
          ¦           ¦   ¦--TB diagnosed (bacteriological)                     ,d.ipd.dhreftest.ptbxns,0,0,0,0,0,1,0,0
          ¦           ¦   ¦   ¦--RifS-TB diagnosed                              ,1-prr,0,0,0,0,0,0,0,0

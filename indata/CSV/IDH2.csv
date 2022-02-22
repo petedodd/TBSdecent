@@ -43,7 +43,7 @@ DH-focused strategy                                                        ,1,0,
  °--Present at PHC                                                         ,d.idh.pphc,0,0,0,0,0,0,0,0
      °--Systematic TB screening                                            ,1,c.d.idh.phc.sassess,0,0,0,0,0,0,0
          ¦--Presumptive TB                                                 ,d.phc.prsmptv*d.idh.phc.presumed,0,0,0,0,0,0,0,0
-         ¦   °--Refer to DH                                                ,1,0,0,0,1,0,0,0,0
+         ¦   °--Refer to DH                                                ,1,c.d.idh.phc.refer,0,0,1,0,0,0,0
          ¦       ¦--Clinical exam + CXR + Xpert Ultra on NPA & stool/sputum,1-d.idh.rltfu,c.d.idh.dh.examCXRxns,0,0,0,0,0,0,0
          ¦       ¦   ¦--TB diagnosed (bacteriological)                     ,d.idh.dh.ptbxns,0,0,0,0,0,1,0,0
          ¦       ¦   ¦   ¦--RifS-TB diagnosed                              ,1-prr,0,0,0,0,0,0,0,0

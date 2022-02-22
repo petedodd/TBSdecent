@@ -67,7 +67,7 @@ PHC-focused strategy                                                   ,1,0,0,0,
          ¦       ¦       ¦--Survives                                   ,1-d.cfr.notx,0,0,1,0,0,0,0,1
          ¦       ¦       °--Dies                                       ,d.cfr.notx,0,1,0,0,0,0,0,1
          ¦       °--Reassessed at 7 days                               ,(1-d.iph.phc.test.ptbc)*(1-d.iph.phc.ptbxns),c.d.iph.phc.sreassess7,0,0,0,0,0,0,0
-         ¦           ¦--Refer to DH                                    ,d.iph.phc.test7.referDH,0,0,0,1,0,0,0,0
+         ¦           ¦--Refer to DH                                    ,d.iph.phc.test7.referDH,c.d.iph.phc.refer,0,0,1,0,0,0,0
          ¦           ¦   ¦--CXR                                        ,1-d.iph.rltfu,c.d.iph.dh.CXR,0,0,0,0,0,0,0
          ¦           ¦   ¦   ¦--TB diagnosed (clinical)                ,d.iph.dhreftest7.ptbcxr,0,0,0,0,1,0,0,0
          ¦           ¦   ¦   ¦   ¦--RifS-TB treatment                  ,1-d.ptltfu,c.d.iph.dh.rsATT,0,0,0,0,0,1,0
