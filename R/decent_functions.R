@@ -1,7 +1,5 @@
 ## TODO questions:
-## - NPA and Stool poss
-## - check this is or
-## - costing for this
+## 
 ## - stool/sputum
 ## - flag assumption = groups for SA or pending data
 ## 
@@ -228,3 +226,116 @@ makeAttributes <- function(D){
 }
 
 ## TODO bring runner from tree into this file to build in swap outs
+
+
+## function for generating random sample of costs
+MakeCostData <- function(csts,          #base data table of cost data
+                         nrep,          #number of replicates being used in PSA
+                         anmz=NULL      #attribute names (if any)
+                         ){
+  if(nrow(csts[cost.sd>0 & cost.m==0])>0) warning(paste0('Some cost input variables have zero mean & SD>0. These will be treated as fixed variables:\n',paste0(csts[cost.sd>0 & cost.m==0,cost],collapse='\n')))
+  if(is.null(anmz)& any(csts[,table(cost)]>1)) warning('Some cost names occur >1 times, but no attributes have been specified! This is unlikely to do what you want.')
+  csts[cost.m>0,gmsc:=cost.sd^2/cost.m]
+  csts[!is.na(gmsc) & gmsc > 0, gmk:=cost.m/gmsc]
+  NR <- nrow(csts)
+  csts <- csts[rep(1:NR,nrep)]
+  csts[,id:=rep(1:nrep,each=NR)]
+  csts[,rnd:=!is.na(gmsc) & !is.na(gmk) & gmk>0 & gmsc > 0]
+  csts[rnd==TRUE,value:=rgamma(sum(rnd),shape=gmk,scale = gmsc)] #random sample from gamma distribution
+  csts[rnd!=TRUE,value:=cost.m]                                  #fixed values
+  ## csts[,cnms:=paste0('c_',cost)]
+  csts[,cnms:=paste0(cost)]
+  F <- 'id '
+  if(!is.null(anmz)) F <- paste0(F,'+ ',paste(anmz,collapse='+')) #split out by attributes if included
+  F <- paste0(F, ' ~ cnms')
+  dcast(csts,as.formula(F),value.var = 'value')      #id ~ cnms
+}
+## NOTE
+## if attributes are included, all costs need to be specified by them even if this means duplicating those without dependence
+
+
+
+
+
+## making life years
+GetLifeYears <- function(isolist,discount.rate,yearfrom){
+    ## template:
+    LYT <- data.table(age=0:14,
+                      age_group=c(rep('0-4',5),rep('5-14',10)),
+                      LYS=0.0)
+    ## make country/age key
+    LYK <- list()
+    for(iso in isolist){
+        ## iso <- cn
+        tmp <- copy(LYT)
+        tmp[,iso3:=iso]
+        for(ag in tmp$age)
+            tmp[age==ag,LYS:=discly::discly(iso3=iso,
+                                            age=ag,
+                                            yearnow=yearfrom,
+                                            sex='Total',
+                                            endyear = 2098,
+                                            HR=1,
+                                            dr=discount.rate,
+                                            hiv='both'
+                                            )]
+        LYK[[iso]] <- tmp
+    }
+    LYK <- rbindlist(LYK)
+    ## assume unweighted & collapse
+    LYK <- LYK[,.(LYS=mean(LYS)),by=.(iso3,age=age_group)]
+    setkey(LYK,age)
+    LYK
+}
+
+
+## TODO this needs adapting to 4 arms
+## some automatic CEA outputs
+MakeCEAoutputs <- function(data,LY,file.id='',Kmax=5e3,wtp=5e3){
+    data <- merge(data,LY,by='age') #add age
+    DS <- data[,.(costINT=sum(costINT*value),costSOC=sum(costSOC*value),
+               lylINT=sum(deathsINT*value*LYS),
+               lylSOC=sum(deathsSOC*value*LYS)),by=id] #PSA summary
+    ## prep for BCEA
+    LYS <- CST <- matrix(nrow=nreps,ncol=2)
+    arms <- c('SoC','Intervention')
+    LYS[,1] <- 1-DS$lylSOC #NOTE this is life years lost
+    LYS[,2] <- 1-DS$lylINT
+    CST[,1] <- DS$costSOC
+    CST[,2] <- DS$costINT
+    ## BCEA outputs
+    M <- bcea(e=LYS,c=CST,ref=2,interventions = arms,Kmax=Kmax)
+    print(summary(M))
+
+    fn <- paste0(here('outdata/kstar_'),file.id,'.txt')
+    cat(M$kstar,file = fn)
+    fn <- paste0(here('outdata/ICER_'),file.id,'.txt')
+    cat(M$ICER,file = fn)
+
+    ## NOTE may need more configuration
+    ceac.plot(M,graph='ggplot2') +
+        scale_x_continuous(label=comma) +
+        theme_classic() + ggpubr::grids()
+    fn <- paste0(here('graphs/CEAC_'),file.id,'.png')
+    ggsave(file=fn,w=7,h=7)
+
+    ceplane.plot(M,graph='ggplot2',wtp=wtp)+
+        scale_x_continuous(label=comma) +
+        theme_classic() +
+        theme(legend.position = 'top') + ggpubr::grids()
+    fn <- paste0(here('graphs/CE_'),file.id,'.png')
+    ggsave(file=fn,w=7,h=7)
+
+    eib.plot(M,graph='ggplot2',wtp=wtp) +
+        scale_x_continuous(label=comma) +
+        theme_classic() + ggpubr::grids()
+    fn <- paste0(here('graphs/EIB_'),file.id,'.png')
+    ggsave(file=fn,w=7,h=7)
+
+    evi.plot(M,graph='ggplot2',wtp=wtp) +
+        scale_x_continuous(label=comma) +
+        theme_classic() + ggpubr::grids()
+    fn <- paste0(here('graphs/EVI_'),file.id,'.png')
+    ggsave(file=fn,w=7,h=7)
+
+}
