@@ -175,8 +175,7 @@ AddCFRs <- function(D){
   ## CFR on  ATT
   D[tb!="noTB",d.cfr.tx:=CFRtxY(age,hiv,art)]
   ## CFR w/o ATT
-  D[tb!="noTB",p.cfr.notx:=CFRtxN(age,hiv,art)]
-
+  D[tb!="noTB",d.cfr.notx:=CFRtxN(age,hiv,art)]
 }
 
 
