@@ -196,10 +196,11 @@ MakeTreeParms <- function(D){
 
 ## ======= EPIDEMIOLOGY ===========
 ## TODO - HIV/ART IRRs
+
 makeAttributes <- function(D){
     nrep <- nrow(D)
     D[,id:=1:nrep]
-    fx <- list(age=agelevels,tb=tblevels,hiv=hivlevels,art=artlevels)
+    fx <- list(age=agelevels,hiv=hivlevels,art=artlevels,tb=tblevels)
     cofx <- expand.grid(fx)
     cat('Attribute combinations used:\n')
     print(cofx)
@@ -208,12 +209,20 @@ makeAttributes <- function(D){
     ## age
     D[,value:=ifelse(age=='5-14',1-d.F.u5,d.F.u5)] #NOTE value first set here
     ## HIV/ART
-    D[age!='5-14',value:=value*ifelse(hiv==1,d.hivprev.u5,d.hivprev.u5)]
-    D[age=='5-14',value:=value*ifelse(hiv==1,d.hivprev.o5,d.hivprev.u5)]
-    D[hiv==1,value:=value*ifelse(art==1,d.artcov,1-d.artcov)]
-    D[hiv==0 & art==1,value:=0]
+    D[,h01:=0]
+    D[age!='5-14',h10:=d.hivprev.u5*(1-d.artcov)]
+    D[age=='5-14',h10:=d.hivprev.o5*(1-d.artcov)]
+    D[age!='5-14',h00:=1-d.hivprev.u5]
+    D[age=='5-14',h00:=1-d.hivprev.o5]
+    D[age!='5-14',h11:=d.hivprev.u5*d.artcov]
+    D[age=='5-14',h11:=d.hivprev.o5*d.artcov]
+    D[hiv==0 & art==0,value:=value*h00]
+    D[hiv==0 & art==1,value:=value*h01]
+    D[hiv==1 & art==0,value:=value*h10]
+    D[hiv==1 & art==1,value:=value*h11]
+    D[,c('h00','h01','h10','h11'):=NULL]
     ## TB
-    D[tb=='noTB',value:=value*d.dh.tbinprsmptv]
+    D[tb=='noTB',value:=value*(1-d.dh.tbinprsmptv)]
     D[tb=='TB-',value:=value*d.dh.tbinprsmptv*(1-Fbc.u5)] #NOTE assuming no TB outside of presumptive?
     D[tb=='TB+',value:=value*d.dh.tbinprsmptv*(Fbc.u5)]   #TODO need value swapouts to handle different cohorts
     return(D)
