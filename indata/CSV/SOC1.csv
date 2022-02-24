@@ -176,10 +176,10 @@ Standard of Care                                             ,1,0,0,0,0,0,0,0,0
          ¦       ¦   °--No TB treatment                      ,d.ptltfu,0,0,0,0,0,0,0,0
          ¦       ¦       ¦--Survives                         ,1-d.cfr.notx,0,0,1,0,0,0,0,1
          ¦       ¦       °--Dies                             ,d.cfr.notx,0,1,0,0,0,0,0,1
-         ¦       ¦--No TB diagnosed                          ,(1-d.soc.phc.test.ptbc)*(1-d.soc.phc.ptbxsp)*(1-d.soc.phc.test.referDH2),0,0,0,0,0,0,0,0
+         ¦       ¦--No TB diagnosed                          ,(1-d.soc.phc.test.ptbc)*(1-d.soc.phc.ptbxsp)*(1-d.soc.phc.test.referDH),0,0,0,0,0,0,0,0
          ¦       ¦   ¦--Survives                             ,1-d.cfr.notx,0,0,1,0,0,0,0,1
          ¦       ¦   °--Dies                                 ,d.cfr.notx,0,1,0,0,0,0,0,1
-         ¦       °--Refer to DH                              ,(1-d.soc.phc.test.ptbc)*(1-d.soc.phc.ptbxsp)*d.soc.phc.test.referDH2,c.d.soc.phc.refer,0,0,1,0,0,0,0
+         ¦       °--Refer to DH                              ,(1-d.soc.phc.test.ptbc)*(1-d.soc.phc.ptbxsp)*d.soc.phc.test.referDH,c.d.soc.phc.refer,0,0,1,0,0,0,0
          ¦           ¦--Clinical exam only                   ,(1-d.soc.dh.test)*(1-d.soc.rltfu),c.d.soc.dh.examCXR,0,0,0,0,0,0,0
          ¦           ¦   ¦--TB diagnosed (clinical)          ,d.soc.dhreftest.notest.ptbc,0,0,0,0,1,0,0,0
          ¦           ¦   ¦   ¦--RifS-TB treatment            ,1-d.ptltfu,c.d.soc.dh.rsATT,0,0,0,0,0,1,0

@@ -8,7 +8,6 @@ d.iph.phc.test7.referDH,1,IPH: people referred to DH from PHC due to ongoing sym
 d.ipd.phc.test.referDH,"B(8,2)",IPD: people chosen to be referred to DH from PHC following bac- initial sputum test,Placeholder assumption 80%,p18,,Update with observation phase data
 d.ipd.phc.notest.referDH,"B(8,2)",IPD: people chosen to be referred to DH from PHC following initial clinical exam only,Placeholder assumption 80%,p18,,
 d.soc.phc.test.referDH,"B(8,2)",SOC: people chosen to be referred to DH from PHC following bac- initial sputum test,Placeholder assumption 80%,p18,,
-d.soc.phc.test.referDH2,"B(8,2)",NEW,,,,
 d.soc.phc.notest.referDH,"B(8,2)",SOC: people chosen to be referred to DH from PHC following initial clinical exam only,Placeholder assumption 80%,p18,,
 d.idh.rltfu,"B(4,6)","IDH: referral loss to follow up, all people with presumptive TB referred to DH",Placehold assumption 40%,see pp18-19,,Update with intervention phase data
 d.iph.rltfu,"B(4,6)","IDH: referral loss to follow up, people referred to DH from PHC due to ongoing symptoms at 7-day reassessment following bac- clin- initial test",Placehold assumption 40%,see pp18-19,,
