@@ -200,8 +200,8 @@ Standard of Care                                             ,1,0,0,0,0,0,0,0,0
          ¦           ¦   ¦   ¦   °--No TB treatment          ,d.ptltfu,0,0,0,0,0,0,0,0
          ¦           ¦   ¦   ¦       ¦--Survives             ,1-d.cfr.notx,0,0,1,0,0,0,0,1
          ¦           ¦   ¦   ¦       °--Dies                 ,d.cfr.notx,0,1,0,0,0,0,0,1
-         ¦           ¦   ¦   °--RifR-TB diagnosed            ,prr,c.d.soc.dh.rrATT,0,0,0,0,0,0,0
-         ¦           ¦   ¦       ¦--RifR-TB treatment        ,1-d.ptltfu,0,0,0,0,0,0,1,0
+         ¦           ¦   ¦   °--RifR-TB diagnosed            ,prr,0,0,0,0,0,0,0,0
+         ¦           ¦   ¦       ¦--RifR-TB treatment        ,1-d.ptltfu,c.d.soc.dh.rrATT,0,0,0,0,0,1,0
          ¦           ¦   ¦       ¦   ¦--Survives             ,1-d.cfr.tx,0,0,1,0,0,0,0,1
          ¦           ¦   ¦       ¦   °--Dies                 ,d.cfr.tx,0,1,0,0,0,0,0,1
          ¦           ¦   ¦       °--No TB treatment          ,d.ptltfu,0,0,0,0,0,0,0,0
