@@ -192,7 +192,6 @@ MakeTreeParms <- function(D){
 }
 
 ## ======= EPIDEMIOLOGY ===========
-## TODO - HIV/ART IRRs
 
 makeAttributes <- function(D){
     nrep <- nrow(D)
@@ -219,13 +218,18 @@ makeAttributes <- function(D){
     D[hiv==1 & art==1,value:=value*h11]
     D[,c('h00','h01','h10','h11'):=NULL]
     ## TB
-    D[tb=='noTB',value:=value*(1-d.dh.tbinprsmptv)]
-    D[tb=='TB-',value:=value*d.dh.tbinprsmptv*(1-Fbc.u5)] #NOTE assuming no TB outside of presumptive?
-    D[tb=='TB+',value:=value*d.dh.tbinprsmptv*(Fbc.u5)]   #TODO need value swapouts to handle different cohorts
+    ## calculate true TB prev among initial care seeking as:
+    ## tbi = f x tbp + (1-f) x tbd
+    ## where: f=fraction initially seeking care at PHC; tbp=prev @ phc; tbd=prev @ dh
+    ## NOTE the 'underlying' TB prev in care-seekers in controlled by soc parms
+    D[,tbi:= d.soc.pphc * d.phc.tbinprsmptv + (1-d.soc.pphc) * d.dh.tbinprsmptv]
+    D[tb=='noTB',value:=value*(1-tbi)]
+    D[tb=='TB-',value:=value*tbi*ifelse(age=='5-14',1-Fbc.o5,1-Fbc.u5)] #NOTE assuming no TB outside of presumptive?
+    D[tb=='TB+',value:=value*tbi*ifelse(age=='5-14',Fbc.o5,Fbc.u5)]
+    D[,tbi:=NULL]                            #remove temporary variable
     return(D)
 }
 
-## TODO bring runner from tree into this file to build in swap outs
 
 
 ## function for generating random sample of costs
@@ -288,54 +292,72 @@ GetLifeYears <- function(isolist,discount.rate,yearfrom){
     LYK
 }
 
+## ## scraps for development of below fn
+## data <- merge(D,LYK,by='age') #add age
+## Kmax <- 1e3
+## file.id <- 'test'
+## wtp <- 500
 
-## TODO this needs adapting to 4 arms
+## NOTE this is more illustrative for now
+## NOTE needs a folder called graphs/ creating (which is currently excluded from the repo)
 ## some automatic CEA outputs
-MakeCEAoutputs <- function(data,LY,file.id='',Kmax=5e3,wtp=5e3){
-    data <- merge(data,LY,by='age') #add age
-    DS <- data[,.(costINT=sum(costINT*value),costSOC=sum(costSOC*value),
-               lylINT=sum(deathsINT*value*LYS),
-               lylSOC=sum(deathsSOC*value*LYS)),by=id] #PSA summary
-    ## prep for BCEA
-    LYS <- CST <- matrix(nrow=nreps,ncol=2)
-    arms <- c('SoC','Intervention')
-    LYS[,1] <- 1-DS$lylSOC #NOTE this is life years lost
-    LYS[,2] <- 1-DS$lylINT
-    CST[,1] <- DS$costSOC
-    CST[,2] <- DS$costINT
-    ## BCEA outputs
-    M <- bcea(e=LYS,c=CST,ref=2,interventions = arms,Kmax=Kmax)
-    print(summary(M))
+MakeCEAoutputs <- function(data,LY,
+                           file.id='',Kmax=5e3,wtp=5e3,
+                           arms=c('SOC','IPD','IDH','IPH')){
+  data <- merge(data,LY,by='age') #add age
+  DS <- data[,.(cost.SOC=sum(cost.soc*value),
+                cost.IPD=sum(cost.ipd*value),
+                cost.IDH=sum(cost.idh*value),
+                cost.IPH=sum(cost.iph*value),
+                lyl.SOC=sum(deaths.soc*value*LYS),
+                lyl.IPD=sum(deaths.ipd*value*LYS),
+                lyl.IDH=sum(deaths.idh*value*LYS),
+                lyl.IPH=sum(deaths.iph*value*LYS)),
+             by=id] #PSA summary
 
-    fn <- paste0(here('outdata/kstar_'),file.id,'.txt')
-    cat(M$kstar,file = fn)
-    fn <- paste0(here('outdata/ICER_'),file.id,'.txt')
-    cat(M$ICER,file = fn)
+  ## prep for BCEA
+  LYS <- CST <- matrix(nrow=nreps,ncol=4)
+  LYS[,1] <- 1-DS$lyl.SOC #NOTE this is life years lost
+  LYS[,2] <- 1-DS$lyl.IPD
+  LYS[,3] <- 1-DS$lyl.IDH
+  LYS[,4] <- 1-DS$lyl.IPH
+  CST[,1] <- DS$cost.SOC
+  CST[,2] <- DS$cost.IPD
+  CST[,3] <- DS$cost.IDH
+  CST[,4] <- DS$cost.IPH
+  ## BCEA outputs
+  M <- bcea(e=LYS,c=CST,ref=1,interventions = arms,Kmax=Kmax)
+  print(summary(M))
 
-    ## NOTE may need more configuration
-    ceac.plot(M,graph='ggplot2') +
-        scale_x_continuous(label=comma) +
-        theme_classic() + ggpubr::grids()
-    fn <- paste0(here('graphs/CEAC_'),file.id,'.png')
-    ggsave(file=fn,w=7,h=7)
+  fn <- paste0(here('outdata/kstar_'),file.id,'.txt')
+  cat(M$kstar,file = fn)
+  fn <- paste0(here('outdata/ICER_'),file.id,'.txt')
+  cat(M$ICER,file = fn)
 
-    ceplane.plot(M,graph='ggplot2',wtp=wtp)+
-        scale_x_continuous(label=comma) +
-        theme_classic() +
-        theme(legend.position = 'top') + ggpubr::grids()
-    fn <- paste0(here('graphs/CE_'),file.id,'.png')
-    ggsave(file=fn,w=7,h=7)
+  ## NOTE may need more configuration
+  ceac.plot(M,graph='ggplot2') +
+    scale_x_continuous(label=comma) +
+    theme_classic() + ggpubr::grids()
+  fn <- paste0(here('graphs/CEAC_'),file.id,'.png')
+  ggsave(file=fn,w=7,h=7)
 
-    eib.plot(M,graph='ggplot2',wtp=wtp) +
-        scale_x_continuous(label=comma) +
-        theme_classic() + ggpubr::grids()
-    fn <- paste0(here('graphs/EIB_'),file.id,'.png')
-    ggsave(file=fn,w=7,h=7)
+  ceplane.plot(M,graph='ggplot2',wtp=wtp)+
+    scale_x_continuous(label=comma) +
+    theme_classic() +
+    theme(legend.position = 'top') + ggpubr::grids()
+  fn <- paste0(here('graphs/CE_'),file.id,'.png')
+  ggsave(file=fn,w=7,h=7)
 
-    evi.plot(M,graph='ggplot2',wtp=wtp) +
-        scale_x_continuous(label=comma) +
-        theme_classic() + ggpubr::grids()
-    fn <- paste0(here('graphs/EVI_'),file.id,'.png')
-    ggsave(file=fn,w=7,h=7)
+  eib.plot(M,graph='ggplot2',wtp=wtp) +
+    scale_x_continuous(label=comma) +
+    theme_classic() + ggpubr::grids()
+  fn <- paste0(here('graphs/EIB_'),file.id,'.png')
+  ggsave(file=fn,w=7,h=7)
+
+  evi.plot(M,graph='ggplot2',wtp=wtp) +
+    scale_x_continuous(label=comma) +
+    theme_classic() + ggpubr::grids()
+  fn <- paste0(here('graphs/EVI_'),file.id,'.png')
+  ggsave(file=fn,w=7,h=7)
 
 }

@@ -64,4 +64,5 @@ d.hivprev.u5,"B(2,8)",HIV prevalence <5,placeholder PJD ,,,Note no difference in
 d.hivprev.o5,"B(2,8)",HIV prevalence >5,placeholder PJD ,,,
 d.artcov,"B(8,2)",ART coverage,placeholder PJD ,,,TODO - HIV/ART IRRs
 d.F.u5,"B(3,3)",fraction of presenting children under 5,placeholder PJD ,,,
-Fbc.u5,"B(17,23)",fraction of children bacteriologically confirmable,Zar,,,
+Fbc.u5,"B(17,23)",fraction of children bacteriologically confirmable under 5,Zar,,,
+Fbc.o5,"B(3,3)",fraction of children bacteriologically confirmable over 5,placeholder PJD ,,,

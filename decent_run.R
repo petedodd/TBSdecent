@@ -46,7 +46,7 @@ csts <- fread(here('indata/testcosts.csv'))         #read cost data
 C <- MakeCostData(csts,nreps)               #make cost PSA
 D <- merge(D,C,by='id',all.x = TRUE)        #merge into PSA
 
-
+names(D)
 ## now split tree into intervention and not
 D <- runallfuns(D,arm='all')                      #appends anwers
 
@@ -59,14 +59,10 @@ if(!LYSdone){
 } else {load(file=here('indata/LYK.Rdata'))}
 LYK <- LYK[,.(LYS=mean(LYS)),by=age] #averaged life-years 4 generic tests
 
-## ## generate some CEA outputs in graphs/ & outdata/
-## MakeCEAoutputs(D, #PSA dataset
-##                LYK, #discounted expected life-years by age
-##                file.id='test2', #string to identify output files 
-##                Kmax=5e3,wtp=5e3)
-
-
-## TODO list
-## IRR for HIV epi
-## cohort swapping (see other file)
-## CEA outputer if wanted
+## generate some CEA outputs in graphs/ & outdata/
+## NOTE these folders need to be created
+## NOTE need ggpubr, BCEA installed
+MakeCEAoutputs(D, #PSA dataset
+               LYK, #discounted expected life-years by age
+               file.id='test', #string to identify output files 
+               Kmax=5e3,wtp=5e3)

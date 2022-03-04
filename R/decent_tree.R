@@ -6,7 +6,11 @@ library(discly)
 library(data.tree)
 library(data.table)
 library(glue)
-
+## NOTE these packages are only needed if wanting to output graphs etc
+library(BCEA)
+library(ggplot2)
+library(scales)
+## NOTE also need ggpubr installed
 
 ## === outcomes subtree ===
 notbdxo <- txt2tree(here('indata/tbnotx.txt')) #no tx
@@ -291,6 +295,5 @@ IPH.F$checkfun(A) #NOTE OK
 IDH.F$checkfun(A) #NOTE OK
 SOC.F$checkfun(A) #NOTE OK
 
-## TODO port over model-runner, include model functions
 ## TODO add showAllParmz to HE dtree, also tester and runall
 
