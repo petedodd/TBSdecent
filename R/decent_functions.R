@@ -51,22 +51,27 @@ AddSampleTests <- function(D){
   D[,d.ipd.dhrefnotest.ptbxns:=TBbac4ST1orST2(ST.poss,ifelse(tb=='TB+',sens.xnpa,1-spec.xnpa),
                                            NPA.poss,ifelse(tb=='TB+',sens.xstool,1-spec.xstool))]
 
+  ## ------- X on sputum/GA -------
+  ## SOC, at DH: people receiving Xpert Ultra testing [either sputum or GA], in those identified as having presumptive TB
+  D[,d.soc.dh.test:=ifelse(age=='5-14',d.soc.dh.test.o5,d.soc.dh.test.u5)]
+
   ## ------- X on sputum ------- #NOTE hardcodes 0 sample availability for u5
   ## IPH, at PHC: TB dx bac+ on Xpert Ultra on sputum, in people identified as having presumptive TB
-  D[,d.ipd.phc.ptbxsp:=TBbacsampletest(ifelse(age=='5-14',ES.poss.phc,0),
+  D[,d.ipd.phc.ptbxsp:=TBbacsampletest(ifelse(age=='5-14',ES.poss.phc.o5,0),
                                     ifelse(tb=='TB+',sens.xsputum,1-spec.xsputum))]
   ## SOC, at DH: TB dx bac+ on Xpert Ultra on sputum, in people identified as having presumptive TB
-  D[,d.soc.dh.ptbxsp:=TBbacsampletest(ifelse(age=='5-14',ES.poss.dh,0),
+  D[,d.soc.dh.ptbxsp:=TBbacsampletest(ifelse(age=='5-14',ES.poss.dh.o5,0),
                                    ifelse(tb=='TB+',sens.xsputum,1-spec.xsputum))]
   ## SOC, at PHC: TB dx bac+ on Xpert Ultra on sputum, in people identified as having presumptive TB
-  D[,d.soc.phc.ptbxsp:=TBbacsampletest(ifelse(age=='5-14',ES.poss.phc,0),
+  D[,d.soc.phc.ptbxsp:=TBbacsampletest(ifelse(age=='5-14',ES.poss.phc.o5,0),
                                     ifelse(tb=='TB+',sens.xsputum,1-spec.xsputum))]
   ## SOC, at DH: TB dx bac+ on Xpert Ultra on sputum, in people chosen to be referred from PHC who were bac- on sputum test at PHC
-  D[,d.soc.dhreftest.ptbxsp:=TBbacsampletest(ifelse(age=='5-14',ES.poss.dh,0),
+  D[,d.soc.dhreftest.ptbxsp:=TBbacsampletest(ifelse(age=='5-14',ES.poss.dh.o5,0),
                                           ifelse(tb=='TB+',sens.xsputum,1-spec.xsputum))]
   ## SOC, at DH: TB dx bac+ on Xpert Ultra on sputum, in people chosen to be referred from PHC who were not tested at PHC
-  D[,d.soc.dhrefnotest.ptbxsp:=TBbacsampletest(ifelse(age=='5-14',ES.poss.dh,0),
+  D[,d.soc.dhrefnotest.ptbxsp:=TBbacsampletest(ifelse(age=='5-14',ES.poss.dh.o5,0),
                                             ifelse(tb=='TB+',sens.xsputum,1-spec.xsputum))]
+
 
   ## ------- X on GA -------
   ## SOC, at DH: TB dx bac+ on Xpert Ultra on GA, in people identified as having presumptive TB
@@ -77,7 +82,7 @@ AddSampleTests <- function(D){
                                           ifelse(tb=='TB+',sens.xga,1-spec.xga))]
   ## SOC, at DH: TB dx bac+ on Xpert Ultra on GA, in people chosen to be referred from PHC who were not tested at PHC
   D[,d.soc.dhrefnotest.ptbxga:=TBbacsampletest(ifelse(age=='5-14',GA.poss.dh.o5,GA.poss.dh.u5),
-                                            ifelse(tb=='TB+',sens.xga,1-spec.xga))]
+                                               ifelse(tb=='TB+',sens.xga,1-spec.xga))]
 
   ## ------- clinical -------
   ## IDH, at DH: TB dx clinical, in bac- people identified as having presumptive TB
@@ -129,8 +134,8 @@ AddSampleTests <- function(D){
 CFRtxY <- function(age,hiv=0,art=0){#NB optimized for clarity not speed
   if(length(age)>1 & length(hiv)==1) hiv <- rep(hiv,length(age))
   if(length(age)>1 & length(art)==1) art <- rep(art,length(age))
-  tmp <- P$ontxY$r(length(age))
-  tmp[age=='5-14'] <- P$ontxO$r(sum(age=='5-14'))  #NB this could be achieved in  the tree model
+  tmp <- P$ontx.u5$r(length(age))
+  tmp[age=='5-14'] <- P$ontx.o5$r(sum(age=='5-14'))  #NB this could be achieved in  the tree model
   ## hivartOR
   Z <- P$hivartOR$r(length(age))
   hor <- rep(1,length(age))
@@ -150,12 +155,12 @@ CFRtxY <- function(age,hiv=0,art=0){#NB optimized for clarity not speed
 CFRtxN <- function(age,hiv=0,art=0){
   if(length(age)>1 & length(hiv)==1) hiv <- rep(hiv,length(age))
   if(length(age)>1 & length(art)==1) art <- rep(art,length(age))
-  tmp <- P$notxY$r(length(age))          #default a<5 and hiv=art=0
-  tmp[age!='5-14' & hiv>0 & art==0] <- P$notxHY$r(sum(age!='5-14' & hiv>0 & art==0)) #u5,HIV+,ART-
-  tmp[age!='5-14' & hiv>0 & art>0] <- P$notxHAY$r(sum(age!='5-14' & hiv>0 & art>0)) #u5,HIV+,ART+
-  tmp[age=='5-14'] <- P$notxO$r(sum(age=='5-14'))    #o5, HIV-ve
-  tmp[age=='5-14' & hiv>0 & art==0] <- P$notxHO$r(sum(age=='5-14' & hiv>0 & art==0)) #o5,HIV+,ART-
-  tmp[age=='5-14' & hiv>0 & art>0] <- P$notxHAO$r(sum(age=='5-14' & hiv>0 & art>0)) #o5,HIV+,ART+
+  tmp <- P$notx.u5$r(length(age))          #default a<5 and hiv=art=0
+  tmp[age!='5-14' & hiv>0 & art==0] <- P$notxH.u5$r(sum(age!='5-14' & hiv>0 & art==0)) #u5,HIV+,ART-
+  tmp[age!='5-14' & hiv>0 & art>0] <- P$notxHA.u5$r(sum(age!='5-14' & hiv>0 & art>0)) #u5,HIV+,ART+
+  tmp[age=='5-14'] <- P$notx.o5$r(sum(age=='5-14'))    #o5, HIV-ve
+  tmp[age=='5-14' & hiv>0 & art==0] <- P$notxH.o5$r(sum(age=='5-14' & hiv>0 & art==0)) #o5,HIV+,ART-
+  tmp[age=='5-14' & hiv>0 & art>0] <- P$notxHA.o5$r(sum(age=='5-14' & hiv>0 & art>0)) #o5,HIV+,ART+
   tmp
 }
 ## CFRtxN(1:10)                            #test
@@ -186,9 +191,9 @@ MakeTreeParms <- function(D){
   AddCFRs(D) #outcomes
   ## -- other not covered above
   ## some parms that are only !=0 for older children:
-  D[,d.ipd.phc.test:=ifelse(age=='5-14',d.ipd.phc.test.514,0)]
-  D[,d.soc.dh.fracsp:=ifelse(age=='5-14',d.soc.dh.fracsp.514,0)]
-  D[,d.soc.phc.test:=ifelse(age=='5-14',d.soc.phc.test.514,0)]
+  D[,d.ipd.phc.test:=ifelse(age=='5-14',d.ipd.phc.test.o5,0)]
+  D[,d.soc.dh.fracsp:=ifelse(age=='5-14',d.soc.dh.fracsp.o5,0)]
+  D[,d.soc.phc.test:=ifelse(age=='5-14',d.soc.phc.test.o5,0)]
 }
 
 ## ======= EPIDEMIOLOGY ===========
