@@ -1,0 +1,23 @@
+DH-focused strategy
+	Present at DH
+		Systematic TB screening
+			Presumptive TB
+				Clinical exam + CXR + Xpert Ultra on NPA & stool/sputum
+					TB diagnosed (bacteriological)
+					TB diagnosed (clinical)
+					Reassessed at 7 days
+						TB diagnosed (clinical)
+						No TB diagnosed
+		All other patients
+	Present at PHC
+		Systematic TB screening
+			Presumptive TB
+				Refer to DH
+					Clinical exam + CXR + Xpert Ultra on NPA & stool/sputum
+						TB diagnosed (bacteriological)
+						TB diagnosed (clinical)
+						Reassessed at 7 days
+							TB diagnosed (clinical)
+							No TB diagnosed
+					Does not reach DH
+		All other patients
