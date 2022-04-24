@@ -115,7 +115,10 @@ print(SOC)
 SOC <- AddOutcomes(SOC)
 
 tree2file(SOC,filename = here('indata/CSV/SOC0.csv'),
-          'p','cost','deaths','lives','refers','dxc','dxb','att','check')
+          'p','cost','deaths','lives','refers','dxc','dxb','att',
+          'check',
+          'DH.presented','DH.screened','DH.presumed','DH.treated',
+          'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
 
 ## create version with probs/costs
 fn <- here('indata/CSV/SOC1.csv')
@@ -125,8 +128,21 @@ if(file.exists(fn)){
   labz$p <- gsub("p\\.rr","prr",labz$p) #NOTE fixing typo
   SOC$Set(p=labz$p)
   SOC$Set(cost=labz$cost)
+  ## DH/PHC cascade counters
+  SOC$Set(DH.presented=labz$DH.presented)
+  SOC$Set(DH.screened=labz$DH.screened)
+  SOC$Set(DH.presumed=labz$DH.presumed)
+  SOC$Set(DH.treated=labz$DH.treated)
+  SOC$Set(PHC.presented=labz$PHC.presented)
+  SOC$Set(PHC.screened=labz$PHC.screened)
+  SOC$Set(PHC.presumed=labz$PHC.presumed)
+  SOC$Set(PHC.treated=labz$PHC.treated)
+  ## save out
   tree2file(SOC,filename = here('indata/CSV/SOC2.csv'),
-            'p','cost','deaths','lives','refers','dxc','dxb','att','check')
+            'p','cost','deaths','lives','refers','dxc','dxb','att',
+            'check',
+            'DH.presented','DH.screened','DH.presumed','DH.treated',
+            'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
 }
 
 ## === IPD
@@ -135,7 +151,10 @@ IPD <- top(IPD)
 print(IPD)
 IPD <- AddOutcomes(IPD)
 tree2file(IPD,filename = here('indata/CSV/IPD0.csv'),
-          'p','cost','deaths','lives','refers','dxc','dxb','att','check')
+          'p','cost','deaths','lives','refers','dxc','dxb','att',
+          'check',
+          'DH.presented','DH.screened','DH.presumed','DH.treated',
+          'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
 
 ## create version with probs/costs
 fn <- here('indata/CSV/IPD1.csv')
@@ -145,8 +164,20 @@ if(file.exists(fn)){
   labz$p <- gsub("p\\.rr","prr",labz$p) #NOTE fixing typo
   IPD$Set(p=labz$p)
   IPD$Set(cost=labz$cost)
+  ## DH/PHC cascade counters
+  IPD$Set(DH.presented=labz$DH.presented)
+  IPD$Set(DH.screened=labz$DH.screened)
+  IPD$Set(DH.presumed=labz$DH.presumed)
+  IPD$Set(DH.treated=labz$DH.treated)
+  IPD$Set(PHC.presented=labz$PHC.presented)
+  IPD$Set(PHC.screened=labz$PHC.screened)
+  IPD$Set(PHC.presumed=labz$PHC.presumed)
+  IPD$Set(PHC.treated=labz$PHC.treated)
   tree2file(IPD,filename = here('indata/CSV/IPD2.csv'),
-            'p','cost','deaths','lives','refers','dxc','dxb','att','check')
+            'p','cost','deaths','lives','refers','dxc','dxb','att',
+            'check',
+            'DH.presented','DH.screened','DH.presumed','DH.treated',
+            'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
 }
 
 ## === IDH
@@ -155,7 +186,10 @@ IDH <- top(IDH)
 print(IDH)
 IDH <- AddOutcomes(IDH)
 tree2file(IDH,filename = here('indata/CSV/IDH0.csv'),
-          'p','cost','deaths','lives','refers','dxc','dxb','att','check')
+          'p','cost','deaths','lives','refers','dxc','dxb','att',
+          'check',
+          'DH.presented','DH.screened','DH.presumed','DH.treated',
+          'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
 
 ## create version with probs/costs
 fn <- here('indata/CSV/IDH1.csv')
@@ -165,8 +199,20 @@ if(file.exists(fn)){
   labz$p <- gsub("p\\.rr","prr",labz$p) #NOTE fixing typo
   IDH$Set(p=labz$p)
   IDH$Set(cost=labz$cost)
+  ## DH/PHC cascade counters
+  IDH$Set(DH.presented=labz$DH.presented)
+  IDH$Set(DH.screened=labz$DH.screened)
+  IDH$Set(DH.presumed=labz$DH.presumed)
+  IDH$Set(DH.treated=labz$DH.treated)
+  IDH$Set(PHC.presented=labz$PHC.presented)
+  IDH$Set(PHC.screened=labz$PHC.screened)
+  IDH$Set(PHC.presumed=labz$PHC.presumed)
+  IDH$Set(PHC.treated=labz$PHC.treated)
   tree2file(IDH,filename = here('indata/CSV/IDH2.csv'),
-            'p','cost','deaths','lives','refers','dxc','dxb','att','check')
+            'p','cost','deaths','lives','refers','dxc','dxb','att',
+            'check',
+            'DH.presented','DH.screened','DH.presumed','DH.treated',
+            'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
 }
 
 ## === IPH
@@ -175,7 +221,10 @@ IPH <- top(IPH)
 print(IPH)
 IPH <- AddOutcomes(IPH)
 tree2file(IPH,filename = here('indata/CSV/IPH0.csv'),
-          'p','cost','deaths','lives','refers','dxc','dxb','att','check')
+          'p','cost','deaths','lives','refers','dxc','dxb','att',
+          'check',
+          'DH.presented','DH.screened','DH.presumed','DH.treated',
+          'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
 
 ## create version with probs/costs
 fn <- here('indata/CSV/IPH1.csv')
@@ -185,20 +234,33 @@ if(file.exists(fn)){
   labz$p <- gsub("p\\.rr","prr",labz$p) #NOTE fixing typo
   IPH$Set(p=labz$p)
   IPH$Set(cost=labz$cost)
+  ## DH/PHC cascade counters
+  IPH$Set(DH.presented=labz$DH.presented)
+  IPH$Set(DH.screened=labz$DH.screened)
+  IPH$Set(DH.presumed=labz$DH.presumed)
+  IPH$Set(DH.treated=labz$DH.treated)
+  IPH$Set(PHC.presented=labz$PHC.presented)
+  IPH$Set(PHC.screened=labz$PHC.screened)
+  IPH$Set(PHC.presumed=labz$PHC.presumed)
+  IPH$Set(PHC.treated=labz$PHC.treated)
   tree2file(IPH,filename = here('indata/CSV/IPH2.csv'),
-            'p','cost','deaths','lives','refers','dxc','dxb','att','check')
+            'p','cost','deaths','lives','refers','dxc','dxb','att',
+            'check',
+            'DH.presented','DH.screened','DH.presumed','DH.treated',
+            'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
 }
 
 
 ## make functions
-SOC.F <- makeTfuns(SOC,c('check','cost','deaths','att',
-                         'lives','refers','dxc','dxb'))
-IPD.F <- makeTfuns(IPD,c('check','cost','deaths','att',
-                         'lives','refers','dxc','dxb'))
-IDH.F <- makeTfuns(IDH,c('check','cost','deaths','att',
-                         'lives','refers','dxc','dxb'))
-IPH.F <- makeTfuns(IPH,c('check','cost','deaths','att',
-                         'lives','refers','dxc','dxb'))
+fnmz <- c('check','cost','deaths','att',
+          'lives','refers','dxc','dxb',
+          'DH.presented','DH.screened','DH.presumed','DH.treated',
+          'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
+
+SOC.F <- makeTfuns(SOC,fnmz)
+IPD.F <- makeTfuns(IPD,fnmz)
+IDH.F <- makeTfuns(IDH,fnmz)
+IPH.F <- makeTfuns(IPH,fnmz)
 
 
 ## running all function

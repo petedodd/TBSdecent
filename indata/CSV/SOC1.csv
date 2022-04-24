@@ -1,4 +1,4 @@
-levelName,p,cost,deaths,lives,refers,dxc,dxb,att,check,DH.opd,DH.screened,DH.presumed,DH.treated,PHC.opd,PHC.screened,PHC.presumed,PHC.treated
+levelName,p,cost,deaths,lives,refers,dxc,dxb,att,check,DH.presented,DH.screened,DH.presumed,DH.treated,PHC.presented,PHC.screened,PHC.presumed,PHC.treated
 "Standard of Care",1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 "¦--Present at DH",1-d.soc.pphc,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
 "¦   °--Non-systematic assessment",1,c.d.soc.dh.nsassess,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0
