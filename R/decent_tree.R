@@ -266,9 +266,9 @@ IPH.F <- makeTfuns(IPH,fnmz)
 
 
 ## running all function
-runallfuns <- function(D,arm='both'){
+runallfuns <- function(D,arm='all'){
   done <- FALSE
-  if(arm=='SOC' | arm=='all'){
+  if('SOC' %in% arm | arm[1]=='all'){
     cat('Running functions for SOC:\n')
     for(nm in names(SOC.F)){
       snm <- gsub('fun','',nm)
@@ -278,7 +278,7 @@ runallfuns <- function(D,arm='both'){
       done <- TRUE
     }
   }
-  if(arm=='IPD' | arm=='all'){
+  if('IPD' %in% arm | arm[1]=='all'){
     cat('Running functions for IPD:\n')
     for(nm in names(IPD.F)){
       snm <- gsub('fun','',nm)
@@ -288,7 +288,7 @@ runallfuns <- function(D,arm='both'){
       done <- TRUE
     }
   }
-  if(arm=='IDH' | arm=='all'){
+  if('IDH' %in% arm | arm[1]=='all'){
     cat('Running functions for IDH:\n')
     for(nm in names(IDH.F)){
       snm <- gsub('fun','',nm)
@@ -298,7 +298,7 @@ runallfuns <- function(D,arm='both'){
       done <- TRUE
     }
   }
-  if(arm=='IPH' | arm=='all'){
+  if('IPH' %in% arm | arm[1]=='all'){
     cat('Running functions for IPH:\n')
     for(nm in names(IPH.F)){
       snm <- gsub('fun','',nm)

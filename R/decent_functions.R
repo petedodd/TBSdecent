@@ -9,7 +9,9 @@ logit <- function(x) log(odds(x))
 ilogit <- function(x) iodds(exp(x))
 odds <- function(x) x/(1-x)
 iodds <- function(x) x/(1+x)
-
+lo <- function(x) quantile(x,probs = 0.025)
+hi <- function(x) quantile(x,probs = 1-0.025)
+rot45 <- theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ## ========= DIAGNOSIS ===============
 
@@ -184,7 +186,51 @@ AddCFRs <- function(D){
 
 ## ======= COMBINED LABELLER ===========
 
-## combined function to add the labeks to the tree prior to calculations
+## additional labels from data (may overwrite some initial version currently)
+AddDataDrivenLabels <- function(D){
+
+  ## initial care seeking
+  D[,d.soc.pphc:=ifelse(age=='0-4',d.soc.pphc.u5,d.soc.pphc.o5)]
+  D[,d.idh.pphc:=ifelse(age=='0-4',d.idh.pphc.u5,d.idh.pphc.o5)]
+  D[,d.iph.pphc:=ifelse(age=='0-4',d.iph.pphc.u5,d.iph.pphc.o5)]
+
+  ## TB more likely to go to DH
+  D[tb!='noTB',d.soc.pphc:=iodds(d.OR.dh.if.TB*odds(d.soc.pphc))]
+  D[tb!='noTB',d.idh.pphc:=iodds(d.OR.dh.if.TB*odds(d.idh.pphc))]
+  D[tb!='noTB',d.iph.pphc:=iodds(d.OR.dh.if.TB*odds(d.iph.pphc))]
+
+  ## screening/assessment coverage
+  D[,d.soc.dh.assess:=ifelse(age=='0-4',d.soc.dh.assess.u5,d.soc.dh.assess.o5)]
+  D[,d.soc.phc.assess:=ifelse(age=='0-4',d.soc.phc.assess.u5,d.soc.phc.assess.o5)]
+  D[,d.idh.dh.assess:=ifelse(age=='0-4',d.idh.dh.assess.u5,d.idh.dh.assess.o5)]
+  D[,d.idh.phc.assess:=ifelse(age=='0-4',d.idh.phc.assess.u5,d.idh.phc.assess.o5)]
+  D[,d.iph.dh.assess:=ifelse(age=='0-4',d.iph.dh.assess.u5,d.iph.dh.assess.o5)]
+  D[,d.iph.phc.assess:=ifelse(age=='0-4',d.iph.phc.assess.u5,d.iph.phc.assess.o5)]
+
+  ## ## prevalence set in make attributes
+  ## d.TBprev.ICS.u5
+  ## d.TBprev.ICS.o5
+
+  ## specificity of presuming
+  D[,c('d.dh.prsmptv','d.phc.prsmptv'):=1.0] #TODO remove this parameter if continuing like this
+  D[age=='0-4',d.soc.dh.presumed:=ifelse(tb!='noTB',1.0,1-d.soc.dh.presumesp.u5)] #SOC
+  D[age!='0-4',d.soc.dh.presumed:=ifelse(tb!='noTB',1.0,1-d.soc.dh.presumesp.o5)]
+  D[age=='0-4',d.soc.phc.presumed:=ifelse(tb!='noTB',1.0,1-d.soc.phc.presumesp.u5)]
+  D[age!='0-4',d.soc.phc.presumed:=ifelse(tb!='noTB',1.0,1-d.soc.phc.presumesp.o5)]
+  D[age=='0-4',d.idh.dh.presumed:=ifelse(tb!='noTB',1.0,1-d.idh.dh.presumesp.u5)] #IDH
+  D[age!='0-4',d.idh.dh.presumed:=ifelse(tb!='noTB',1.0,1-d.idh.dh.presumesp.o5)]
+  D[age=='0-4',d.idh.phc.presumed:=ifelse(tb!='noTB',1.0,1-d.idh.phc.presumesp.u5)]
+  D[age!='0-4',d.idh.phc.presumed:=ifelse(tb!='noTB',1.0,1-d.idh.phc.presumesp.o5)]
+  D[age=='0-4',d.iph.dh.presumed:=ifelse(tb!='noTB',1.0,1-d.iph.dh.presumesp.u5)] #IPH
+  D[age!='0-4',d.iph.dh.presumed:=ifelse(tb!='noTB',1.0,1-d.iph.dh.presumesp.o5)]
+  D[age=='0-4',d.iph.phc.presumed:=ifelse(tb!='noTB',1.0,1-d.iph.phc.presumesp.u5)]
+  D[age!='0-4',d.iph.phc.presumed:=ifelse(tb!='noTB',1.0,1-d.iph.phc.presumesp.o5)]
+
+}
+
+
+
+## combined function to add the labels to the tree prior to calculations
 MakeTreeParms <- function(D){
   ## -- use of other functions
   AddSampleTests(D) #samples/tests
@@ -194,6 +240,8 @@ MakeTreeParms <- function(D){
   D[,d.ipd.phc.test:=ifelse(age=='5-14',d.ipd.phc.test.o5,0)]
   D[,d.soc.dh.fracsp:=ifelse(age=='5-14',d.soc.dh.fracsp.o5,0)]
   D[,d.soc.phc.test:=ifelse(age=='5-14',d.soc.phc.test.o5,0)]
+  ## new labels from data
+  AddDataDrivenLabels(D)
 }
 
 ## ======= EPIDEMIOLOGY ===========
@@ -207,9 +255,9 @@ makeAttributes <- function(D){
     print(cofx)
     D <- D[rep(1:nrow(D),each=nrow(cofx))] #expand out data
     D[,names(cofx):=cofx[rep(1:nrow(cofx),nrep),]]
-    ## age
+    ## --- age
     D[,value:=ifelse(age=='5-14',1-d.F.u5,d.F.u5)] #NOTE value first set here
-    ## HIV/ART
+    ## --- HIV/ART
     D[,h01:=0]
     D[age!='5-14',h10:=d.hivprev.u5*(1-d.artcov)]
     D[age=='5-14',h10:=d.hivprev.o5*(1-d.artcov)]
@@ -222,12 +270,18 @@ makeAttributes <- function(D){
     D[hiv==1 & art==0,value:=value*h10]
     D[hiv==1 & art==1,value:=value*h11]
     D[,c('h00','h01','h10','h11'):=NULL]
-    ## TB
-    ## calculate true TB prev among initial care seeking as:
-    ## tbi = f x tbp + (1-f) x tbd
-    ## where: f=fraction initially seeking care at PHC; tbp=prev @ phc; tbd=prev @ dh
-    ## NOTE the 'underlying' TB prev in care-seekers in controlled by soc parms
-    D[,tbi:= d.soc.pphc * d.phc.tbinprsmptv + (1-d.soc.pphc) * d.dh.tbinprsmptv]
+    ## --- TB
+    ## ## (old version) calculate true TB prev among initial care seeking as:
+    ## ## tbi = f x tbp + (1-f) x tbd
+    ## ## where: f=fraction initially seeking care at PHC; tbp=prev @ phc; tbd=prev @ dh
+    ## ## NOTE the 'underlying' TB prev in care-seekers in controlled by soc parms
+    ## D[,tbi:= d.soc.pphc * d.phc.tbinprsmptv + (1-d.soc.pphc) * d.dh.tbinprsmptv]
+    ## D[tb=='noTB',value:=value*(1-tbi)]
+    ## D[tb=='TB-',value:=value*tbi*ifelse(age=='5-14',1-Fbc.o5,1-Fbc.u5)] #NOTE assuming no TB outside of presumptive?
+    ## D[tb=='TB+',value:=value*tbi*ifelse(age=='5-14',Fbc.o5,Fbc.u5)]
+    ## D[,tbi:=NULL]                            #remove temporary variable
+    ## (new version) based on data:
+    D[,tbi:=ifelse(age=='5-14',d.TBprev.ICS.o5,d.TBprev.ICS.u5)]
     D[tb=='noTB',value:=value*(1-tbi)]
     D[tb=='TB-',value:=value*tbi*ifelse(age=='5-14',1-Fbc.o5,1-Fbc.u5)] #NOTE assuming no TB outside of presumptive?
     D[tb=='TB+',value:=value*tbi*ifelse(age=='5-14',Fbc.o5,Fbc.u5)]

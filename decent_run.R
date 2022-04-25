@@ -17,7 +17,18 @@ agelevels <- c('0-4','5-14')
 
 ## prior parameters
 PD0 <- read.csv(here('indata/DecentParms - distributions.csv')) #read in
+
+## temporary work with new parameters from data
+PD1 <- read.csv(here('indata/PMZ.csv')) #read in
+both <- intersect(PD0$NAME,PD1$NAME)
+PD0 <- PD0[!PD0$NAME %in% both,] #supercede with PD1 version
+
+
+## combine with above
 P <- parse.parmtable(PD0)             #convert into parameter object
+P2 <- parse.parmtable(PD1)             #convert into parameter object
+P <- c(P,P2)
+
 
 ## ## version making test plots
 ## P <- parse.parmtable(PD0,
@@ -36,7 +47,7 @@ D[,sum(value),by=id] #CHECK
 MakeTreeParms(D)
 
 ## check for leaks
-head(IPD.F$checkfun(D)) #IPD arm
+## head(IPD.F$checkfun(D)) #IPD arm NOTE omitted from current country work
 head(IPH.F$checkfun(D)) #IPH arm
 head(IDH.F$checkfun(D)) #IDH arm
 head(SOC.F$checkfun(D)) #SOC arm
@@ -48,7 +59,50 @@ D <- merge(D,C,by='id',all.x = TRUE)        #merge into PSA
 
 names(D)
 ## now split tree into intervention and not
-D <- runallfuns(D,arm='all')                      #appends anwers
+## D <- runallfuns(D,arm='all')                      #appends anwers
+
+notIPD <- c('SOC','IDH','IPH')
+D <- runallfuns(D,arm=notIPD)                      #appends anwers
+
+## --- cascade variables checking
+nmz <- names(D)
+rnmz <- grep("DH\\.|PHC\\.",nmz,value=TRUE)
+rnmz <- c('id','age','tb',rnmz)
+A <- D[,..rnmz]
+A[,TB:=ifelse(tb!='noTB','TB','not TB')] #simpler version of TB indicator
+A[,tb:=NULL]
+A <- melt(A,id=c('id','age','TB'))
+A[,c('location','stage','arm'):=tstrsplit(variable,split='\\.')]
+
+## summary version
+AS <- A[,.(mid=mean(value),lo=lo(value),hi=hi(value)),by=.(age,TB,arm,location,stage)]
+lvls <- c('presented','screened','presumed','treated')
+AS$stage <- factor(AS$stage,levels=lvls,ordered = TRUE)
+tpl <- AS[stage=='presented',.(top=sum(mid)),by=.(arm,location,age)]
+AS <- merge(AS,tpl[,.(arm,location,age,top)],by=c('arm','location','age'),all.x=TRUE)
+AS[,vpl:=1e5*mid/top] #value per lakh
+AS[,txt:=round(vpl)]
+AS[stage=='presented',txt:=NA]
+
+
+## graphical output
+GP <- ggplot(AS,aes(stage,vpl,fill=TB))+
+  geom_bar(stat='identity')+
+  facet_grid(location+age ~ arm)+
+  scale_y_continuous(label=comma)+
+  ylab('Number per 100K attending')+
+  xlab('Stage')+
+  theme_light() + rot45
+## GP
+ggsave(GP,file=here('graphs/cascade_plt.png'),w=15,h=15)
+
+
+
+## TODO
+## errors!
+## check prev
+## check presume <> ATT
+
 
 LYSdone <- TRUE
 if(!LYSdone){

@@ -1,7 +1,7 @@
 levelName,p,cost,deaths,lives,refers,dxc,dxb,att,check,DH.presented,DH.screened,DH.presumed,DH.treated,PHC.presented,PHC.screened,PHC.presumed,PHC.treated
 DH-focused strategy                                                        ,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
  ¦--Present at DH                                                          ,1-d.idh.pphc,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
- ¦   ¦--Systematic TB screening                                            ,d.dh.idh.assess,c.d.idh.dh.sassess,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0
+ ¦   ¦--Systematic TB screening                                            ,d.idh.dh.assess,c.d.idh.dh.sassess,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0
  ¦   ¦   ¦--Presumptive TB                                                 ,d.dh.prsmptv*d.idh.dh.presumed,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0
  ¦   ¦   ¦   °--Clinical exam + CXR + Xpert Ultra on NPA & stool/sputum    ,1,c.d.idh.dh.examCXRxns,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
  ¦   ¦   ¦       ¦--TB diagnosed (bacteriological)                         ,d.idh.dh.ptbxns,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
@@ -40,11 +40,11 @@ DH-focused strategy                                                        ,1,0,
  ¦   ¦   °--Not presumptive TB                                             ,1-d.dh.prsmptv*d.idh.dh.presumed,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
  ¦   ¦       ¦--Survives                                                   ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
  ¦   ¦       °--Dies                                                       ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
- ¦   °--All other patients                                                 ,1-d.dh.idh.assess,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+ ¦   °--All other patients                                                 ,1-d.idh.dh.assess,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
  ¦       ¦--Survives                                                       ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
  ¦       °--Dies                                                           ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
  °--Present at PHC                                                         ,d.idh.pphc,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
-     ¦--Systematic TB screening                                            ,d.phc.idh.assess,c.d.idh.phc.sassess,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+     ¦--Systematic TB screening                                            ,d.idh.phc.assess,c.d.idh.phc.sassess,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
      ¦   ¦--Presumptive TB                                                 ,d.phc.prsmptv*d.idh.phc.presumed,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
      ¦   ¦   °--Refer to DH                                                ,1,c.d.idh.phc.refer,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
      ¦   ¦       ¦--Clinical exam + CXR + Xpert Ultra on NPA & stool/sputum,1-d.idh.rltfu,c.d.idh.dh.examCXRxns,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -87,6 +87,6 @@ DH-focused strategy                                                        ,1,0,
      ¦   °--Not presumptive TB                                             ,1-d.phc.prsmptv*d.idh.phc.presumed,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
      ¦       ¦--Survives                                                   ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦       °--Dies                                                       ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
-     °--All other patients                                                 ,1-d.phc.idh.assess,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+     °--All other patients                                                 ,1-d.idh.phc.assess,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
          ¦--Survives                                                       ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
          °--Dies                                                           ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
