@@ -1,7 +1,7 @@
 Standard of Care
 	Present at DH
 		Non-systematic assessment
-			Identified presumptive TB
+			Presumptive TB
 				Clinical exam only
 					TB diagnosed (clinical)
 					No TB diagnosed
@@ -13,11 +13,11 @@ Standard of Care
 					TB diagnosed (bacteriological)
 					TB diagnosed (clinical)
 					No TB diagnosed
-			Unidentified presumptive TB
+			Not presumptive TB
 		All other patients
 	Present at PHC
 		Non-systematic assessment
-			Identified presumptive TB
+			Presumptive TB
 				Clinical exam only
 					TB diagnosed (clinical)
 					No TB diagnosed
@@ -51,5 +51,6 @@ Standard of Care
 							TB diagnosed (clinical)
 							No TB diagnosed
 						Does not reach DH
-			Unidentified presumptive TB
+			Not presumptive TB
 		All other patients
+    

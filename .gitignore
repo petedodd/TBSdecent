@@ -45,5 +45,8 @@ vignettes/*.pdf
 graphs/*
 outdata/*
 
-# gnumeric temporary files
+# gnumeric/numbers temporary files
 *.gnumeric
+*.numbers
+
+indata/OLD/*

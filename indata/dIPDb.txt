@@ -8,6 +8,7 @@ Partly-decentralized PHCs
 					Reassessed at 7 days
 						TB diagnosed (clinical)
 						No TB diagnosed
+			Not presumptive TB
 		All other patients
 	Present at PHC
 		Systematic TB screening
@@ -35,4 +36,5 @@ Partly-decentralized PHCs
 								TB diagnosed (clinical)
 								No TB diagnosed
 						Does not reach DH
+			Not presumptive TB
 		All other patients

@@ -8,6 +8,7 @@ PHC-focused strategy
 					Reassessed at 7 days
 						TB diagnosed (clinical)
 						No TB diagnosed
+			Not presumptive TB
 		All other patients
 	Present at PHC
 		Systematic TB screening
@@ -22,4 +23,5 @@ PHC-focused strategy
 								No TB diagnosed
 							Does not reach DH
 						No TB diagnosed
+			Not presumptive TB
 		All other patients
