@@ -66,23 +66,43 @@ D <- runallfuns(D,arm=notIPD)                      #appends anwers
 
 ## --- cascade variables checking
 nmz <- names(D)
-rnmz <- grep("DH\\.|PHC\\.",nmz,value=TRUE)
-rnmz <- c('id','age','tb',rnmz)
+rnmz0 <- grep("DH\\.|PHC\\.",nmz,value=TRUE)
+rnmz <- c('id','age','tb','value',rnmz0)
 A <- D[,..rnmz]
+A[,sum(value),by=id] #CHECK
+A[,pop:=value]       #rename for melting
+A[,value:=NULL]
 A[,TB:=ifelse(tb!='noTB','TB','not TB')] #simpler version of TB indicator
-A[,tb:=NULL]
-A <- melt(A,id=c('id','age','TB'))
-A[,c('location','stage','arm'):=tstrsplit(variable,split='\\.')]
+A[,tb:=NULL]                             #drop
+nrow(A) #240K (attributes x 1000)
+A[,sum(pop),by=id] #CHECK
+A[,c(rnmz0):=lapply(.SD,function(x) x*pop),.SDcols=rnmz0] #multiply variables by population
+A[,pop:=NULL]                                             #can drop now
+
+AM <- melt(A,id=c('id','age','TB'))
+AM[,sum(value),by=id] #BUG here
+
+
+AM[,c('location','stage','arm'):=tstrsplit(variable,split='\\.')]
+AM <- AM[,value:=sum(pop*value),by=.(age,TB,arm,location,stage)] #sum 
+
+A[TB=='TB',mean(pop)*1e2,by=.(age)] #TODO
 
 ## summary version
-AS <- A[,.(mid=mean(value),lo=lo(value),hi=hi(value)),by=.(age,TB,arm,location,stage)]
+AS <- AM[,.(mid=mean(value*pop),lo=lo(value*pop),hi=hi(value*pop)),by=.(age,TB,arm,location,stage)]
 lvls <- c('presented','screened','presumed','treated')
 AS$stage <- factor(AS$stage,levels=lvls,ordered = TRUE)
 tpl <- AS[stage=='presented',.(top=sum(mid)),by=.(arm,location,age)]
+
 AS <- merge(AS,tpl[,.(arm,location,age,top)],by=c('arm','location','age'),all.x=TRUE)
 AS[,vpl:=1e5*mid/top] #value per lakh
 AS[,txt:=round(vpl)]
 AS[stage=='presented',txt:=NA]
+
+
+CH <- A[stage=='presented']
+CH[,sum(value),by=.(id,arm)] #all 24 ?= 2 age x 3 TB x 2 HIV x 2 ART
+
 
 
 ## graphical output
