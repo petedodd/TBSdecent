@@ -420,3 +420,85 @@ MakeCEAoutputs <- function(data,LY,
   ggsave(file=fn,w=7,h=7)
 
 }
+
+
+## ============ experiments with reweighting
+
+
+getWeights <- function(X,V=1,W=rep(1,4)){
+  lnmz <- c('id','age','value',rnmz0)
+  XL <- X[,..lnmz]
+  XL[,c(rnmz0):=lapply(.SD,function(x) x*value),
+    .SDcols=rnmz0] #multiply variables by population
+  XL[,value:=NULL]                                             #can drop now
+  XL <- XL[,lapply(.SD,sum),.SDcols=rnmz0,by=.(id,age)]
+  XL <- merge(XL,DDW,by='age',all.x=TRUE)
+  if(TRUE){
+    ## SSE error
+    XL[,SSE:=
+          W[1]*(DH.presented.idh-DH_presented_idh/1e5)^2+
+          W[1]*(DH.presented.iph-DH_presented_iph/1e5)^2+
+          W[1]*(DH.presented.soc-DH_presented_soc/1e5)^2+
+          W[2]*(DH.presumed.idh-DH_presumed_idh/1e5)^2+
+          W[2]*(DH.presumed.iph-DH_presumed_iph/1e5)^2+
+          W[2]*(DH.presumed.soc-DH_presumed_soc/1e5)^2+
+          W[3]*(DH.screened.idh-DH_screened_idh/1e5)^2+
+          W[3]*(DH.screened.iph-DH_screened_iph/1e5)^2+
+          W[3]*(DH.screened.soc-DH_screened_soc/1e5)^2+
+          W[4]*(DH.treated.idh-DH_treated_idh/1e5)^2+
+          W[4]*(DH.treated.iph-DH_treated_iph/1e5)^2+
+          W[4]*(DH.treated.soc-DH_treated_soc/1e5)^2+
+          W[1]*(PHC.presented.idh-PHC_presented_idh/1e5)^2+
+          W[1]*(PHC.presented.iph-PHC_presented_iph/1e5)^2+
+          W[1]*(PHC.presented.soc-PHC_presented_soc/1e5)^2+
+          W[2]*(PHC.presumed.idh-PHC_presumed_idh/1e5)^2+
+          W[2]*(PHC.presumed.iph-PHC_presumed_iph/1e5)^2+
+          W[2]*(PHC.presumed.soc-PHC_presumed_soc/1e5)^2+
+          W[3]*(PHC.screened.idh-PHC_screened_idh/1e5)^2+
+          W[3]*(PHC.screened.iph-PHC_screened_iph/1e5)^2+
+          W[3]*(PHC.screened.soc-PHC_screened_soc/1e5)^2+
+          W[4]*(PHC.treated.idh-PHC_treated_idh/1e5)^2+
+          W[4]*(PHC.treated.iph-PHC_treated_iph/1e5)^2+
+          W[4]*(PHC.treated.soc-PHC_treated_soc/1e5)^2]
+    XL <- XL[,.(LL=-sum(SSE)/V),by=id]
+    XL[,wts:=LL-max(LL)]
+    XL[,wts:=exp(wts)]
+    XL[,wts:=wts/sum(wts)]
+    cat('ESS=',XL[,1/sum(wts^2)],'\n')
+    }
+  XL
+}
+
+
+
+
+
+## tmp <- getWeights(D,V=1e-6,W=c(0,0,0,1))
+
+
+## tmp[,.(id,age,
+##   (DH.presented.idh-DH_presented_idh/1e5),
+##   (DH.presented.iph-DH_presented_iph/1e5),
+##   (DH.presented.soc-DH_presented_soc/1e5),
+##   (DH.presumed.idh-DH_presumed_idh/1e5),
+##   (DH.presumed.iph-DH_presumed_iph/1e5),
+##   (DH.presumed.soc-DH_presumed_soc/1e5),
+##   (DH.screened.idh-DH_screened_idh/1e5),
+##   (DH.screened.iph-DH_screened_iph/1e5),
+##   (DH.screened.soc-DH_screened_soc/1e5),
+##   (DH.treated.idh-DH_treated_idh/1e5),
+##   (DH.treated.iph-DH_treated_iph/1e5),
+##   (DH.treated.soc-DH_treated_soc/1e5),
+##   (PHC.presented.idh-PHC_presented_idh/1e5),
+##   (PHC.presented.iph-PHC_presented_iph/1e5),
+##   (PHC.presented.soc-PHC_presented_soc/1e5),
+##   (PHC.presumed.idh-PHC_presumed_idh/1e5),
+##   (PHC.presumed.iph-PHC_presumed_iph/1e5),
+##   (PHC.presumed.soc-PHC_presumed_soc/1e5),
+##   (PHC.screened.idh-PHC_screened_idh/1e5),
+##   (PHC.screened.iph-PHC_screened_iph/1e5),
+##   (PHC.screened.soc-PHC_screened_soc/1e5),
+##   (PHC.treated.idh-PHC_treated_idh/1e5),
+##   (PHC.treated.iph-PHC_treated_iph/1e5),
+##   (PHC.treated.soc-PHC_treated_soc/1e5))]
+

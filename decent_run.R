@@ -8,6 +8,7 @@ source(here('R/decent_functions.R'))      #functions for tree parameters
 
 DD <- fread(here('indata/DD.csv')) #cascade data for plots
 DD$location <- toupper(DD$location)
+DDW <- dcast(DD,age~location+stage+arm,value.var='vpl')
 
 ## number of reps
 nreps <- 1e3
@@ -83,13 +84,27 @@ names(D)
 notIPD <- c('SOC','IDH','IPH')
 D <- runallfuns(D,arm=notIPD)                      #appends anwers
 
-## TODO need a function to compute weights by id
-
 
 ## --- cascade variables checking
 nmz <- names(D)
 rnmz0 <- grep("DH\\.|PHC\\.",nmz,value=TRUE)
 rnmz <- c('id','age','tb','value',rnmz0)
+
+
+## ## NOTE experiments with reweighting - to be used in conjunction with noise block above
+## tmp <- getWeights(D,V=1e-5,W=c(0,0,0,1))
+## idz <- sample(nreps,nreps,replace = TRUE,prob=tmp$wts)
+
+## D2 <- list()
+## for(i in 1:length(idz)){
+##   D2[[i]] <- D[id==idz[i]]
+##   D2[[i]][,id:=i]
+##   if(!i%%10) print(i)
+## }
+## D <- rbindlist(D2) #resampled
+## rm(D2)
+
+## computing cascades
 A <- D[,..rnmz]
 A[,sum(value),by=id] #CHECK
 A[,pop:=value]       #rename for melting
@@ -169,6 +184,10 @@ ggsave(GP3,file=here('graphs/cascade_plt_TB.png'),w=15,h=15)
 ## Treated true TB per 100K presented by arm
 TTB <- AS[stage=='treated' & TB=='TB',.(TTBpl=1e5*sum(mid)),by=arm]
 fwrite(TTB,file=here('graphs/TTB.csv'))
+
+
+
+tmp[,.(id,SSE)]
 
 LYSdone <- TRUE
 if(!LYSdone){
