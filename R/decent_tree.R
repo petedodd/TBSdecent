@@ -274,7 +274,7 @@ runallfuns <- function(D,arm='all'){
       snm <- gsub('fun','',nm)
       snma <- paste0(snm,'.soc')
       D[[snma]] <- SOC.F[[nm]](D)
-      cat(snm,' run...\n')
+      cat('...',snm,' run...\n')
       done <- TRUE
     }
   }
@@ -284,7 +284,7 @@ runallfuns <- function(D,arm='all'){
       snm <- gsub('fun','',nm)
       snma <- paste0(snm,'.ipd')
       D[[snma]] <- IPD.F[[nm]](D)
-      cat(snm,' run...\n')
+      cat('...',snm,' run...\n')
       done <- TRUE
     }
   }
@@ -294,7 +294,7 @@ runallfuns <- function(D,arm='all'){
       snm <- gsub('fun','',nm)
       snma <- paste0(snm,'.idh')
       D[[snma]] <- IDH.F[[nm]](D)
-      cat(snm,' run...\n')
+      cat('...',snm,' run...\n')
       done <- TRUE
     }
   }
@@ -304,7 +304,7 @@ runallfuns <- function(D,arm='all'){
       snm <- gsub('fun','',nm)
       snma <- paste0(snm,'.iph')
       D[[snma]] <- IPH.F[[nm]](D)
-      cat(snm,' run...\n')
+      cat('...',snm,' run...\n')
       done <- TRUE
     }
   }

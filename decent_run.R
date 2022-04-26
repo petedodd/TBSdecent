@@ -6,8 +6,11 @@ library(here)
 source(here('R/decent_tree.R'))           #tree structure and namings: also tree functions & libraries
 source(here('R/decent_functions.R'))      #functions for tree parameters
 
+DD <- fread(here('indata/DD.csv')) #cascade data for plots
+DD$location <- toupper(DD$location)
+
 ## number of reps
-nreps <- 1e4
+nreps <- 1e3
 
 ## attributes to use
 tblevels <- c('TB+','TB-','noTB') #bac confirmable TB, bac unconfirmable TB, not TB
@@ -27,6 +30,11 @@ PD0 <- PD0[!PD0$NAME %in% both,] #supercede with PD1 version
 ## combine with above
 P <- parse.parmtable(PD0)             #convert into parameter object
 P2 <- parse.parmtable(PD1)             #convert into parameter object
+
+P2$d.TBprev.ICS.o5 <- P2$d.TBprev.ICS.o5*1/2 #TODO expt
+P2$d.TBprev.ICS.u5 <- P2$d.TBprev.ICS.u5*1/2
+P2$d.OR.dh.if.TB <- 2
+
 P <- c(P,P2)
 
 
@@ -35,13 +43,24 @@ P <- c(P,P2)
 ##                      testdir = here('graphs/test'),
 ##                      outfile = here('graphs/test/00out.csv'))
 
+names(P)
+
 ## make base PSA dataset
 set.seed(1234) #random number seed
 D <- makePSA(nreps,P,dbls = list(c('cfrhivor','cfrartor')))
 
+## NOTE temporary introduction of noise:
+for(nm in setdiff(PD1$NAME,'d.OR.dh.if.TB')){ #loop over probs
+  D[[nm]] <- ilogit(logit(D[[nm]]) + rnorm(nreps)/5)
+}
+D[['d.OR.dh.if.TB']] <- exp(log(D[['d.OR.dh.if.TB']]) + rnorm(nreps)/5)
+
+
 ## use these parameters to construct intput data by attribute
 D <- makeAttributes(D)
 D[,sum(value),by=id] #CHECK
+D[tb!='noTB',sum(value),by=id] #CHECK
+D[,sum(value),by=.(id,age)] #CHECK
 
 ## compute other parameters (adds by side-effect)
 MakeTreeParms(D)
@@ -74,54 +93,66 @@ A[,pop:=value]       #rename for melting
 A[,value:=NULL]
 A[,TB:=ifelse(tb!='noTB','TB','not TB')] #simpler version of TB indicator
 A[,tb:=NULL]                             #drop
+
 nrow(A) #240K (attributes x 1000)
 A[,sum(pop),by=id] #CHECK
-A[,c(rnmz0):=lapply(.SD,function(x) x*pop),.SDcols=rnmz0] #multiply variables by population
+A[TB=='TB',1e2*sum(pop),by=id] #CHECK
+A[,sum(pop),by=.(id,age)] #CHECK
+
+
+## population scaling
+A[,c(rnmz0):=lapply(.SD,function(x) x*pop),
+  .SDcols=rnmz0] #multiply variables by population
 A[,pop:=NULL]                                             #can drop now
 
+## melt
 AM <- melt(A,id=c('id','age','TB'))
-AM[,sum(value),by=id] #BUG here
-
-
 AM[,c('location','stage','arm'):=tstrsplit(variable,split='\\.')]
-AM <- AM[,value:=sum(pop*value),by=.(age,TB,arm,location,stage)] #sum 
+## aggregate/average
+AS <- AM[,.(mid=mean(value)),by=.(arm,age,TB,location,stage)]
+AS2 <- AS[,.(mid=sum(mid)),by=.(arm,age,location,stage)]
 
-A[TB=='TB',mean(pop)*1e2,by=.(age)] #TODO
-
-## summary version
-AS <- AM[,.(mid=mean(value*pop),lo=lo(value*pop),hi=hi(value*pop)),by=.(age,TB,arm,location,stage)]
+## noTB version
+tpl <- AS2[stage=='presented']
+AS2 <- merge(AS2,tpl[,.(arm,age,location,pmid=mid)],
+             by=c('arm','age','location'),all.x=TRUE)
+AS2[,vpl:=1e5*mid/pmid]
 lvls <- c('presented','screened','presumed','treated')
-AS$stage <- factor(AS$stage,levels=lvls,ordered = TRUE)
-tpl <- AS[stage=='presented',.(top=sum(mid)),by=.(arm,location,age)]
-
-AS <- merge(AS,tpl[,.(arm,location,age,top)],by=c('arm','location','age'),all.x=TRUE)
-AS[,vpl:=1e5*mid/top] #value per lakh
-AS[,txt:=round(vpl)]
-AS[stage=='presented',txt:=NA]
+AS2$stage <- factor(AS2$stage,levels=lvls,ordered=TRUE)
+AS2[,txt:=round(vpl)]
+AS2[stage=='presented',txt:=NA]
 
 
-CH <- A[stage=='presented']
-CH[,sum(value),by=.(id,arm)] #all 24 ?= 2 age x 3 TB x 2 HIV x 2 ART
-
-
-
-## graphical output
-GP <- ggplot(AS,aes(stage,vpl,fill=TB))+
+## cascade plot
+GP2 <- ggplot(AS2,aes(stage,vpl))+
   geom_bar(stat='identity')+
   facet_grid(location+age ~ arm)+
-  scale_y_continuous(label=comma)+
+  scale_y_log10(label=comma)+
+  ylab('Number per 100K attending')+
+  xlab('Stage')+
+  theme_light() + rot45+
+  geom_text(aes(label=txt),col='red',vjust=0.1) +
+  geom_point(data=DD,col='cyan',size=2)
+## GP2
+
+ggsave(GP2,file=here('graphs/cascade_plt.png'),w=15,h=15)
+
+AS <- merge(AS,tpl[,.(arm,age,location,pmid=mid)],
+             by=c('arm','age','location'),all.x=TRUE)
+AS[,vpl:=1e5*mid/pmid]
+AS$stage <- factor(AS$stage,levels=lvls,ordered=TRUE)
+
+
+GP3 <- ggplot(AS,aes(stage,vpl,fill=TB))+
+  geom_bar(stat='identity',position='fill')+
+  facet_grid(location+age ~ arm)+
+  scale_y_sqrt(label=percent)+
   ylab('Number per 100K attending')+
   xlab('Stage')+
   theme_light() + rot45
-## GP
-ggsave(GP,file=here('graphs/cascade_plt.png'),w=15,h=15)
+## GP3
 
-
-
-## TODO
-## errors!
-## check prev
-## check presume <> ATT
+ggsave(GP3,file=here('graphs/cascade_plt_TB.png'),w=15,h=15)
 
 
 LYSdone <- TRUE
