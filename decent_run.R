@@ -36,7 +36,19 @@ P2$d.TBprev.ICS.o5 <- P2$d.TBprev.ICS.o5*1/5 #TODO expt
 P2$d.TBprev.ICS.u5 <- P2$d.TBprev.ICS.u5*1/5
 ## P2$d.OR.dh.if.TB <- 8
 
+## ## NOTE for computing sense
+## P2$d.TBprev.ICS.o5 <- 0.99
+## P2$d.TBprev.ICS.u5 <- 0.99
+
+## ## NOTE for computing spec
+## P2$d.TBprev.ICS.o5 <- 1e-5
+## P2$d.TBprev.ICS.u5 <- 1e-5
+
+
 P <- c(P,P2)
+
+## ## checking influence of rltfu on IDH sensitivity
+## P$d.idh.rltfu <- 0
 
 
 ## ## version making test plots
@@ -187,7 +199,20 @@ fwrite(TTB,file=here('graphs/TTB.csv'))
 
 
 
-tmp[,.(id,SSE)]
+## exploring sensitivity/spec (if all set to TB/not)
+tpl2 <- AS2[stage=='presumed']
+AS2 <- merge(AS2,tpl2[,.(arm,age,location,prmid=mid)],
+             by=c('arm','age','location'),all.x=TRUE)
+
+## ## NOTE needs TB prev set to 1
+## sense <- AS2[stage=='treated',.(sense=round(1e2*mid/prmid,1),arm,age,location)]
+## fwrite(sense,file=here('graphs/sense.csv'))
+
+## ## NOTE needs TB prev set to 0
+## spec <- AS2[stage=='treated',.(spec=round(1e2*(1-mid/prmid),1),arm,age,location)]
+## fwrite(spec,file=here('graphs/spec.csv'))
+
+
 
 LYSdone <- TRUE
 if(!LYSdone){
