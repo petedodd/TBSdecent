@@ -31,9 +31,9 @@ PD0 <- PD0[!PD0$NAME %in% both,] #supercede with PD1 version
 P <- parse.parmtable(PD0)             #convert into parameter object
 P2 <- parse.parmtable(PD1)             #convert into parameter object
 
-P2$d.TBprev.ICS.o5 <- P2$d.TBprev.ICS.o5*1/2 #TODO expt
-P2$d.TBprev.ICS.u5 <- P2$d.TBprev.ICS.u5*1/2
-P2$d.OR.dh.if.TB <- 2
+P2$d.TBprev.ICS.o5 <- P2$d.TBprev.ICS.o5*1/5 #TODO expt
+P2$d.TBprev.ICS.u5 <- P2$d.TBprev.ICS.u5*1/5
+## P2$d.OR.dh.if.TB <- 8
 
 P <- c(P,P2)
 
@@ -49,11 +49,11 @@ names(P)
 set.seed(1234) #random number seed
 D <- makePSA(nreps,P,dbls = list(c('cfrhivor','cfrartor')))
 
-## NOTE temporary introduction of noise:
-for(nm in setdiff(PD1$NAME,'d.OR.dh.if.TB')){ #loop over probs
-  D[[nm]] <- ilogit(logit(D[[nm]]) + rnorm(nreps)/5)
-}
-D[['d.OR.dh.if.TB']] <- exp(log(D[['d.OR.dh.if.TB']]) + rnorm(nreps)/5)
+## ## NOTE temporary introduction of noise:
+## for(nm in setdiff(PD1$NAME,'d.OR.dh.if.TB')){ #loop over probs
+##   D[[nm]] <- ilogit(logit(D[[nm]]) + rnorm(nreps)/5)
+## }
+## D[['d.OR.dh.if.TB']] <- exp(log(D[['d.OR.dh.if.TB']]) + rnorm(nreps)/5)
 
 
 ## use these parameters to construct intput data by attribute
@@ -83,6 +83,9 @@ names(D)
 notIPD <- c('SOC','IDH','IPH')
 D <- runallfuns(D,arm=notIPD)                      #appends anwers
 
+## TODO need a function to compute weights by id
+
+
 ## --- cascade variables checking
 nmz <- names(D)
 rnmz0 <- grep("DH\\.|PHC\\.",nmz,value=TRUE)
@@ -108,11 +111,18 @@ A[,pop:=NULL]                                             #can drop now
 ## melt
 AM <- melt(A,id=c('id','age','TB'))
 AM[,c('location','stage','arm'):=tstrsplit(variable,split='\\.')]
+## sum over other attributes
+AM <- AM[,.(value=sum(value)),by=.(id,arm,age,location,stage,TB)]
+nrow(AM)
 ## aggregate/average
+## TB version
 AS <- AM[,.(mid=mean(value)),by=.(arm,age,TB,location,stage)]
-AS2 <- AS[,.(mid=sum(mid)),by=.(arm,age,location,stage)]
 
-## noTB version
+## no TB version
+AS2 <- AM[,.(mid=sum(value)),by=.(id,arm,age,location,stage)]
+AS2 <- AS2[,.(mid=mean(mid)),by=.(arm,age,location,stage)]
+
+## noTB graph version
 tpl <- AS2[stage=='presented']
 AS2 <- merge(AS2,tpl[,.(arm,age,location,pmid=mid)],
              by=c('arm','age','location'),all.x=TRUE)
@@ -132,11 +142,13 @@ GP2 <- ggplot(AS2,aes(stage,vpl))+
   xlab('Stage')+
   theme_light() + rot45+
   geom_text(aes(label=txt),col='red',vjust=0.1) +
-  geom_point(data=DD,col='cyan',size=2)
-## GP2
+  geom_point(data=DD,col='cyan',size=2)+
+  geom_text(data=DD,aes(label=txt),col='cyan',vjust=2)
+GP2
 
 ggsave(GP2,file=here('graphs/cascade_plt.png'),w=15,h=15)
 
+## TB graph version
 AS <- merge(AS,tpl[,.(arm,age,location,pmid=mid)],
              by=c('arm','age','location'),all.x=TRUE)
 AS[,vpl:=1e5*mid/pmid]
@@ -154,6 +166,9 @@ GP3 <- ggplot(AS,aes(stage,vpl,fill=TB))+
 
 ggsave(GP3,file=here('graphs/cascade_plt_TB.png'),w=15,h=15)
 
+## Treated true TB per 100K presented by arm
+TTB <- AS[stage=='treated' & TB=='TB',.(TTBpl=1e5*sum(mid)),by=arm]
+fwrite(TTB,file=here('graphs/TTB.csv'))
 
 LYSdone <- TRUE
 if(!LYSdone){

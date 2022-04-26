@@ -195,9 +195,9 @@ AddDataDrivenLabels <- function(D){
   D[,d.iph.pphc:=ifelse(age=='0-4',d.iph.pphc.u5,d.iph.pphc.o5)]
 
   ## TB more likely to go to DH
-  D[tb!='noTB',d.soc.pphc:=iodds(d.OR.dh.if.TB*odds(d.soc.pphc))]
-  D[tb!='noTB',d.idh.pphc:=iodds(d.OR.dh.if.TB*odds(d.idh.pphc))]
-  D[tb!='noTB',d.iph.pphc:=iodds(d.OR.dh.if.TB*odds(d.iph.pphc))]
+  D[tb!='noTB',d.soc.pphc:=1-iodds(d.OR.dh.if.TB*odds(1-d.soc.pphc))]
+  D[tb!='noTB',d.idh.pphc:=1-iodds(d.OR.dh.if.TB*odds(1-d.idh.pphc))]
+  D[tb!='noTB',d.iph.pphc:=1-iodds(d.OR.dh.if.TB*odds(1-d.iph.pphc))]
 
   ## screening/assessment coverage
   D[,d.soc.dh.assess:=ifelse(age=='0-4',d.soc.dh.assess.u5,d.soc.dh.assess.o5)]
