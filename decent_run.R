@@ -78,6 +78,15 @@ D[,sum(value),by=.(id,age)] #CHECK
 ## compute other parameters (adds by side-effect)
 MakeTreeParms(D)
 
+## sensitivity/specificity
+snm <- grep("ptbxns|ptbc",names(D),value=TRUE)
+snm <- grep("idh",snm,value=TRUE)
+snml <- c('id','tb','age','hiv','art','age',snm)
+## examine sense/spec exx
+D[,..snml] #BUG for d.idh.dh.ptbxns spec
+D[,.(id,sens.xnpa,spec.xnpa,sens.xstool,spec.xstool)]
+
+
 ## check for leaks
 ## head(IPD.F$checkfun(D)) #IPD arm NOTE omitted from current country work
 head(IPH.F$checkfun(D)) #IPH arm
