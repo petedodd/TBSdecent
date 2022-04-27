@@ -6,30 +6,30 @@ d.idh.pphc.u5,0.539368581209585,0.539368581209585,ICS @ PHC
 d.idh.pphc.o5,0.625886804351253,0.625886804351253,ICS @ PHC
 d.iph.pphc.u5,0.696462310248225,0.696462310248225,ICS @ PHC
 d.iph.pphc.o5,0.789748976398208,0.789748976398208,ICS @ PHC
-d.soc.dh.assess.u5,0.144156276479845,0.144156276479845,assessment/screening coverage
-d.soc.dh.assess.o5,0.181118272078035,0.181118272078035,assessment/screening coverage
-d.soc.phc.assess.u5,0.117488903673864,0.117488903673864,assessment/screening coverage
-d.soc.phc.assess.o5,0.251398912247673,0.251398912247673,assessment/screening coverage
+d.soc.dh.assess.u5,0.0660482992373805,0.0660482992373805,assessment/screening coverage
+d.soc.dh.assess.o5,0.49259710851768,0.49259710851768,assessment/screening coverage
 d.idh.dh.assess.u5,0.779196649758169,0.779196649758169,assessment/screening coverage
 d.idh.dh.assess.o5,0.828487147071218,0.828487147071218,assessment/screening coverage
-d.idh.phc.assess.u5,0.866638122103566,0.866638122103566,assessment/screening coverage
-d.idh.phc.assess.o5,0.843727959697733,0.843727959697733,assessment/screening coverage
 d.iph.dh.assess.u5,0.759283107963082,0.759283107963082,assessment/screening coverage
 d.iph.dh.assess.o5,0.763866231647635,0.763866231647635,assessment/screening coverage
+d.soc.phc.assess.u5,0.053563128298138,0.053563128298138,assessment/screening coverage
+d.soc.phc.assess.o5,0.327123208869365,0.327123208869365,assessment/screening coverage
+d.idh.phc.assess.u5,0.866638122103566,0.866638122103566,assessment/screening coverage
+d.idh.phc.assess.o5,0.843727959697733,0.843727959697733,assessment/screening coverage
 d.iph.phc.assess.u5,0.874345182413471,0.874345182413471,assessment/screening coverage
 d.iph.phc.assess.o5,0.848402594934991,0.848402594934991,assessment/screening coverage
 d.OR.dh.if.TB,5,5,OR of DH given TB
 d.TBprev.ICS.u5,0.015,0.015,TB prev in ICS
 d.TBprev.ICS.o5,0.03,0.03,TB prev in ICS
-d.soc.dh.presumesp.u5,0.95759420594101,0.95759420594101,specificity of presuming
-d.soc.dh.presumesp.o5,0.948066935949221,0.948066935949221,specificity of presuming
-d.soc.phc.presumesp.u5,0.973314715693119,0.973314715693119,specificity of presuming
-d.soc.phc.presumesp.o5,0.988090904363201,0.988090904363201,specificity of presuming
-d.idh.dh.presumesp.u5,0.976079633624768,0.976079633624768,specificity of presuming
-d.idh.dh.presumesp.o5,0.959104781281791,0.959104781281791,specificity of presuming
-d.idh.phc.presumesp.u5,0.994681623993723,0.994681623993723,specificity of presuming
-d.idh.phc.presumesp.o5,0.992237879149749,0.992237879149749,specificity of presuming
-d.iph.dh.presumesp.u5,0.974416961130742,0.974416961130742,specificity of presuming
-d.iph.dh.presumesp.o5,0.967565403096636,0.967565403096636,specificity of presuming
-d.iph.phc.presumesp.u5,0.990130259180999,0.990130259180999,specificity of presuming
-d.iph.phc.presumesp.o5,0.988418223701049,0.988418223701049,specificity of presuming
+d.soc.dh.presumesp.u5,0.963573883161512,0.963573883161512,specificity of presuming
+d.soc.dh.presumesp.o5,0.963578500707214,0.963578500707214,specificity of presuming
+d.idh.dh.presumesp.u5,0.968774838196889,0.968774838196889,specificity of presuming
+d.idh.dh.presumesp.o5,0.962970498474059,0.962970498474059,specificity of presuming
+d.iph.dh.presumesp.u5,0.96982332155477,0.96982332155477,specificity of presuming
+d.iph.dh.presumesp.o5,0.952749599572878,0.952749599572878,specificity of presuming
+d.soc.phc.presumesp.u5,0.981453122341331,0.981453122341331,specificity of presuming
+d.soc.phc.presumesp.o5,0.981455577315055,0.981455577315055,specificity of presuming
+d.idh.phc.presumesp.u5,0.985672353163416,0.985672353163416,specificity of presuming
+d.idh.phc.presumesp.o5,0.983639837592548,0.983639837592548,specificity of presuming
+d.iph.phc.presumesp.u5,0.977692780913152,0.977692780913152,specificity of presuming
+d.iph.phc.presumesp.o5,0.978820066547223,0.978820066547223,specificity of presuming

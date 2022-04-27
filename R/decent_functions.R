@@ -25,7 +25,7 @@ TBbacsampletest <- function(samplepossible,testpos){
 ## OR function - with NPA/stool in mind
 ## positive if either sample/test combo is
 TBbac4ST1orST2 <- function(S1,T1,S2,T2){
-  1 - TBbacsampletest(S1,T1) * TBbacsampletest(S2,T2)
+  1 - (1-TBbacsampletest(S1,T1)) * (1-TBbacsampletest(S2,T2))
 }
 
 

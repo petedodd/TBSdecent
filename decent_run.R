@@ -78,13 +78,13 @@ D[,sum(value),by=.(id,age)] #CHECK
 ## compute other parameters (adds by side-effect)
 MakeTreeParms(D)
 
-## sensitivity/specificity
-snm <- grep("ptbxns|ptbc",names(D),value=TRUE)
-snm <- grep("idh",snm,value=TRUE)
-snml <- c('id','tb','age','hiv','art','age',snm)
-## examine sense/spec exx
-D[,..snml] #BUG for d.idh.dh.ptbxns spec
-D[,.(id,sens.xnpa,spec.xnpa,sens.xstool,spec.xstool)]
+## ## sensitivity/specificity CHECKS
+## snm <- grep("ptbxns|ptbc",names(D),value=TRUE)
+## snm <- grep("idh",snm,value=TRUE)
+## snml <- c('id','tb','age','hiv','art','age',snm)
+## ## examine sense/spec exx
+## D[,..snml]
+## ## D[,.(id,sens.xnpa,spec.xnpa,sens.xstool,spec.xstool)]
 
 
 ## check for leaks
@@ -130,10 +130,10 @@ A <- D[,..rnmz]
 A[,sum(value),by=id] #CHECK
 A[,pop:=value]       #rename for melting
 A[,value:=NULL]
-A[,TB:=ifelse(tb!='noTB','TB','not TB')] #simpler version of TB indicator
+A[,TB:=ifelse(tb!='noTB','TB','not TB')] #simple version of TB indicator
 A[,tb:=NULL]                             #drop
 
-nrow(A) #240K (attributes x 1000)
+nrow(A) #240K (attributes x nreps)
 A[,sum(pop),by=id] #CHECK
 A[TB=='TB',1e2*sum(pop),by=id] #CHECK
 A[,sum(pop),by=.(id,age)] #CHECK
@@ -198,9 +198,9 @@ GP3 <- ggplot(AS,aes(stage,vpl,fill=TB))+
   ylab('Number per 100K attending')+
   xlab('Stage')+
   theme_light() + rot45
-## GP3
+GP3
 
-ggsave(GP3,file=here('graphs/cascade_plt_TB.png'),w=15,h=15)
+ggsave(GP3,file=here('graphs/cascade_plt_TB.png'),w=15,h=15) #FV?
 
 ## Treated true TB per 100K presented by arm
 TTB <- AS[stage=='treated' & TB=='TB',.(TTBpl=1e5*sum(mid)),by=arm]
@@ -214,11 +214,13 @@ AS2 <- merge(AS2,tpl2[,.(arm,age,location,prmid=mid)],
              by=c('arm','age','location'),all.x=TRUE)
 
 ## ## NOTE needs TB prev set to 1
-## sense <- AS2[stage=='treated',.(sense=round(1e2*mid/prmid,1),arm,age,location)]
+## sense <- AS2[stage=='treated',.(sense=round(1e2*mid/prmid,1),
+##                                 arm,age,location)]
 ## fwrite(sense,file=here('graphs/sense.csv'))
 
 ## ## NOTE needs TB prev set to 0
-## spec <- AS2[stage=='treated',.(spec=round(1e2*(1-mid/prmid),1),arm,age,location)]
+## spec <- AS2[stage=='treated',.(spec=round(1e2*(1-mid/prmid),1),
+##                                arm,age,location)]
 ## fwrite(spec,file=here('graphs/spec.csv'))
 
 
