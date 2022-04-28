@@ -6,12 +6,15 @@ library(here)
 source(here('R/decent_tree.R'))           #tree structure and namings: also tree functions & libraries
 source(here('R/decent_functions.R'))      #functions for tree parameters
 
+## cascade data
 DD <- fread(here('indata/DD.csv')) #cascade data for plots
 DD$location <- toupper(DD$location)
 DDW <- dcast(DD,age~location+stage+arm,value.var='vpl')
+ICS <- fread(here('indata/ICS.csv')) #initial care-seeking props
 
 ## number of reps
 nreps <- 1e3
+set.seed(1234)
 
 ## attributes to use
 tblevels <- c('TB+','TB-','noTB') #bac confirmable TB, bac unconfirmable TB, not TB
@@ -19,43 +22,27 @@ hivlevels <- c(0,1)
 artlevels <- c(0,1)
 agelevels <- c('0-4','5-14')
 
+## read and make cost data
+csts <- fread(here('indata/testcosts.csv'))         #read cost data
+C <- MakeCostData(csts,nreps)               #make cost PSA
+
 ## prior parameters
 PD0 <- read.csv(here('indata/DecentParms - distributions.csv')) #read in
+## parameters to be determined from cascade data
+PD1 <- PD0[PD0$DISTRIBUTION=="",]
+## the rest
+PD0 <- PD0[PD0$DISTRIBUTION!="",]
 
-## temporary work with new parameters from data
-PD1 <- read.csv(here('indata/PMZ.csv')) #read in
-both <- intersect(PD0$NAME,PD1$NAME)
-PD0 <- PD0[!PD0$NAME %in% both,] #supercede with PD1 version
+## this computes and saves out the average accuracy of dx cascades
+DxA <- computeDxAccuracy(PD0,PD1,C,nreps)
 
+## this computes and saves model parameters derived from cascade data
+PD1 <- computeCascadeParameters(DD,ICS,DxA)
 
-## combine with above
-P <- parse.parmtable(PD0)             #convert into parameter object
+## combine different parameter types
+P1 <- parse.parmtable(PD0)             #convert into parameter object
 P2 <- parse.parmtable(PD1)             #convert into parameter object
-
-P2$d.TBprev.ICS.o5 <- P2$d.TBprev.ICS.o5*1/5 #TODO expt
-P2$d.TBprev.ICS.u5 <- P2$d.TBprev.ICS.u5*1/5
-## P2$d.OR.dh.if.TB <- 8
-
-## ## NOTE for computing sense
-## P2$d.TBprev.ICS.o5 <- 0.99
-## P2$d.TBprev.ICS.u5 <- 0.99
-
-## ## NOTE for computing spec
-## P2$d.TBprev.ICS.o5 <- 1e-5
-## P2$d.TBprev.ICS.u5 <- 1e-5
-
-
-P <- c(P,P2)
-
-## ## checking influence of rltfu on IDH sensitivity
-## P$d.idh.rltfu <- 0
-
-
-## ## version making test plots
-## P <- parse.parmtable(PD0,
-##                      testdir = here('graphs/test'),
-##                      outfile = here('graphs/test/00out.csv'))
-
+P <- c(P1,P2)
 names(P)
 
 ## make base PSA dataset
@@ -76,16 +63,7 @@ D[tb!='noTB',sum(value),by=id] #CHECK
 D[,sum(value),by=.(id,age)] #CHECK
 
 ## compute other parameters (adds by side-effect)
-MakeTreeParms(D)
-
-## ## sensitivity/specificity CHECKS
-## snm <- grep("ptbxns|ptbc",names(D),value=TRUE)
-## snm <- grep("idh",snm,value=TRUE)
-## snml <- c('id','tb','age','hiv','art','age',snm)
-## ## examine sense/spec exx
-## D[,..snml]
-## ## D[,.(id,sens.xnpa,spec.xnpa,sens.xstool,spec.xstool)]
-
+MakeTreeParms(D,P)
 
 ## check for leaks
 ## head(IPD.F$checkfun(D)) #IPD arm NOTE omitted from current country work
@@ -94,80 +72,16 @@ head(IDH.F$checkfun(D)) #IDH arm
 head(SOC.F$checkfun(D)) #SOC arm
 
 ## add cost data
-csts <- fread(here('indata/testcosts.csv'))         #read cost data
-C <- MakeCostData(csts,nreps)               #make cost PSA
 D <- merge(D,C,by='id',all.x = TRUE)        #merge into PSA
 
-names(D)
-## now split tree into intervention and not
-## D <- runallfuns(D,arm='all')                      #appends anwers
-
+## run model
 notIPD <- c('SOC','IDH','IPH')
 D <- runallfuns(D,arm=notIPD)                      #appends anwers
 
-
 ## --- cascade variables checking
-nmz <- names(D)
-rnmz0 <- grep("DH\\.|PHC\\.",nmz,value=TRUE)
-rnmz <- c('id','age','tb','value',rnmz0)
-
-
-## ## NOTE experiments with reweighting - to be used in conjunction with noise block above
-## tmp <- getWeights(D,V=1e-5,W=c(0,0,0,1))
-## idz <- sample(nreps,nreps,replace = TRUE,prob=tmp$wts)
-
-## D2 <- list()
-## for(i in 1:length(idz)){
-##   D2[[i]] <- D[id==idz[i]]
-##   D2[[i]][,id:=i]
-##   if(!i%%10) print(i)
-## }
-## D <- rbindlist(D2) #resampled
-## rm(D2)
-
-## computing cascades
-A <- D[,..rnmz]
-A[,sum(value),by=id] #CHECK
-A[,pop:=value]       #rename for melting
-A[,value:=NULL]
-A[,TB:=ifelse(tb!='noTB','TB','not TB')] #simple version of TB indicator
-A[,tb:=NULL]                             #drop
-
-nrow(A) #240K (attributes x nreps)
-A[,sum(pop),by=id] #CHECK
-A[TB=='TB',1e2*sum(pop),by=id] #CHECK
-A[,sum(pop),by=.(id,age)] #CHECK
-
-
-## population scaling
-A[,c(rnmz0):=lapply(.SD,function(x) x*pop),
-  .SDcols=rnmz0] #multiply variables by population
-A[,pop:=NULL]                                             #can drop now
-
-## melt
-AM <- melt(A,id=c('id','age','TB'))
-AM[,c('location','stage','arm'):=tstrsplit(variable,split='\\.')]
-## sum over other attributes
-AM <- AM[,.(value=sum(value)),by=.(id,arm,age,location,stage,TB)]
-nrow(AM)
-## aggregate/average
-## TB version
-AS <- AM[,.(mid=mean(value)),by=.(arm,age,TB,location,stage)]
-
-## no TB version
-AS2 <- AM[,.(mid=sum(value)),by=.(id,arm,age,location,stage)]
-AS2 <- AS2[,.(mid=mean(mid)),by=.(arm,age,location,stage)]
-
-## noTB graph version
-tpl <- AS2[stage=='presented']
-AS2 <- merge(AS2,tpl[,.(arm,age,location,pmid=mid)],
-             by=c('arm','age','location'),all.x=TRUE)
-AS2[,vpl:=1e5*mid/pmid]
-lvls <- c('presented','screened','presumed','treated')
-AS2$stage <- factor(AS2$stage,levels=lvls,ordered=TRUE)
-AS2[,txt:=round(vpl)]
-AS2[stage=='presented',txt:=NA]
-
+CO <- computeCascadeData(D)
+AS2 <- CO$woTB
+AS <- CO$wTB
 
 ## cascade plot
 GP2 <- ggplot(AS2,aes(stage,vpl))+
@@ -177,54 +91,18 @@ GP2 <- ggplot(AS2,aes(stage,vpl))+
   ylab('Number per 100K attending')+
   xlab('Stage')+
   theme_light() + rot45+
-  geom_text(aes(label=txt),col='red',vjust=0.1) +
+  geom_text(aes(label=txt),col='red',vjust=0.1,hjust=-0.5) +
   geom_point(data=DD,col='cyan',size=2)+
-  geom_text(data=DD,aes(label=txt),col='cyan',vjust=2)
+  geom_text(data=DD,aes(label=txt),col='cyan',vjust=2,hjust=1)
 GP2
 
 ggsave(GP2,file=here('graphs/cascade_plt.png'),w=15,h=15)
-
-## TB graph version
-AS <- merge(AS,tpl[,.(arm,age,location,pmid=mid)],
-             by=c('arm','age','location'),all.x=TRUE)
-AS[,vpl:=1e5*mid/pmid]
-AS$stage <- factor(AS$stage,levels=lvls,ordered=TRUE)
-
-
-GP3 <- ggplot(AS,aes(stage,vpl,fill=TB))+
-  geom_bar(stat='identity',position='fill')+
-  facet_grid(location+age ~ arm)+
-  scale_y_sqrt(label=percent)+
-  ylab('Number per 100K attending')+
-  xlab('Stage')+
-  theme_light() + rot45
-GP3
-
-ggsave(GP3,file=here('graphs/cascade_plt_TB.png'),w=15,h=15) #FV?
 
 ## Treated true TB per 100K presented by arm
 TTB <- AS[stage=='treated' & TB=='TB',.(TTBpl=1e5*sum(mid)),by=arm]
 fwrite(TTB,file=here('graphs/TTB.csv'))
 
-
-
-## exploring sensitivity/spec (if all set to TB/not)
-tpl2 <- AS2[stage=='presumed']
-AS2 <- merge(AS2,tpl2[,.(arm,age,location,prmid=mid)],
-             by=c('arm','age','location'),all.x=TRUE)
-
-## ## NOTE needs TB prev set to 1
-## sense <- AS2[stage=='treated',.(sense=round(1e2*mid/prmid,1),
-##                                 arm,age,location)]
-## fwrite(sense,file=here('graphs/sense.csv'))
-
-## ## NOTE needs TB prev set to 0
-## spec <- AS2[stage=='treated',.(spec=round(1e2*(1-mid/prmid),1),
-##                                arm,age,location)]
-## fwrite(spec,file=here('graphs/spec.csv'))
-
-
-
+## --- life years and other outputs
 LYSdone <- TRUE
 if(!LYSdone){
   ## make discounted life-years if they haven't been done
