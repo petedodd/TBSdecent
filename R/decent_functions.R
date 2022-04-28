@@ -421,6 +421,23 @@ MakeCEAoutputs <- function(data,LY,
 
 }
 
+## --- for reformatting costs
+reformatCosts <- function(rcsts){
+  iextra <- outer(isoz,c('.lo','.hi','drop'),paste0)
+  iextra <- c(t(iextra)); iextra <- rev(rev(iextra)[-1])
+  nnmz <- c('drop','DESCRIPTION','NAME',iextra)
+  names(rcsts)[1:length(nnmz)] <- nnmz
+  drop <- grep('drop',names(rcsts),value=TRUE)
+  rcsts[,c(drop):=NULL]
+  rcsts[is.na(rcsts)] <- 0.1 #dummy
+  rcsts <- melt(rcsts,id=c('NAME','DESCRIPTION'))
+  rcsts[,DESCRIPTION:=NULL]
+  rcsts[,c('iso3','hilo'):=tstrsplit(variable,split="\\.")]
+  rcsts <- dcast(rcsts,iso3 + NAME ~ hilo,value.var = 'value')
+  rcsts[,c('cost.m','cost.sd'):=.((lo+hi)/2,(hi-lo)/3.92)]
+  rcsts <- rcsts[,.(iso3,cost=NAME,cost.m,cost.sd)]
+  rcsts
+}
 
 
 ## --- for computing cascades
