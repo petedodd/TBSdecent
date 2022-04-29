@@ -13,6 +13,10 @@ lo <- function(x) quantile(x,probs = 0.025)
 hi <- function(x) quantile(x,probs = 1-0.025)
 rot45 <- theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+brkt <- function(M,L,H,ndp=0) paste0(round(M,ndp),' (',
+                                     round(L,ndp),' - ',
+                                     round(H,ndp),')')
+
 ## ========= DIAGNOSIS ===============
 
 ## function for combining sample modality with bacteriological test
@@ -633,6 +637,60 @@ computeCascadeParameters <- function(DD,ICS,DxA){
   as.data.frame(NP)
 }
 
+
+## =========== output formatters
+outsummary <- function(out){
+  ## compute mean/lo/hi etc
+  outs1 <- out[,.(DcostperATT.iph.mid=mean(DcostperATT.iph),
+                  DcostperATT.iph.lo=lo(DcostperATT.iph),
+                  DcostperATT.iph.hi=hi(DcostperATT.iph),
+                  DcostperATT.idh.mid=mean(DcostperATT.idh),
+                  DcostperATT.idh.lo=lo(DcostperATT.idh),
+                  DcostperATT.idh.hi=hi(DcostperATT.idh))]
+  outs2 <- out[,.(DcostperLYS.iph.mid=mean(DcostperLYS.iph),
+                  DcostperLYS.iph.lo=lo(DcostperLYS.iph),
+                  DcostperLYS.iph.hi=hi(DcostperLYS.iph),
+                  DcostperLYS.idh.mid=mean(DcostperLYS.idh),
+                  DcostperLYS.idh.lo=lo(DcostperLYS.idh),
+                  DcostperLYS.idh.hi=hi(DcostperLYS.idh))]
+  outs3 <- out[,.(Dcostperdeaths.iph.mid=mean(Dcostperdeaths.iph),
+                  Dcostperdeaths.iph.lo=lo(Dcostperdeaths.iph),
+                  Dcostperdeaths.iph.hi=hi(Dcostperdeaths.iph),
+                  Dcostperdeaths.idh.mid=mean(Dcostperdeaths.idh),
+                  Dcostperdeaths.idh.lo=lo(Dcostperdeaths.idh),
+                  Dcostperdeaths.idh.hi=hi(Dcostperdeaths.idh))]
+  outs4 <- out[,.(DcostPerOPD.iph.mid=mean(Dcost.iph),
+                  DcostPerOPD.iph.lo=lo(Dcost.iph),
+                  DcostPerOPD.iph.hi=hi(Dcost.iph),
+                  DcostPerOPD.idh.mid=mean(Dcost.idh),
+                  DcostPerOPD.idh.lo=lo(Dcost.idh),
+                  DcostPerOPD.idh.hi=hi(Dcost.idh))]
+  outs5 <- out[,.(DdeathsPer100kOPD.iph.mid=-1e5*mean(Ddeaths.iph),
+                  DdeathsPer100kOPD.iph.lo=-1e5*hi(Ddeaths.iph),
+                  DdeathsPer100kOPD.iph.hi=-1e5*lo(Ddeaths.iph),
+                  DdeathsPer100kOPD.idh.mid=-1e5*mean(Ddeaths.idh),
+                  DdeathsPer100kOPD.idh.lo=-1e5*hi(Ddeaths.idh),
+                  DdeathsPer100kOPD.idh.hi=-1e5*lo(Ddeaths.idh))]
+  outi <- out[,.(ICER.iph= -mean(Dcost.iph) / mean(DLYL.iph),
+                 ICER.idh= -mean(Dcost.idh) / mean(DLYL.idh))]
+  outs <- cbind(cbind(cbind(cbind(cbind(outs1,outs2),outs3),outs4),outs5),outi)
+
+  ## pretty version
+  pouts <- outs[,.(DcostperATT.iph = brkt(DcostperATT.iph.mid,DcostperATT.iph.lo,DcostperATT.iph.hi),
+                  DcostperATT.idh = brkt(DcostperATT.idh.mid,DcostperATT.idh.lo,DcostperATT.idh.hi),
+                  DcostperLYS.iph = brkt(DcostperLYS.iph.mid,DcostperLYS.iph.lo,DcostperLYS.iph.hi),
+                  DcostperLYS.idh = brkt(DcostperLYS.idh.mid,DcostperLYS.idh.lo,DcostperLYS.idh.hi),
+                  Dcostperdeaths.iph = brkt(Dcostperdeaths.iph.mid,Dcostperdeaths.iph.lo,Dcostperdeaths.iph.hi),
+                  Dcostperdeaths.idh = brkt(Dcostperdeaths.idh.mid,Dcostperdeaths.idh.lo,Dcostperdeaths.idh.hi),
+                  DcostPerOPD.iph = brkt(DcostPerOPD.iph.mid,DcostPerOPD.iph.lo,DcostPerOPD.iph.hi),
+                  DcostPerOPD.idh = brkt(DcostPerOPD.idh.mid,DcostPerOPD.idh.lo,DcostPerOPD.idh.hi),
+                  DdeathsPer100kOPD.iph = brkt(DdeathsPer100kOPD.iph.mid,DdeathsPer100kOPD.iph.lo,DdeathsPer100kOPD.iph.hi),
+                  DdeathsPer100kOPD.idh = brkt(DdeathsPer100kOPD.idh.mid,DdeathsPer100kOPD.idh.lo,DdeathsPer100kOPD.idh.hi),
+                  ICER.iph=round(ICER.iph,0),ICER.idh=round(ICER.idh,0))]
+
+  ## return value
+  list(outs=outs,pouts=pouts)
+}
 
 
 ## ## ============ experiments with reweighting

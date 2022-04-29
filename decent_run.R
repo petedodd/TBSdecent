@@ -23,6 +23,21 @@ artlevels <- c(0,1)
 agelevels <- c('0-4','5-14')
 isoz <- c('KHM','CMR','CIV','MOZ','SLE','UGA','ZMB') #relevant countries
 
+
+## --- life years and other outputs NOTE needs to be set FALSE on first run thru
+LYSdone <- TRUE
+if(!LYSdone){
+  ## make discounted life-years if they haven't been done
+  LYKc <- GetLifeYears(isolist=isoz,discount.rate=0.03,yearfrom=2021)
+  LYK <- LYKc[,.(LYS=mean(LYS)),by=.(age)] #averaged life-years 4 generic tests
+  save(LYKc,file=here('indata/LYKc.Rdata'))
+  save(LYK,file=here('indata/LYK.Rdata'))
+} else {
+  load(file=here('indata/LYKc.Rdata'))
+  load(file=here('indata/LYK.Rdata'))
+}
+
+
 ## read and make cost data
 csts <- fread(here('indata/testcosts.csv'))         #read cost data
 rcsts <- fread(here('indata/TBS.DECENT.costs.csv'),skip = 1)    #read cost data
@@ -111,62 +126,65 @@ ggsave(GP2,file=here('graphs/cascade_plt.png'),w=15,h=15)
 TTB <- AS[stage=='treated' & TB=='TB',.(TTBpl=1e5*sum(mid)),by=arm]
 fwrite(TTB,file=here('graphs/TTB.csv'))
 
+
+
 ## --- run over different countries
 cnmz <- names(C)
 cnmz <- cnmz[cnmz!='id']
-toget <- c('id','cost.soc','cost.iph','cost.idh','att.soc','att.idh','att.iph')
+toget <- c('id','cost.soc','cost.iph','cost.idh',
+           'att.soc','att.idh','att.iph',
+           'deaths.soc','deaths.idh','deaths.iph',
+           'LYS','value'
+           )
+notwt <- c('id','LYS','value') #variables not to weight against value
+lyarm <- c('LYL.soc','LYL.idh','LYL.iph')
+tosum <- c(setdiff(toget,notwt),lyarm)
 
-allout <- list()
+allout <- allpout <- list()
 ## cn <- isoz[1]
 for(cn in isoz){
   cat('running model for:',cn,'\n')
+  ## --- costs
   ## drop previous costs
   D[,c(cnmz):=NULL]
   ## add cost data
   C <- MakeCostData(allcosts[iso3==cn],nreps) #make cost PSA
   D <- merge(D,C,by='id',all.x = TRUE)        #merge into PSA
-  ## run model (quietly)
+  ## --- DALYs
+  ## drop any that are there
+  if('LYS' %in% names(D)) D[,LYS:=NULL]
+  D <- merge(D,LYKc[iso3==cn,.(age,LYS)],by='age',all.x = TRUE)        #merge into PSA
+  ## --- run model (quietly)
   invisible(capture.output(D <- runallfuns(D,arm=notIPD)))
-  ## grather outcomes
+  ## --- grather outcomes
   out <- D[,..toget]
-  out <- out[,lapply(.SD,sum),.SDcols=toget[-1],by=id]
-  out <- out[,.(DcostperATT.iph=(cost.iph-cost.soc)/(att.iph-att.soc),
-                DcostperATT.idh=(cost.idh-cost.soc)/(att.idh-att.soc)),
-             by=id]
-  out <- out[,.(DcostperATT.iph.mid=mean(DcostperATT.iph),
-                DcostperATT.iph.lo=lo(DcostperATT.iph),
-                DcostperATT.iph.hi=hi(DcostperATT.iph),
-                DcostperATT.idh.mid=mean(DcostperATT.idh),
-                DcostperATT.idh.lo=lo(DcostperATT.idh),
-                DcostperATT.idh.hi=hi(DcostperATT.idh))]
-  out[,iso3:=cn]
+  out[,c(lyarm):=.(LYS*deaths.soc,LYS*deaths.idh,LYS*deaths.iph)] #LYL per pop by arm
+  ## out[,sum(value),by=id]                                       #CHECK
+  out <- out[,lapply(.SD,function(x) sum(x*value)),.SDcols=tosum,by=id] #sum against popn
+  ## increments wrt SOC (per child presenting at either DH/PHC)
+  out[,Dcost.iph:=cost.iph-cost.soc]; out[,Dcost.idh:=cost.idh-cost.soc] #inc costs
+  out[,Datt.iph:=att.iph-att.soc]; out[,Datt.idh:=att.idh-att.soc] #inc atts
+  out[,Ddeaths.iph:=deaths.iph-deaths.soc]; out[,Ddeaths.idh:=deaths.idh-deaths.soc] #inc deaths
+  out[,DLYL.iph:=LYL.iph-LYL.soc]; out[,DLYL.idh:=LYL.idh-LYL.soc] #inc LYLs
+  ## per whatever
+  out[,DcostperATT.iph:=Dcost.iph/Datt.iph];out[,DcostperATT.idh:=Dcost.idh/Datt.idh]
+  out[,Dcostperdeaths.iph:=-Dcost.iph/Ddeaths.iph];out[,Dcostperdeaths.idh:=-Dcost.idh/Ddeaths.idh]
+  out[,DcostperLYS.iph:=-Dcost.iph/DLYL.iph];out[,DcostperLYS.idh:=-Dcost.idh/DLYL.idh]
+
+  ## summarize
+  smy <- outsummary(out)
+  outs <- smy$outs; pouts <- smy$pouts;
+  outs[,iso3:=cn]; pouts[,iso3:=cn]
   ## capture
-  allout[[cn]] <- out
+  allout[[cn]] <- outs; allpout[[cn]] <- pouts
 }
 allout <- rbindlist(allout)
-allout[,pty.iph:=paste0(round(DcostperATT.iph.mid,0),' (',
-                        round(DcostperATT.iph.lo,0),' - ',
-                        round(DcostperATT.iph.hi,0),')')]
-
-allout[,pty.idh:=paste0(round(DcostperATT.idh.mid,0),' (',
-                        round(DcostperATT.idh.lo,0),' - ',
-                        round(DcostperATT.idh.hi,0),')')]
+allpout <- rbindlist(allpout)
 
 fwrite(allout,file=here('graphs/allout.csv'))
-
-## TODO check total population
-## TODO DALY outputs etc
+fwrite(allpout,file=here('graphs/allpout.csv'))
 
 
-## ## --- life years and other outputs
-## LYSdone <- TRUE
-## if(!LYSdone){
-##   ## make discounted life-years if they haven't been done
-##   
-##   LYK <- GetLifeYears(isolist=isoz,discount.rate=0.03,yearfrom=2021)
-##   save(LYK,file=here('indata/LYK.Rdata'))
-## } else {load(file=here('indata/LYK.Rdata'))}
-## LYK <- LYK[,.(LYS=mean(LYS)),by=age] #averaged life-years 4 generic tests
 
 ## ## generate some CEA outputs in graphs/ & outdata/
 ## ## NOTE these folders need to be created
