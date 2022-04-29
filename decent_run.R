@@ -60,7 +60,8 @@ PD0 <- PD0[PD0$DISTRIBUTION!="",]
 DxA <- computeDxAccuracy(PD0,PD1,C,nreps)
 
 ## this computes and saves model parameters derived from cascade data
-PD1 <- computeCascadeParameters(DD,ICS,DxA)
+prevapproach <- 'gm'
+PD1 <- computeCascadeParameters(DD,ICS,DxA,using=prevapproach)
 
 ## combine different parameter types
 P1 <- parse.parmtable(PD0)             #convert into parameter object
@@ -120,11 +121,11 @@ GP2 <- ggplot(AS2,aes(stage,vpl))+
   geom_text(data=DD,aes(label=txt),col='cyan',vjust=2,hjust=1)
 GP2
 
-ggsave(GP2,file=here('graphs/cascade_plt.png'),w=15,h=15)
+ggsave(GP2,file=gh('graphs/cascade_plt_{prevapproach}.png'),w=15,h=15)
 
 ## Treated true TB per 100K presented by arm
 TTB <- AS[stage=='treated' & TB=='TB',.(TTBpl=1e5*sum(mid)),by=arm]
-fwrite(TTB,file=here('graphs/TTB.csv'))
+fwrite(TTB,file=gh('graphs/TTB_{prevapproach}.csv'))
 
 
 
@@ -139,7 +140,13 @@ toget <- c('id','cost.soc','cost.iph','cost.idh',
 notwt <- c('id','LYS','value') #variables not to weight against value
 lyarm <- c('LYL.soc','LYL.idh','LYL.iph')
 tosum <- c(setdiff(toget,notwt),lyarm)
-lz <- seq(from = 0,to=5e2,length.out = 1000) #threshold vector for CEACs
+## heuristic to scale top value for thresholds:
+heur <- c('id','value','deaths.iph','deaths.soc')
+out <- D[,..heur]
+out <- out[,lapply(.SD,function(x) sum(x*value)),.SDcols=c('deaths.iph','deaths.soc'),by=id] #sum against popn
+topl <- 1/out[,mean(deaths.soc-deaths.iph)]
+lz <- seq(from = 0,to=topl,length.out = 1000) #threshold vector for CEACs
+
 
 
 ## containers & loop
@@ -174,12 +181,10 @@ for(cn in isoz){
   out[,DcostperATT.iph:=Dcost.iph/Datt.iph];out[,DcostperATT.idh:=Dcost.idh/Datt.idh]
   out[,Dcostperdeaths.iph:=-Dcost.iph/Ddeaths.iph];out[,Dcostperdeaths.idh:=-Dcost.idh/Ddeaths.idh]
   out[,DcostperLYS.iph:=-Dcost.iph/DLYL.iph];out[,DcostperLYS.idh:=-Dcost.idh/DLYL.idh]
-
   ## summarize
   smy <- outsummary(out)
   outs <- smy$outs; pouts <- smy$pouts;
   outs[,iso3:=cn]; pouts[,iso3:=cn]
-
   ## capture tabular
   allout[[cn]] <- outs; allpout[[cn]] <- pouts
   ## ceac data
@@ -192,15 +197,14 @@ allout <- rbindlist(allout)
 allpout <- rbindlist(allpout)
 ceacl <- rbindlist(ceacl)
 
-fwrite(allout,file=here('graphs/allout.csv'))
-fwrite(allpout,file=here('graphs/allpout.csv'))
-save(ceacl,file=here('graphs/ceacl.Rdata'))
+fwrite(allout,file=gh('graphs/allout_{prevapproach}.csv'))
+fwrite(allpout,file=gh('graphs/allpout_{prevapproach}.csv'))
+save(ceacl,file=gh('graphs/ceacl_{prevapproach}.Rdata'))
 
 
 ## CEAC plot
 cbPalette <- c("#999999", "#E69F00", "#56B4E9","#009E73",
                "#F0E442", "#0072B2","#D55E00", "#CC79A7")
-
 ceaclm <- melt(ceacl,id=c('iso3','threshold'))
 ceaclm[,Intervention:=ifelse(variable=='iph','PHC-focussed','DH-focussed')]
 
@@ -216,7 +220,7 @@ GP <- ggplot(ceaclm,aes(threshold,value,
   scale_colour_manual(values=cbPalette)
 GP
 
-ggsave(GP,file=here('graphs/CEAC.png'),w=7,h=5)
+ggsave(GP,file=gh('graphs/CEAC_{prevapproach}.png'),w=7,h=5)
 
 
 

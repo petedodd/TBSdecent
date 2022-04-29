@@ -16,6 +16,8 @@ rot45 <- theme(axis.text.x = element_text(angle = 45, hjust = 1))
 brkt <- function(M,L,H,ndp=0) paste0(round(M,ndp),' (',
                                      round(L,ndp),' - ',
                                      round(H,ndp),')')
+gm <- function(x) exp(mean(log(x))) #geometric mean
+gh <- function(x) glue(here(x))
 
 ## ========= DIAGNOSIS ===============
 
@@ -199,9 +201,16 @@ AddDataDrivenLabels <- function(D){
   D[,d.iph.pphc:=ifelse(age=='0-4',d.iph.pphc.u5,d.iph.pphc.o5)]
 
   ## TB more likely to go to DH
-  D[tb!='noTB',d.soc.pphc:=1-iodds(d.OR.dh.if.TB*odds(1-d.soc.pphc))]
-  D[tb!='noTB',d.idh.pphc:=1-iodds(d.OR.dh.if.TB*odds(1-d.idh.pphc))]
-  D[tb!='noTB',d.iph.pphc:=1-iodds(d.OR.dh.if.TB*odds(1-d.iph.pphc))]
+  ## D[tb!='noTB',d.soc.pphc:=1-iodds(d.OR.dh.if.TB*odds(1-d.soc.pphc))]
+  ## D[tb!='noTB',d.idh.pphc:=1-iodds(d.OR.dh.if.TB*odds(1-d.idh.pphc))]
+  ## D[tb!='noTB',d.iph.pphc:=1-iodds(d.OR.dh.if.TB*odds(1-d.iph.pphc))]
+  ## version with arm dependence:
+  D[tb!='noTB' & age=='0-4',d.soc.pphc:=1-iodds(d.OR.dh.if.TB.soc.u5*odds(1-d.soc.pphc))]
+  D[tb!='noTB' & age=='0-4',d.idh.pphc:=1-iodds(d.OR.dh.if.TB.idh.u5*odds(1-d.idh.pphc))]
+  D[tb!='noTB' & age=='0-4',d.iph.pphc:=1-iodds(d.OR.dh.if.TB.iph.u5*odds(1-d.iph.pphc))]
+  D[tb!='noTB' & age!='0-4',d.soc.pphc:=1-iodds(d.OR.dh.if.TB.soc.o5*odds(1-d.soc.pphc))]
+  D[tb!='noTB' & age!='0-4',d.idh.pphc:=1-iodds(d.OR.dh.if.TB.idh.o5*odds(1-d.idh.pphc))]
+  D[tb!='noTB' & age!='0-4',d.iph.pphc:=1-iodds(d.OR.dh.if.TB.iph.o5*odds(1-d.iph.pphc))]
 
   ## screening/assessment coverage
   D[,d.soc.dh.assess:=ifelse(age=='0-4',d.soc.dh.assess.u5,d.soc.dh.assess.o5)]
@@ -547,7 +556,7 @@ computeDxAccuracy <- function(PD0,PD1,C,nreps){
 
 
 ## ------------- function to compute parameters derived from cascades
-computeCascadeParameters <- function(DD,ICS,DxA){
+computeCascadeParameters <- function(DD,ICS,DxA,using='mean'){
   aal <- c('arm','age','location')
 
   ## prevalence of TB in presumed
@@ -594,10 +603,20 @@ computeCascadeParameters <- function(DD,ICS,DxA){
                    agedest[,.(arm,age,location='DH',pinit=1-pphc)])
   alldest <- merge(alldest,prins[,.(arm,age,location,tbinit)],by=aal)
   tbagearm <- alldest[,.(tbICS=sum(pinit*tbinit)),by=.(arm,age)]
-  cat('Implied prevalences at ICS (using max):\n')
+  cat('Implied prevalences at ICS (using ',using,'):\n')
   print(tbagearm[order(age),.(`TB prev @ ICE`=1e5*tbICS),by=.(age,arm)])
-  tbbyage <- tbagearm[,.(tbICS=max(tbICS)),by=age]
+  if(using=='min')
+    tbbyage <- tbagearm[,.(tbICS=min(tbICS)),by=age]
+  if(using=='max')
+    tbbyage <- tbagearm[,.(tbICS=max(tbICS)),by=age]
+  if(using=='mean')
+    tbbyage <- tbagearm[,.(tbICS=mean(tbICS)),by=age]
+  if(using=='median')
+    tbbyage <- tbagearm[,.(tbICS=median(tbICS)),by=age]
+  if(using=='gm')
+    tbbyage <- tbagearm[,.(tbICS=gm(tbICS)),by=age]
   tbbyage[,NAME:=paste0("d.TBprev.ICS.",ifelse(age=='0-4','u5','o5'))]
+  print(tbbyage[,.(NAME,age,tbICS)])
 
   ## OR for DH calculations
   ORcalc <- dcast(data=alldest,arm+age~location,value.var = c('pinit','tbinit'))
@@ -607,7 +626,11 @@ computeCascadeParameters <- function(DD,ICS,DxA){
   ORcalc[,ORDH:=(1/probPHCifTB-1)/(1/probPHCifNotTB-1)]
   cat('Implied OR for CS @ DH if TB+ (using mean):\n')
   print(ORcalc[,.(arm,age,ORDH)]) #NOTE could make arm dependent
-  d.OR.dh.if.TB <- ORcalc[,mean(ORDH)]
+  ORcalc[,NAME:=paste0('d.OR.dh.if.TB.',
+                       arm,'.',
+                       ifelse(age=='0-4','u5','o5')
+                       )]
+  ## d.OR.dh.if.TB <- ORcalc[,mean(ORDH)] #single OR
 
   ## and assessent coverage
   assess <- DD[stage %in% 'screened',.(assess=vpl/1e5,arm,age,location)]
@@ -627,7 +650,8 @@ computeCascadeParameters <- function(DD,ICS,DxA){
     agesp,
     agedest[,.(NAME,DISTRIBUTION=pphc)],
     tbbyage[,.(NAME,DISTRIBUTION=tbICS)],
-    data.table(NAME='d.OR.dh.if.TB',DISTRIBUTION=d.OR.dh.if.TB)
+    ORcalc[,.(NAME,DISTRIBUTION=ORDH)]## new version with arm dependence
+    ## data.table(NAME='d.OR.dh.if.TB',DISTRIBUTION=d.OR.dh.if.TB)
   ))
 
   cat('saving calculated parameters to indata/calcparms.csv\n')
