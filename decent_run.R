@@ -61,7 +61,7 @@ DxA <- computeDxAccuracy(PD0,PD1,C,nreps)
 
 ## this computes and saves model parameters derived from cascade data
 prevapproach <- 'gm'
-PD1 <- computeCascadeParameters(DD,ICS,DxA,using=prevapproach)
+PD1 <- computeCascadeParameters(DD,ICS,DxA,prevapproach)
 
 ## combine different parameter types
 P1 <- parse.parmtable(PD0)             #convert into parameter object
@@ -221,6 +221,22 @@ GP <- ggplot(ceaclm,aes(threshold,value,
 GP
 
 ggsave(GP,file=gh('graphs/CEAC_{prevapproach}.png'),w=7,h=5)
+
+
+
+## plot
+GP <- ggplot(ceaclm[variable=='idh'],aes(threshold,value,
+                        col=iso3)) +
+  geom_line() +
+  theme_classic() +
+  theme(legend.position = 'top')+
+  ggpubr::grids()+
+  ylab('Probability cost-effective')+
+  xlab('Cost-effectiveness threshold (USD/DALY)')+
+  scale_colour_manual(values=cbPalette)
+GP
+
+ggsave(GP,file=gh('graphs/CEAC1_{prevapproach}.png'),w=7,h=5)
 
 
 

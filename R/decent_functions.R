@@ -655,7 +655,8 @@ computeCascadeParameters <- function(DD,ICS,DxA,using='mean'){
   ))
 
   cat('saving calculated parameters to indata/calcparms_',using,'.csv\n')
-  fwrite(NP,file=gh('indata/calcparms_{using}.csv'))
+  fn <- paste0(here('indata/calcparms_'),using,'.csv')
+  fwrite(NP,file=fn)
 
   ## return value
   as.data.frame(NP)
