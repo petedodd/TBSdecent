@@ -624,7 +624,7 @@ computeCascadeParameters <- function(DD,ICS,DxA,using='mean'){
   ORcalc[,probPHCifTB:=tbinit_PHC * pinit_PHC / tbICS]
   ORcalc[,probPHCifNotTB:=(1-tbinit_PHC) * pinit_PHC / (1-tbICS)]
   ORcalc[,ORDH:=(1/probPHCifTB-1)/(1/probPHCifNotTB-1)]
-  cat('Implied OR for CS @ DH if TB+ (using mean):\n')
+  cat('Implied OR for CS @ DH if TB+ :\n')
   print(ORcalc[,.(arm,age,ORDH)]) #NOTE could make arm dependent
   ORcalc[,NAME:=paste0('d.OR.dh.if.TB.',
                        arm,'.',
@@ -654,8 +654,8 @@ computeCascadeParameters <- function(DD,ICS,DxA,using='mean'){
     ## data.table(NAME='d.OR.dh.if.TB',DISTRIBUTION=d.OR.dh.if.TB)
   ))
 
-  cat('saving calculated parameters to indata/calcparms.csv\n')
-  fwrite(NP,file=here('indata/calcparms.csv'))
+  cat('saving calculated parameters to indata/calcparms_',using,'.csv\n')
+  fwrite(NP,file=gh('indata/calcparms_{using}.csv'))
 
   ## return value
   as.data.frame(NP)
