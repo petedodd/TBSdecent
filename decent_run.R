@@ -139,8 +139,12 @@ toget <- c('id','cost.soc','cost.iph','cost.idh',
 notwt <- c('id','LYS','value') #variables not to weight against value
 lyarm <- c('LYL.soc','LYL.idh','LYL.iph')
 tosum <- c(setdiff(toget,notwt),lyarm)
+lz <- seq(from = 0,to=5e2,length.out = 1000) #threshold vector for CEACs
 
-allout <- allpout <- list()
+
+## containers & loop
+allout <- allpout <- list() #tabular outputs
+ceacl <- list()             #CEAC outputs
 ## cn <- isoz[1]
 for(cn in isoz){
   cat('running model for:',cn,'\n')
@@ -175,14 +179,46 @@ for(cn in isoz){
   smy <- outsummary(out)
   outs <- smy$outs; pouts <- smy$pouts;
   outs[,iso3:=cn]; pouts[,iso3:=cn]
-  ## capture
+
+  ## capture tabular
   allout[[cn]] <- outs; allpout[[cn]] <- pouts
+  ## ceac data
+  ceacl[[cn]] <- data.table(iso3=cn,
+                            iph=make.ceac(out[,.(Q=-DLYL.iph,P=Dcost.iph)],lz),
+                            idh=make.ceac(out[,.(Q=-DLYL.idh,P=Dcost.idh)],lz),
+                            threshold=lz)
 }
 allout <- rbindlist(allout)
 allpout <- rbindlist(allpout)
+ceacl <- rbindlist(ceacl)
 
 fwrite(allout,file=here('graphs/allout.csv'))
 fwrite(allpout,file=here('graphs/allpout.csv'))
+save(ceacl,file=here('graphs/ceacl.Rdata'))
+
+
+## CEAC plot
+cbPalette <- c("#999999", "#E69F00", "#56B4E9","#009E73",
+               "#F0E442", "#0072B2","#D55E00", "#CC79A7")
+
+ceaclm <- melt(ceacl,id=c('iso3','threshold'))
+ceaclm[,Intervention:=ifelse(variable=='iph','PHC-focussed','DH-focussed')]
+
+## plot
+GP <- ggplot(ceaclm,aes(threshold,value,
+                        col=iso3,lty=Intervention)) +
+  geom_line() +
+  theme_classic() +
+  theme(legend.position = 'top')+
+  ggpubr::grids()+
+  ylab('Probability cost-effective')+
+  xlab('Cost-effectiveness threshold (USD/DALY)')+
+  scale_colour_manual(values=cbPalette)
+GP
+
+ggsave(GP,file=here('graphs/CEAC.png'),w=7,h=5)
+
+
 
 
 

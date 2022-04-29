@@ -693,6 +693,15 @@ outsummary <- function(out){
 }
 
 
+## ---- utilities for making CEACs
+make.ceac <- function(CEA,lamz){
+    crv <- lamz
+    for(i in 1:length(crv)) crv[i] <- CEA[,mean(lamz[i]*Q-P>0)]
+    crv
+}
+
+
+
 ## ## ============ experiments with reweighting
 
 
