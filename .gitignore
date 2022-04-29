@@ -50,3 +50,6 @@ outdata/*
 *.numbers
 
 indata/OLD/*
+
+# if run slaved:
+Rplots.pdf
