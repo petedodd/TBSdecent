@@ -207,13 +207,18 @@ cbPalette <- c("#999999", "#E69F00", "#56B4E9","#009E73",
                "#F0E442", "#0072B2","#D55E00", "#CC79A7")
 ceaclm <- melt(ceacl,id=c('iso3','threshold'))
 ceaclm[,Intervention:=ifelse(variable=='iph','PHC-focussed','DH-focussed')]
+## name key
+ckey <- data.table(iso3=c('KHM','CMR','CIV','MOZ','SLE','UGA','ZMB'),
+                   country=c('Cambodia','Cameroon',"Cote d'Ivoire",'Mozambique','Sierra Leone','Uganda','Zambia'))
+
+ceaclm <- merge(ceaclm,ckey,by='iso3',all.x=TRUE)
 
 ## plot
 GP <- ggplot(ceaclm,aes(threshold,value,
-                        col=iso3,lty=Intervention)) +
+                        col=country,lty=Intervention)) +
   geom_line() +
   theme_classic() +
-  theme(legend.position = 'top')+
+  theme(legend.position = 'top',legend.title = element_blank())+
   ggpubr::grids()+
   ylab('Probability cost-effective')+
   xlab('Cost-effectiveness threshold (USD/DALY)')+
@@ -226,14 +231,14 @@ ggsave(GP,file=gh('graphs/CEAC_{prevapproach}.png'),w=7,h=5)
 
 ## plot
 GP <- ggplot(ceaclm[variable=='idh'],aes(threshold,value,
-                        col=iso3)) +
+                        col=country)) +
   geom_line() +
   theme_classic() +
-  theme(legend.position = 'top')+
+  theme(legend.position = 'top',legend.title = element_blank())+
   ggpubr::grids()+
   ylab('Probability cost-effective')+
   xlab('Cost-effectiveness threshold (USD/DALY)')+
-  scale_colour_manual(values=cbPalette)
+  scale_colour_manual(values=cbPalette) + xlim(x=c(0,1500))
 GP
 
 ggsave(GP,file=gh('graphs/CEAC1_{prevapproach}.png'),w=7,h=5)
