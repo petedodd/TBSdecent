@@ -6,32 +6,32 @@ Partly-decentralized PHCs                                                      ,
  ¦   ¦   ¦   °--Clinical exam + CXR + Xpert Ultra on NPA & stool/sputum        ,1,c.d.ipd.dh.examCXRxns,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
  ¦   ¦   ¦       ¦--TB diagnosed (bacteriological)                             ,d.ipd.dh.ptbxns,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
  ¦   ¦   ¦       ¦   ¦--RifS-TB diagnosed                                      ,1-p.rr,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
- ¦   ¦   ¦       ¦   ¦   ¦--RifS-TB treatment                                  ,1-d.ptltfu,c.d.ipd.dh.rsATT,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0
+ ¦   ¦   ¦       ¦   ¦   ¦--RifS-TB treatment                                  ,1-d.ptltfu.soc,c.d.ipd.dh.rsATT,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0
  ¦   ¦   ¦       ¦   ¦   ¦   ¦--Survives                                       ,1-d.cfr.tx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
  ¦   ¦   ¦       ¦   ¦   ¦   °--Dies                                           ,d.cfr.tx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
- ¦   ¦   ¦       ¦   ¦   °--No TB treatment                                    ,d.ptltfu,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+ ¦   ¦   ¦       ¦   ¦   °--No TB treatment                                    ,d.ptltfu.soc,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
  ¦   ¦   ¦       ¦   ¦       ¦--Survives                                       ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
  ¦   ¦   ¦       ¦   ¦       °--Dies                                           ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
  ¦   ¦   ¦       ¦   °--RifR-TB diagnosed                                      ,p.rr,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
- ¦   ¦   ¦       ¦       ¦--RifR-TB treatment                                  ,1-d.ptltfu,c.d.ipd.dh.rrATT,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0
+ ¦   ¦   ¦       ¦       ¦--RifR-TB treatment                                  ,1-d.ptltfu.soc,c.d.ipd.dh.rrATT,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0
  ¦   ¦   ¦       ¦       ¦   ¦--Survives                                       ,1-d.cfr.tx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
  ¦   ¦   ¦       ¦       ¦   °--Dies                                           ,d.cfr.tx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
- ¦   ¦   ¦       ¦       °--No TB treatment                                    ,d.ptltfu,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+ ¦   ¦   ¦       ¦       °--No TB treatment                                    ,d.ptltfu.soc,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
  ¦   ¦   ¦       ¦           ¦--Survives                                       ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
  ¦   ¦   ¦       ¦           °--Dies                                           ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
  ¦   ¦   ¦       ¦--TB diagnosed (clinical)                                    ,d.ipd.dh.test.ptbc*(1-d.ipd.dh.ptbxns),0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
- ¦   ¦   ¦       ¦   ¦--RifS-TB treatment                                      ,1-d.ptltfu,c.d.ipd.dh.rsATT,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0
+ ¦   ¦   ¦       ¦   ¦--RifS-TB treatment                                      ,1-d.ptltfu.soc,c.d.ipd.dh.rsATT,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0
  ¦   ¦   ¦       ¦   ¦   ¦--Survives                                           ,1-d.cfr.tx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
  ¦   ¦   ¦       ¦   ¦   °--Dies                                               ,d.cfr.tx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
- ¦   ¦   ¦       ¦   °--No TB treatment                                        ,d.ptltfu,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+ ¦   ¦   ¦       ¦   °--No TB treatment                                        ,d.ptltfu.soc,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
  ¦   ¦   ¦       ¦       ¦--Survives                                           ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
  ¦   ¦   ¦       ¦       °--Dies                                               ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
 ¦   ¦   ¦       °--Reassessed at 7 days,(1-d.ipd.dh.test.ptbc)*(1-d.ipd.dh.ptbxns),c.d.ipd.dh.sreassess7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
  ¦   ¦   ¦           ¦--TB diagnosed (clinical)                                ,d.ipd.dh.test7.ptbc,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
- ¦   ¦   ¦           ¦   ¦--RifS-TB treatment                                  ,1-d.ptltfu,c.d.ipd.dh.rsATT,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0
+ ¦   ¦   ¦           ¦   ¦--RifS-TB treatment                                  ,1-d.ptltfu.soc,c.d.ipd.dh.rsATT,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0
  ¦   ¦   ¦           ¦   ¦   ¦--Survives                                       ,1-d.cfr.tx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
  ¦   ¦   ¦           ¦   ¦   °--Dies                                           ,d.cfr.tx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
- ¦   ¦   ¦           ¦   °--No TB treatment                                    ,d.ptltfu,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+ ¦   ¦   ¦           ¦   °--No TB treatment                                    ,d.ptltfu.soc,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
  ¦   ¦   ¦           ¦       ¦--Survives                                       ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
  ¦   ¦   ¦           ¦       °--Dies                                           ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
  ¦   ¦   ¦           °--No TB diagnosed                                        ,1-d.ipd.dh.test7.ptbc,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -48,42 +48,42 @@ Partly-decentralized PHCs                                                      ,
      ¦   ¦--Presumptive TB                                                     ,d.phc.prsmptv*d.ipd.phc.presumed,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
      ¦   ¦   ¦--Clinical exam only                                             ,1-d.ipd.phc.test,c.d.ipd.phc.exam,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦--TB diagnosed (clinical)                                    ,d.ipd.phc.notest.ptbc,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-     ¦   ¦   ¦   ¦   ¦--RifS-TB treatment                                      ,1-d.ptltfu,c.d.ipd.phc.rsATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
+     ¦   ¦   ¦   ¦   ¦--RifS-TB treatment                                      ,1-d.ptltfu.soc,c.d.ipd.phc.rsATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
      ¦   ¦   ¦   ¦   ¦   ¦--Survives                                           ,1-d.cfr.tx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦   °--Dies                                               ,d.cfr.tx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
-     ¦   ¦   ¦   ¦   °--No TB treatment                                        ,d.ptltfu,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+     ¦   ¦   ¦   ¦   °--No TB treatment                                        ,d.ptltfu.soc,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦       ¦--Survives                                           ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦       °--Dies                                               ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦--Refer to DH                                                ,d.ipd.phc.notest.referDH*(1-d.ipd.phc.notest.ptbc),c.d.ipd.phc.refer,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦--Clinical exam + CXR + Xpert Ultra on NPA & stool/sputum,1-d.ipd.rltfu,c.d.ipd.dh.examCXRxns,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦   ¦--TB diagnosed (bacteriological)                     ,d.ipd.dhrefnotest.ptbxns,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦   ¦   ¦--RifS-TB diagnosed                              ,1-p.rr,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-     ¦   ¦   ¦   ¦   ¦   ¦   ¦   ¦--RifS-TB treatment                          ,1-d.ptltfu,c.d.ipd.dh.rsATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
+     ¦   ¦   ¦   ¦   ¦   ¦   ¦   ¦--RifS-TB treatment                          ,1-d.ptltfu.soc,c.d.ipd.dh.rsATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
      ¦   ¦   ¦   ¦   ¦   ¦   ¦   ¦   ¦--Survives                               ,1-d.cfr.tx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦   ¦   ¦   ¦   °--Dies                                   ,d.cfr.tx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
-     ¦   ¦   ¦   ¦   ¦   ¦   ¦   °--No TB treatment                            ,d.ptltfu,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+     ¦   ¦   ¦   ¦   ¦   ¦   ¦   °--No TB treatment                            ,d.ptltfu.soc,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦   ¦   ¦       ¦--Survives                               ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦   ¦   ¦       °--Dies                                   ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦   ¦   °--RifR-TB diagnosed                              ,p.rr,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-     ¦   ¦   ¦   ¦   ¦   ¦       ¦--RifR-TB treatment                          ,1-d.ptltfu,c.d.ipd.dh.rrATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
+     ¦   ¦   ¦   ¦   ¦   ¦       ¦--RifR-TB treatment                          ,1-d.ptltfu.soc,c.d.ipd.dh.rrATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
      ¦   ¦   ¦   ¦   ¦   ¦       ¦   ¦--Survives                               ,1-d.cfr.tx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦   ¦       ¦   °--Dies                                   ,d.cfr.tx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
-     ¦   ¦   ¦   ¦   ¦   ¦       °--No TB treatment                            ,d.ptltfu,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+     ¦   ¦   ¦   ¦   ¦   ¦       °--No TB treatment                            ,d.ptltfu.soc,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦   ¦           ¦--Survives                               ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦   ¦           °--Dies                                   ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦   ¦--TB diagnosed (clinical)                            ,d.ipd.dhrefnotest.test.ptbc*(1-d.ipd.dhrefnotest.ptbxns),0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-     ¦   ¦   ¦   ¦   ¦   ¦   ¦--RifS-TB treatment                              ,1-d.ptltfu,c.d.ipd.dh.rsATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
+     ¦   ¦   ¦   ¦   ¦   ¦   ¦--RifS-TB treatment                              ,1-d.ptltfu.soc,c.d.ipd.dh.rsATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
      ¦   ¦   ¦   ¦   ¦   ¦   ¦   ¦--Survives                                   ,1-d.cfr.tx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦   ¦   ¦   °--Dies                                       ,d.cfr.tx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
-     ¦   ¦   ¦   ¦   ¦   ¦   °--No TB treatment                                ,d.ptltfu,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+     ¦   ¦   ¦   ¦   ¦   ¦   °--No TB treatment                                ,d.ptltfu.soc,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦   ¦       ¦--Survives                                   ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦   ¦       °--Dies                                       ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
 ¦   ¦   ¦   ¦   ¦   °--Reassessed at 7 days,(1-d.ipd.dhrefnotest.test.ptbc)*(1-d.ipd.dhrefnotest.ptbxns),c.d.ipd.dh.sreassess7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦       ¦--TB diagnosed (clinical)                        ,d.ipd.dh.test7.ptbc,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-     ¦   ¦   ¦   ¦   ¦       ¦   ¦--RifS-TB treatment                          ,1-d.ptltfu,c.d.ipd.dh.rsATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
+     ¦   ¦   ¦   ¦   ¦       ¦   ¦--RifS-TB treatment                          ,1-d.ptltfu.soc,c.d.ipd.dh.rsATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
      ¦   ¦   ¦   ¦   ¦       ¦   ¦   ¦--Survives                               ,1-d.cfr.tx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦       ¦   ¦   °--Dies                                   ,d.cfr.tx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
-     ¦   ¦   ¦   ¦   ¦       ¦   °--No TB treatment                            ,d.ptltfu,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+     ¦   ¦   ¦   ¦   ¦       ¦   °--No TB treatment                            ,d.ptltfu.soc,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦       ¦       ¦--Survives                               ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦       ¦       °--Dies                                   ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦       °--No TB diagnosed                                ,1-d.ipd.dh.test7.ptbc,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -98,24 +98,24 @@ Partly-decentralized PHCs                                                      ,
      ¦   ¦   °--Clinical exam + Xpert Ultra on sputum                          ,d.ipd.phc.test,c.d.ipd.phc.examxsp,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
      ¦   ¦       ¦--TB diagnosed (bacteriological)                             ,d.ipd.phc.ptbxsp,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
      ¦   ¦       ¦   ¦--RifS-TB diagnosed                                      ,1-p.rr,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-     ¦   ¦       ¦   ¦   ¦--RifS-TB treatment                                  ,1-d.ptltfu,c.d.ipd.phc.rsATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
+     ¦   ¦       ¦   ¦   ¦--RifS-TB treatment                                  ,1-d.ptltfu.soc,c.d.ipd.phc.rsATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
      ¦   ¦       ¦   ¦   ¦   ¦--Survives                                       ,1-d.cfr.tx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦       ¦   ¦   ¦   °--Dies                                           ,d.cfr.tx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
-     ¦   ¦       ¦   ¦   °--No TB treatment                                    ,d.ptltfu,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+     ¦   ¦       ¦   ¦   °--No TB treatment                                    ,d.ptltfu.soc,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
      ¦   ¦       ¦   ¦       ¦--Survives                                       ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦       ¦   ¦       °--Dies                                           ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦       ¦   °--RifR-TB diagnosed                                      ,p.rr,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-     ¦   ¦       ¦       ¦--RifR-TB treatment                                  ,1-d.ptltfu,c.d.ipd.phc.rrATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
+     ¦   ¦       ¦       ¦--RifR-TB treatment                                  ,1-d.ptltfu.soc,c.d.ipd.phc.rrATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
      ¦   ¦       ¦       ¦   ¦--Survives                                       ,1-d.cfr.tx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦       ¦       ¦   °--Dies                                           ,d.cfr.tx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
-     ¦   ¦       ¦       °--No TB treatment                                    ,d.ptltfu,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+     ¦   ¦       ¦       °--No TB treatment                                    ,d.ptltfu.soc,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
      ¦   ¦       ¦           ¦--Survives                                       ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦       ¦           °--Dies                                           ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦       ¦--TB diagnosed (clinical)                                    ,d.ipd.phc.test.ptbc*(1-d.ipd.phc.ptbxsp),0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-     ¦   ¦       ¦   ¦--RifS-TB treatment                                      ,1-d.ptltfu,c.d.ipd.phc.rsATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
+     ¦   ¦       ¦   ¦--RifS-TB treatment                                      ,1-d.ptltfu.soc,c.d.ipd.phc.rsATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
      ¦   ¦       ¦   ¦   ¦--Survives                                           ,1-d.cfr.tx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦       ¦   ¦   °--Dies                                               ,d.cfr.tx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
-     ¦   ¦       ¦   °--No TB treatment                                        ,d.ptltfu,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+     ¦   ¦       ¦   °--No TB treatment                                        ,d.ptltfu.soc,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
      ¦   ¦       ¦       ¦--Survives                                           ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦       ¦       °--Dies                                               ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦       ¦--No TB diagnosed                                            ,(1-d.ipd.phc.test.referDH)*(1-d.ipd.phc.test.ptbc)*(1-d.ipd.phc.ptbxsp),0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -125,32 +125,32 @@ Partly-decentralized PHCs                                                      ,
      ¦   ¦           ¦--Clinical exam + CXR + Xpert Ultra on NPA & stool/sputum,1-d.ipd.rltfu,c.d.ipd.dh.examCXRxns,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
      ¦   ¦           ¦   ¦--TB diagnosed (bacteriological)                     ,d.ipd.dhreftest.ptbxns,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
      ¦   ¦           ¦   ¦   ¦--RifS-TB diagnosed                              ,1-p.rr,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-     ¦   ¦           ¦   ¦   ¦   ¦--RifS-TB treatment                          ,1-d.ptltfu,c.d.ipd.dh.rsATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
+     ¦   ¦           ¦   ¦   ¦   ¦--RifS-TB treatment                          ,1-d.ptltfu.soc,c.d.ipd.dh.rsATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
      ¦   ¦           ¦   ¦   ¦   ¦   ¦--Survives                               ,1-d.cfr.tx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦           ¦   ¦   ¦   ¦   °--Dies                                   ,d.cfr.tx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
-     ¦   ¦           ¦   ¦   ¦   °--No TB treatment                            ,d.ptltfu,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+     ¦   ¦           ¦   ¦   ¦   °--No TB treatment                            ,d.ptltfu.soc,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
      ¦   ¦           ¦   ¦   ¦       ¦--Survives                               ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦           ¦   ¦   ¦       °--Dies                                   ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦           ¦   ¦   °--RifR-TB diagnosed                              ,p.rr,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-     ¦   ¦           ¦   ¦       ¦--RifR-TB treatment                          ,1-d.ptltfu,c.d.ipd.dh.rrATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
+     ¦   ¦           ¦   ¦       ¦--RifR-TB treatment                          ,1-d.ptltfu.soc,c.d.ipd.dh.rrATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
      ¦   ¦           ¦   ¦       ¦   ¦--Survives                               ,1-d.cfr.tx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦           ¦   ¦       ¦   °--Dies                                   ,d.cfr.tx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
-     ¦   ¦           ¦   ¦       °--No TB treatment                            ,d.ptltfu,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+     ¦   ¦           ¦   ¦       °--No TB treatment                            ,d.ptltfu.soc,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
      ¦   ¦           ¦   ¦           ¦--Survives                               ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦           ¦   ¦           °--Dies                                   ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦           ¦   ¦--TB diagnosed (clinical)                            ,d.ipd.dhreftest.test.ptbc*(1-d.ipd.dhreftest.ptbxns),0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-     ¦   ¦           ¦   ¦   ¦--RifS-TB treatment                              ,1-d.ptltfu,c.d.ipd.dh.rsATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
+     ¦   ¦           ¦   ¦   ¦--RifS-TB treatment                              ,1-d.ptltfu.soc,c.d.ipd.dh.rsATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
      ¦   ¦           ¦   ¦   ¦   ¦--Survives                                   ,1-d.cfr.tx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦           ¦   ¦   ¦   °--Dies                                       ,d.cfr.tx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
-     ¦   ¦           ¦   ¦   °--No TB treatment                                ,d.ptltfu,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+     ¦   ¦           ¦   ¦   °--No TB treatment                                ,d.ptltfu.soc,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
      ¦   ¦           ¦   ¦       ¦--Survives                                   ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦           ¦   ¦       °--Dies                                       ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
 ¦   ¦           ¦   °--Reassessed at 7 days,(1-d.ipd.dhreftest.test.ptbc)*(1-d.ipd.dhreftest.ptbxns),c.d.ipd.dh.sreassess7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
      ¦   ¦           ¦       ¦--TB diagnosed (clinical)                        ,d.ipd.dh.test7.ptbc,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-     ¦   ¦           ¦       ¦   ¦--RifS-TB treatment                          ,1-d.ptltfu,c.d.ipd.dh.rsATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
+     ¦   ¦           ¦       ¦   ¦--RifS-TB treatment                          ,1-d.ptltfu.soc,c.d.ipd.dh.rsATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
      ¦   ¦           ¦       ¦   ¦   ¦--Survives                               ,1-d.cfr.tx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦           ¦       ¦   ¦   °--Dies                                   ,d.cfr.tx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
-     ¦   ¦           ¦       ¦   °--No TB treatment                            ,d.ptltfu,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+     ¦   ¦           ¦       ¦   °--No TB treatment                            ,d.ptltfu.soc,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
      ¦   ¦           ¦       ¦       ¦--Survives                               ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦           ¦       ¦       °--Dies                                   ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦           ¦       °--No TB diagnosed                                ,1-d.ipd.dh.test7.ptbc,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

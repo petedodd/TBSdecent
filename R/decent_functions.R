@@ -41,23 +41,23 @@ AddSampleTests <- function(D){
 
   ## ------- X on NPA or stool/sputum ------- NOTE working with stool for now; also assuming all same
   ## IDH, at DH: TB dx bac+ on Xpert Ultra on NPA & stool/sputum, in people identified as having presumptive TB
-  D[,d.idh.dh.ptbxns:=TBbac4ST1orST2(ST.poss,ifelse(tb=='TB+',sens.xnpa,1-spec.xnpa),
-                                  NPA.poss,ifelse(tb=='TB+',sens.xstool,1-spec.xstool))]
+  D[,d.idh.dh.ptbxns:=TBbac4ST1orST2(ST.poss.dh,ifelse(tb=='TB+',sens.xnpa,1-spec.xnpa),
+                                  NPA.poss.dh,ifelse(tb=='TB+',sens.xstool,1-spec.xstool))]
   ## IPH, at DH: TB dx bac+ on Xpert Ultra on NPA & stool/sputum, in people identified as having presumptive TB
-  D[,d.iph.dh.ptbxns:=TBbac4ST1orST2(ST.poss,ifelse(tb=='TB+',sens.xnpa,1-spec.xnpa),
-                                  NPA.poss,ifelse(tb=='TB+',sens.xstool,1-spec.xstool))]
+  D[,d.iph.dh.ptbxns:=TBbac4ST1orST2(ST.poss.dh,ifelse(tb=='TB+',sens.xnpa,1-spec.xnpa),
+                                  NPA.poss.dh,ifelse(tb=='TB+',sens.xstool,1-spec.xstool))]
   ## IPH, at PHC: TB dx bac+ on Xpert Ultra on NPA & stool/sputum, in people identified as having presumptive TB
-  D[,d.iph.phc.ptbxns:=TBbac4ST1orST2(ST.poss,ifelse(tb=='TB+',sens.xnpa,1-spec.xnpa),
-                                   NPA.poss,ifelse(tb=='TB+',sens.xstool,1-spec.xstool))]
+  D[,d.iph.phc.ptbxns:=TBbac4ST1orST2(ST.poss.phc,ifelse(tb=='TB+',sens.xnpa,1-spec.xnpa),
+                                   NPA.poss.phc,ifelse(tb=='TB+',sens.xstool,1-spec.xstool))]
   ## IPD, at DH: TB dx bac+ on Xpert Ultra on NPA & stool/sputum, in people identified as having presumptive TB
-  D[,d.ipd.dh.ptbxns:=TBbac4ST1orST2(ST.poss,ifelse(tb=='TB+',sens.xnpa,1-spec.xnpa),
-                                  NPA.poss,ifelse(tb=='TB+',sens.xstool,1-spec.xstool))]
+  D[,d.ipd.dh.ptbxns:=TBbac4ST1orST2(ST.poss.dh,ifelse(tb=='TB+',sens.xnpa,1-spec.xnpa),
+                                  NPA.poss.dh,ifelse(tb=='TB+',sens.xstool,1-spec.xstool))]
   ## IPD, at DH: TB dx bac+ on Xpert Ultra on NPA & stool/sputum, in people chosen to be referred from PHC who were bac- on sputum test at PHC
-  D[,d.ipd.dhreftest.ptbxns:=TBbac4ST1orST2(ST.poss,ifelse(tb=='TB+',sens.xnpa,1-spec.xnpa),
-                                         NPA.poss,ifelse(tb=='TB+',sens.xstool,1-spec.xstool))]
+  D[,d.ipd.dhreftest.ptbxns:=TBbac4ST1orST2(ST.poss.dh,ifelse(tb=='TB+',sens.xnpa,1-spec.xnpa),
+                                         NPA.poss.dh,ifelse(tb=='TB+',sens.xstool,1-spec.xstool))]
   ## IPD, at DH: TB dx bac+ on Xpert Ultra on NPA & stool/sputum, in people chosen to be referred from PHC who were not tested at PHC
-  D[,d.ipd.dhrefnotest.ptbxns:=TBbac4ST1orST2(ST.poss,ifelse(tb=='TB+',sens.xnpa,1-spec.xnpa),
-                                           NPA.poss,ifelse(tb=='TB+',sens.xstool,1-spec.xstool))]
+  D[,d.ipd.dhrefnotest.ptbxns:=TBbac4ST1orST2(ST.poss.dh,ifelse(tb=='TB+',sens.xnpa,1-spec.xnpa),
+                                           NPA.poss.dh,ifelse(tb=='TB+',sens.xstool,1-spec.xstool))]
 
   ## ------- X on sputum/GA -------
   ## SOC, at DH: people receiving Xpert Ultra testing [either sputum or GA], in those identified as having presumptive TB

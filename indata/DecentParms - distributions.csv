@@ -1,15 +1,18 @@
 NAME,DISTRIBUTION,MEDIAN (IQR),DESCRIPTION,SOURCE,NOTES,CATEGORY,"WORKING NOTES, QUERIES, ACTIONS",NOTES - TBS STUDY
 d.ptltfu,"B(3.6,68.4)",0.046 (0.031 - 0.064),pre-treatment loss to follow up,5% (0-10%). Assumption,,Common,Bolded names col 1 are parms more funamental to corresponding labels,Available by patient attributes
-d.iph.phc.test7.referDH,1,,IPH: people referred to DH from PHC due to ongoing symptoms at 7-day reassessment following bac- clin- initial test,100%. As protocol,"Table 11, p18 Footnote",,,
-d.ipd.phc.test.referDH,"B(2,98)",0.017 (0.010 - 0.027),IPD: people chosen to be referred to DH from PHC following bac- initial sputum test,2%. Placeholder assumption,"Table 11, p18 Footnote",,Update with intervention phase data,
-d.ipd.phc.notest.referDH,"B(5,5)",0.500 (0.392 - 0.608),IPD: people chosen to be referred to DH from PHC following initial clinical exam only,50%. Placeholder assumption,"Table 11, p18 Footnote",,Update with intervention phase data,
-d.soc.phc.test.referDH,"B(2,98)",0.017 (0.010 - 0.027),SOC: people chosen to be referred to DH from PHC following bac- initial sputum test,2%. Placeholder assumption,"Table 11, p18",,Update with observation phase data,
-d.soc.phc.notest.referDH,"B(5,5)",0.500 (0.392 - 0.608),SOC: people chosen to be referred to DH from PHC following initial clinical exam only,50%. Placeholder assumption,"Table 11, p18",,Update with observation phase data,
-d.idh.rltfu,"B(2,8)",,"IDH: referral loss to follow up, all people with presumptive TB referred to DH",20%. Placeholder assumption (Marc email),"Table 12, p19 Footnote",,"Update with intervention phase data. Ideally pathway-specific, but may need to use the same rate for all pathways if little data/wide ranges",
-d.iph.rltfu,"B(2,8)",,"IDH: referral loss to follow up, people referred to DH from PHC due to ongoing symptoms at 7-day reassessment following bac- clin- initial test",20%. Placeholder assumption (Marc email),"Table 12, p19 Footnote",,,
-d.ipd.rltfu,"B(2,8)",,"IDH: referral loss to follow up, people chosen to be referred to DH from PHC following either clinical exam only or bac- sputum test",20%. Placeholder assumption (Marc email),"Table 12, p19 Footnote",,,
-d.soc.rltfu,"B(2,8)",,"SOC: referral loss to follow up, people chosen to be referred to DH from PHC following either clinical exam only or bac- sputum test",20%. Placeholder assumption (Marc email),"Table 12, p19",,,
-d.ipd.phc.test.o5,"B(3.5,31.5)",,"IPD, at PHC: people receiving Xpert Ultra testing [on sputum], in people identified as having presumptive TB",10% (0-20%). Placeholder assumption [using same assumption as SOC],"Table 7, p13 (=0 in u5)",Testing,"PD: MH to check. MH: Yes, but to update with real data from IPD",
+d.ptltfu.soc,0.15,,pre-treatment loss to follow up,,,,,Available by patient attributes
+d.ptltfu.idh,0.11,,pre-treatment loss to follow up,,,,,
+d.ptltfu.iph,0.25,,pre-treatment loss to follow up,,,,,
+d.iph.phc.test7.referDH,1,,IPH: people referred to DH from PHC due to ongoing symptoms at 7-day reassessment following bac- clin- initial test,100%. As protocol,"Table 11, p18 Footnote",,,Not available
+d.ipd.phc.test.referDH,"B(2,98)",0.017 (0.010 - 0.027),IPD: people chosen to be referred to DH from PHC following bac- initial sputum test,2%. Placeholder assumption,"Table 11, p18 Footnote",,Update with intervention phase data,Not available
+d.ipd.phc.notest.referDH,"B(5,5)",0.500 (0.392 - 0.608),IPD: people chosen to be referred to DH from PHC following initial clinical exam only,50%. Placeholder assumption,"Table 11, p18 Footnote",,Update with intervention phase data,Not available
+d.soc.phc.test.referDH,"B(2,98)",0.017 (0.010 - 0.027),SOC: people chosen to be referred to DH from PHC following bac- initial sputum test,2%. Placeholder assumption,"Table 11, p18",,Update with observation phase data,Not available
+d.soc.phc.notest.referDH,"B(5,5)",0.500 (0.392 - 0.608),SOC: people chosen to be referred to DH from PHC following initial clinical exam only,50%. Placeholder assumption,"Table 11, p18",,Update with observation phase data,Not available
+d.idh.rltfu,"B(2,8)",,"IDH: referral loss to follow up, all people with presumptive TB referred to DH",20%. Placeholder assumption (Marc email),"Table 12, p19 Footnote",,"Update with intervention phase data. Ideally pathway-specific, but may need to use the same rate for all pathways if little data/wide ranges",marc to extract from referral data (Mastula)
+d.iph.rltfu,"B(2,8)",,"IDH: referral loss to follow up, people referred to DH from PHC due to ongoing symptoms at 7-day reassessment following bac- clin- initial test",20%. Placeholder assumption (Marc email),"Table 12, p19 Footnote",,,marc to extract from referral data (Mastula)
+d.ipd.rltfu,"B(2,8)",,"IDH: referral loss to follow up, people chosen to be referred to DH from PHC following either clinical exam only or bac- sputum test",20%. Placeholder assumption (Marc email),"Table 12, p19 Footnote",,,marc to extract from referral data (Mastula)
+d.soc.rltfu,"B(2,8)",,"SOC: referral loss to follow up, people chosen to be referred to DH from PHC following either clinical exam only or bac- sputum test",20%. Placeholder assumption (Marc email),"Table 12, p19",,,Not available
+d.ipd.phc.test.o5,"B(3.5,31.5)",,"IPD, at PHC: people receiving Xpert Ultra testing [on sputum], in people identified as having presumptive TB",10% (0-20%). Placeholder assumption [using same assumption as SOC],"Table 7, p13 (=0 in u5)",Testing,"PD: MH to check. MH: Yes, but to update with real data from IPD",Not available
 d.soc.dh.test.o5,"B(4.48,10.45)",0.291 (0.215 - 0.375),"SOC, at DH: people receiving Xpert Ultra testing [either sputum or GA], in those identified as having presumptive TB","30% (7.5-52.5%). O1 baseline assessment, expert opinion","Table 7, p13",,,
 d.soc.dh.test.u5,"B(3.36,30.22)",0.092 (0.062 - 0.130),"SOC, at DH: people receiving Xpert Ultra testing [on GA], in those identified as having presumptive TB","10% (0-20%). O1 baseline assessment, expert opinion","Table 7, p13",,,
 d.soc.dh.fracsp.o5,"B(24.63,12.31)",0.670 (0.616 - 0.721),"SOC, at DH: people receiving Xpert Ultra on a sputum sample, of those receiving any Xpert test [the remainder receiving it on a GA sample]","66.7% (50-80%). O1 baseline assessment, expert opinion","Table 7, p13 (=0 in u5)",,,
@@ -20,8 +23,10 @@ GA.poss.dh.o5,"B(3.5,31.5)",0.092 (0.063 - 0.129),% of patients identified as ha
 GA.poss.dh.u5,"B(3.5,31.5)",0.092 (0.063 - 0.129),% of patients identified as having presumptive TB who give a GA sample: <5s,"10% (0-20%). O1 baseline assessment, expert opinion","Table 5, p11",,,
 d.soc.phc.smear.o5,"B(3.25,18.4166666666667)",0.139 (0.094 - 0.195),% of patients identified as having presumptive TB who receive smear microscopy on a sputum sample,"15% (0-30%) = 60% * ES.poss.phc.o5. O1 baseline assessment, expert opinion","Table 6, p12",,,
 d.soc.dh.smear.o5,"B(5.48888888888889,21.9555555555556)",0.193 (0.145 - 0.247),% of patients identified as having presumptive TB who receive smear microscopy on a sputum sample,"20% (5-35%) = 50% * ES.poss.dh.o5. O1 baseline assessment, expert opinion","Table 6, p12",,,
-NPA.poss,"B(7,3)",0.714 (0.609 - 0.804),% patients in whom NPA sample is possible,placeholder [=??],,,,Available by patient attributes
-ST.poss,"B(8,2)",0.820 (0.728 - 0.893),% patients in whom Stool sample possible,placeholder [=??],,,,Available by patient attributes
+NPA.poss.dh,0.93,,% patients in whom NPA sample is possible,,,,,Available by patient attributes
+NPA.poss.phc,0.98,,% patients in whom NPA sample is possible,,,,,Available by patient attributes
+ST.poss.phc,0.61,,% patients in whom Stool sample possible,,,,,Available by patient attributes
+ST.poss.dh,0.77,,% patients in whom Stool sample possible,,,,,Available by patient attributes
 sens.xstool,"B(21.716911549042,13.5951397502133)",0.617 (0.561 - 0.672),sensitivity of Xpert Ultra on stool in bac+ children,61.5% (44.1-76.4%). Kay 2020,"Table 9, p15",Dx accuracy,"Update from Output 4 SP results. We will need 4 alternatives, i.e. sens.xstool.SSF, sens.xstool.OSF, sens.xstool.SOS, sens.xstool.SPK",
 spec.xstool,"B(480.118305785123,7.31144628099173)",0.986 (0.982 - 0.989),specificity of Xpert Ultra stool in bac+ children,98.5% (97.0-99.2%). Kay 2020,"Table 9, p15",,As above,
 sens.xnpa,"B(14.876289210384,17.67576595457)",0.456 (0.397 - 0.516),sensitivity of Xpert Ultra on NPA in bac+ children,45.7% (28.9-63.3%). Kay 2020,"Table 9, p15",,,
@@ -44,20 +49,20 @@ notxH.u5,"B(77.13050,11.10817)",0.877 (0.852 - 0.899),CFR children <5 without TB
 notxH.o5,"B(19.59083,6.89700)",0.746 (0.686 - 0.800),CFR children 5-14 without TB treatment (HIV+/ART-),Dodd et al 2017,used in d.cfr.notx,,,
 notxHA.u5,"B(15.18683,12.87500)",0.542 (0.478 - 0.605),CFR children <5 without TB treatment (HIV+/ART+),Dodd et al 2017,used in d.cfr.notx,,,
 notxHA.o5,"B(10.43383,11.08417)",0.484 (0.412 - 0.558),CFR children 5-14 without TB treatment (HIV+/ART+),Dodd et al 2017,used in d.cfr.notx,,,
-prr,"B(2.1525,69.5975)",0.026 (0.015 - 0.040),prevalence of rifampicin resistance in people with TB,3% (SD=2%). Placeholder assumption,,Epidemiology,Update using country-specific data,
+prr,0.01,,prevalence of rifampicin resistance in people with TB,,,,,
 d.hivprev.u5,"B(2,8)",0.180 (0.107 - 0.272),HIV prevalence <5,placeholder PJD ,,,Update using country-specific data. Note no difference in cohort by DH vs PHC,
 d.hivprev.o5,"B(2,8)",0.180 (0.107 - 0.272),HIV prevalence >5,placeholder PJD ,,,Update using country-specific data,
 d.artcov,"B(8,2)",0.820 (0.728 - 0.893),ART coverage,placeholder PJD ,,,,
 Fbc.u5,"B(17,23)",0.424 (0.371 - 0.477),fraction of children bacteriologically confirmable under 5,Zar,,,MH: Where will this come from?,
 Fbc.o5,"B(3,3)",0.500 (0.359 - 0.641),fraction of children bacteriologically confirmable over 5,placeholder PJD ,,,MH: Where will this come from?,
-d.idh.pphc.u5,,,IDH: proportion of patients who initially present at PHC,,,FROM CASCADE (computed in model),Look at intervention phase data for interest (sense checking),Available - not by attributes
-d.iph.pphc.u5,,,IPH: proportion of patients who initially present at PHC,,,,Look at intervention phase data for interest (sense checking),Available - not by attributes
-d.ipd.pphc.u5,,,IPD: proportion of patients who initially present at PHC,,,,Look at intervention phase data for interest (sense checking),Available - not by attributes
-d.soc.pphc.u5,,,SOC: proportion of patients who initially present at PHC,,,,Look at intervention phase data for interest (sense checking),
-d.idh.pphc.o5,,,,,,,,
-d.iph.pphc.o5,,,,,,,,
-d.ipd.pphc.o5,,,,,,,,
-d.soc.pphc.o5,,,,,,,,
+d.idh.pphc.u5,,0.57,IDH: proportion of patients who initially present at PHC,,,FROM CASCADE (computed in model),Look at intervention phase data for interest (sense checking),
+d.iph.pphc.u5,,0.74,IPH: proportion of patients who initially present at PHC,,,,Look at intervention phase data for interest (sense checking),
+d.ipd.pphc.u5,,,IPD: proportion of patients who initially present at PHC,,,,Look at intervention phase data for interest (sense checking),Not available
+d.soc.pphc.u5,,,SOC: proportion of patients who initially present at PHC,,,,Look at intervention phase data for interest (sense checking),Not available
+d.idh.pphc.o5,,0.57,,,,,,
+d.iph.pphc.o5,,0.74,,,,,,
+d.ipd.pphc.o5,,,,,,,,Not available
+d.soc.pphc.o5,,,,,,,,Not available
 d.F.u5,,,fraction of presenting children under 5,,,,,
 d.soc.dh.assess.u5,,,assessment/screening coverage,,,,,
 d.soc.dh.assess.o5,,,assessment/screening coverage,,,,,
