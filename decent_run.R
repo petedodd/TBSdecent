@@ -144,7 +144,7 @@ tosum <- c(setdiff(toget,notwt),lyarm)
 heur <- c('id','value','deaths.iph','deaths.soc')
 out <- D[,..heur]
 out <- out[,lapply(.SD,function(x) sum(x*value)),.SDcols=c('deaths.iph','deaths.soc'),by=id] #sum against popn
-topl <- 1/out[,mean(deaths.soc-deaths.iph)]
+topl <- 0.25/out[,mean(deaths.soc-deaths.iph)]
 lz <- seq(from = 0,to=topl,length.out = 1000) #threshold vector for CEACs
 
 
@@ -238,7 +238,7 @@ GP <- ggplot(ceaclm[variable=='idh'],aes(threshold,value,
   ggpubr::grids()+
   ylab('Probability cost-effective')+
   xlab('Cost-effectiveness threshold (USD/DALY)')+
-  scale_colour_manual(values=cbPalette) + xlim(x=c(0,1500))
+  scale_colour_manual(values=cbPalette) ## + xlim(x=c(0,1500))
 GP
 
 ggsave(GP,file=gh('graphs/CEAC1_{prevapproach}.png'),w=7,h=5)
