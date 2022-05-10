@@ -145,7 +145,8 @@ tosum <- c(setdiff(toget,notwt),lyarm)
 heur <- c('id','value','deaths.iph','deaths.soc')
 out <- D[,..heur]
 out <- out[,lapply(.SD,function(x) sum(x*value)),.SDcols=c('deaths.iph','deaths.soc'),by=id] #sum against popn
-topl <- 0.25/out[,mean(deaths.soc-deaths.iph)]
+## topl <- 0.25/out[,mean(deaths.soc-deaths.iph)]
+topl <- 300
 lz <- seq(from = 0,to=topl,length.out = 1000) #threshold vector for CEACs
 
 
