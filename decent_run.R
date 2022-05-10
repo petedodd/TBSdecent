@@ -47,6 +47,7 @@ setdiff(unique(rcsts$NAME),
 setdiff(unique(csts$cost),
         unique(rcsts$NAME))
 allcosts <- reformatCosts(rcsts)
+allcosts[cost.sd==0,cost.sd:=cost.m/40]        #SD such that 95% UI ~ 10% of mean
 C <- MakeCostData(allcosts[iso3=='CIV'],nreps)               #make cost PSA
 
 ## prior parameters
