@@ -1,7 +1,7 @@
 NAME,DISTRIBUTION,MEDIAN (IQR),DESCRIPTION,SOURCE,NOTES,CATEGORY,"WORKING NOTES, QUERIES, ACTIONS",NOTES - TBS STUDY
 d.ptltfu,"B(3.6,68.4)",0.046 (0.031 - 0.064),pre-treatment loss to follow up,5% (0-10%). Assumption,,Common,Bolded names col 1 are parms more funamental to corresponding labels,Available by patient attributes
 d.ptltfu.soc,0.15,,pre-treatment loss to follow up,,,,,Available by patient attributes
-d.ptltfu.idh,0.11,,pre-treatment loss to follow up,,,,,
+d.ptltfu.idh,0.13,,pre-treatment loss to follow up,,,,,
 d.ptltfu.iph,0.25,,pre-treatment loss to follow up,,,,,
 d.iph.phc.test7.referDH,1,,IPH: people referred to DH from PHC due to ongoing symptoms at 7-day reassessment following bac- clin- initial test,100%. As protocol,"Table 11, p18 Footnote",,,Not available
 d.ipd.phc.test.referDH,"B(2,98)",0.017 (0.010 - 0.027),IPD: people chosen to be referred to DH from PHC following bac- initial sputum test,2%. Placeholder assumption,"Table 11, p18 Footnote",,Update with intervention phase data,Not available
