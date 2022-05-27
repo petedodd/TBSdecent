@@ -211,7 +211,8 @@ ceaclm <- melt(ceacl,id=c('iso3','threshold'))
 ceaclm[,Intervention:=ifelse(variable=='iph','PHC-focussed','DH-focussed')]
 ## name key
 ckey <- data.table(iso3=c('KHM','CMR','CIV','MOZ','SLE','UGA','ZMB'),
-                   country=c('Cambodia','Cameroon',"Cote d'Ivoire",'Mozambique','Sierra Leone','Uganda','Zambia'))
+                   country=c('Cambodia','Cameroon',"C\u00F4te d'Ivoire",
+                             'Mozambique','Sierra Leone','Uganda','Zambia'))
 
 ceaclm <- merge(ceaclm,ckey,by='iso3',all.x=TRUE)
 

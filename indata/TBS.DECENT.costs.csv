@@ -1,44 +1,44 @@
 ,,,Cambodia,,,Cameroon,,,Côte d'Ivoire,,,Mozambique,,,Sierra Leone,,,Uganda,,,Zambia,
 COSTS,DESCRIPTION,NAME,Low,High,,Low,High,,Low,High,,Low,High,,Low,High,,Low,High,,Low,High
-Screening,"SOC, at DH: non-systematic initial assessment",c.d.soc.dh.nsassess,2,2,,2,2,,2,2,,2,2,,2,2,,2,2,,2,2
-,"SOC, at PHC: non-systematic initial assessment",c.d.soc.phc.nsassess,2,2,,2,2,,2,2,,2,2,,2,2,,2,2,,2,2
-,"IDH, at DH: systematic initial screening assessment",c.d.idh.dh.sassess,2,2,,2,2,,2,2,,2,2,,2,2,,2,2,,2,2
-,"IDH, at PHC: systematic initial screening assessment",c.d.idh.phc.sassess,2,2,,2,2,,2,2,,2,2,,2,2,,2,2,,2,2
-,"IPH, at DH: systematic initial screening assessment",c.d.iph.dh.sassess,2,2,,2,2,,2,2,,2,2,,2,2,,2,2,,2,2
-,"IPH, at PHC: systematic initial screening assessment",c.d.iph.phc.sassess,2,2,,2,2,,2,2,,2,2,,2,2,,2,2,,2,2
-,"IPD, at DH: systematic initial screening assessment",c.d.ipd.dh.sassess,2,2,,2,2,,2,2,,2,2,,2,2,,2,2,,2,2
-,"IPD, at PHC: systematic initial screening assessment",c.d.ipd.phc.sassess,2,2,,2,2,,2,2,,2,2,,2,2,,2,2,,2,2
-Reassessment,"IDH, at DH: systematic clinical reassessment after 7 days",c.d.idh.dh.sreassess7,3,3,,2,3,,3,3,,2,3,,3,4,,2,3,,3,4
-,"IPH, at DH: systematic clinical reassessment after 7 days",c.d.iph.dh.sreassess7,3,3,,2,3,,3,3,,2,3,,3,4,,2,3,,3,4
-,"IPH, at PHC: systematic clinical reassessment after 7 days",c.d.iph.phc.sreassess7,3,3,,2,3,,3,3,,2,3,,3,4,,2,3,,3,4
-,"IPD, at DH: systematic clinical reassessment after 7 days",c.d.ipd.dh.sreassess7,3,3,,2,3,,3,3,,2,3,,3,4,,2,3,,3,4
-Exams & tests,"IPH, at DH: CXR only",c.d.iph.dh.CXR,1,1,,1,2,,2,2,,1,2,,1,3,,1,2,,2,2
-,"IPH, at PHC: clinical exam only",c.d.ipd.phc.exam,29,29,,27,29,,28,30,,26,28,,27,30,,28,29,,28,29
-,"SOC, at PHC: clinical exam + smear [for some]",c.d.soc.phc.exam,29,29,,27,29,,28,30,,27,28,,27,30,,28,29,,28,29
-,"SOC, at DH: clinical exam + CXR [for some] + smear [for some]",c.d.soc.dh.examCXR,29,29,,27,29,,28,30,,27,28,,27,30,,28,29,,28,29
-,"SOC, at DH: clinical exam + Xpert Ultra on sputum + CXR [for some] + smear [for some]",c.d.soc.dh.examCXRxsp,29,30,,28,30,,29,31,,27,29,,27,31,,28,30,,29,30
-,"SOC, at DH: clinical exam + Xpert Ultra on GA + CXR [for some] + smear [for some]",c.d.soc.dh.examCXRxga,50,52,,47,52,,48,53,,46,51,,46,53,,48,52,,48,52
-,"IDH, at DH: clinical exam + CXR + Xpert Ultra on NPA & stool/sputum",c.d.idh.dh.examCXRxns,60,64,,61,68,,62,69,,53,59,,52,60,,56,61,,61,68
-,"IPH, at DH: clinical exam + CXR + Xpert Ultra on NPA & stool/sputum",c.d.iph.dh.examCXRxns,74,81,,70,80,,72,82,,69,79,,70,81,,72,80,,72,81
-,"IPD, at DH: clinical exam + CXR + Xpert Ultra on NPA & stool/sputum",c.d.ipd.dh.examCXRxns,74,81,,70,80,,72,82,,69,79,,70,81,,72,80,,72,81
-,"IPH, at PHC: clinical exam + Xpert Ultra on NPA & stool/sputum",c.d.iph.phc.examxns,74,81,,70,80,,72,82,,69,79,,70,81,,72,80,,72,81
-,"IPD, at PHC: clinical exam + Xpert Ultra on sputum",c.d.ipd.phc.examxsp,73,79,,69,78,,71,80,,68,77,,68,78,,70,78,,70,79
-,"SOC, at PHC: clinical exam + Xpert Ultra on sputum + smear [for some]",c.d.soc.phc.examxsp,49,52,,46,51,,48,52,,45,50,,46,52,,47,51,,48,51
-Referral,"SOC, at PHC: refer to DH",c.d.soc.phc.refer,49,52,,46,51,,48,52,,46,50,,46,52,,47,51,,48,52
+Screening,"SOC, at DH: non-systematic initial assessment",c.d.soc.dh.nsassess,0.730747282,0.783369316,,1.404206139,1.613865208,,1.084321337,1.325780311,,1.176116682,1.382668593,,0.669435211,0.875987122,,1.287862911,1.376796774,,1.411747755,1.509788589
+,"SOC, at PHC: non-systematic initial assessment",c.d.soc.phc.nsassess,0.730747282,0.783369316,,1.404206139,1.613865208,,1.084321337,1.325780311,,1.176116682,1.382668593,,0.669435211,0.875987122,,1.287862911,1.376796774,,1.411747755,1.509788589
+,"IDH, at DH: systematic initial screening assessment",c.d.idh.dh.sassess,0.730747282,0.783369316,,1.404206139,1.613865208,,1.084321337,1.325780311,,1.176116682,1.382668593,,0.669435211,0.875987122,,1.287862911,1.376796774,,1.411747755,1.509788589
+,"IDH, at PHC: systematic initial screening assessment",c.d.idh.phc.sassess,0.730747282,0.783369316,,1.404206139,1.613865208,,1.084321337,1.325780311,,1.176116682,1.382668593,,0.669435211,0.875987122,,1.287862911,1.376796774,,1.411747755,1.509788589
+,"IPH, at DH: systematic initial screening assessment",c.d.iph.dh.sassess,0.730747282,0.783369316,,1.404206139,1.613865208,,1.084321337,1.325780311,,1.176116682,1.382668593,,0.669435211,0.875987122,,1.287862911,1.376796774,,1.411747755,1.509788589
+,"IPH, at PHC: systematic initial screening assessment",c.d.iph.phc.sassess,0.730747282,0.783369316,,1.404206139,1.613865208,,1.084321337,1.325780311,,1.176116682,1.382668593,,0.669435211,0.875987122,,1.287862911,1.376796774,,1.411747755,1.509788589
+,"IPD, at DH: systematic initial screening assessment",c.d.ipd.dh.sassess,0.730747282,0.783369316,,1.404206139,1.613865208,,1.084321337,1.325780311,,1.176116682,1.382668593,,0.669435211,0.875987122,,1.287862911,1.376796774,,1.411747755,1.509788589
+,"IPD, at PHC: systematic initial screening assessment",c.d.ipd.phc.sassess,0.730747282,0.783369316,,1.404206139,1.613865208,,1.084321337,1.325780311,,1.176116682,1.382668593,,0.669435211,0.875987122,,1.287862911,1.376796774,,1.411747755,1.509788589
+Reassessment,"IDH, at DH: systematic clinical reassessment after 7 days",c.d.idh.dh.sreassess7,0.85566086,1.097711068,,1.674291772,2.081739708,,1.810431744,2.363636503,,1.617924642,2.129645083,,1.461946254,3.10402458,,1.320140433,1.996723314,,2.419660385,2.945943425
+,"IPH, at DH: systematic clinical reassessment after 7 days",c.d.iph.dh.sreassess7,0.85566086,1.097711068,,1.674291772,2.081739708,,1.810431744,2.363636503,,1.617924642,2.129645083,,1.461946254,3.10402458,,1.320140433,1.996723314,,2.419660385,2.945943425
+,"IPH, at PHC: systematic clinical reassessment after 7 days",c.d.iph.phc.sreassess7,0.85566086,1.097711068,,1.674291772,2.081739708,,1.810431744,2.363636503,,1.617924642,2.129645083,,1.461946254,3.10402458,,1.320140433,1.996723314,,2.419660385,2.945943425
+,"IPD, at DH: systematic clinical reassessment after 7 days",c.d.ipd.dh.sreassess7,0.85566086,1.097711068,,1.674291772,2.081739708,,1.810431744,2.363636503,,1.617924642,2.129645083,,1.461946254,3.10402458,,1.320140433,1.996723314,,2.419660385,2.945943425
+Exams & tests,"IPH, at DH: CXR only",c.d.iph.dh.CXR,1.597991531,1.926532999,,2.011929829,2.489329254,,2.817502647,3.541335078,,1.941320529,2.58387069,,2.607438118,4.092287772,,2.119477855,2.99853202,,2.954892849,3.590270547
+,"IPH, at PHC: clinical exam only",c.d.ipd.phc.exam,8.110016865,8.657318401,,10.88562785,12.72821378,,10.3586014,12.47181714,,9.74632068,11.6098546,,8.06713112,11.06102293,,10.57956789,11.78034887,,11.81127671,12.99479505
+,"SOC, at PHC: clinical exam + smear [for some]",c.d.soc.phc.exam,8.285209457,8.84721902,,11.15315317,13.03039361,,10.65114901,12.799588,,10.07219996,11.97597497,,8.225045601,11.24117907,,10.78410006,12.00475509,,12.18216902,13.403878
+,"SOC, at DH: clinical exam + CXR [for some] + smear [for some]",c.d.soc.dh.examCXR,8.241411309,8.799743865,,11.08627184,12.95484865,,10.57801211,12.71764529,,9.990730137,11.88444488,,8.185566981,11.19614004,,10.73296702,11.94865354,,12.08944595,13.30160726
+,"SOC, at DH: clinical exam + Xpert Ultra on sputum + CXR [for some] + smear [for some]",c.d.soc.dh.examCXRxsp,8.800708345,9.474030415,,11.79044728,13.82611389,,11.56413804,13.95711256,,10.67019232,12.78879962,,9.098170322,12.62844076,,11.47478427,12.99813974,,13.12365844,14.55820195
+,"SOC, at DH: clinical exam + Xpert Ultra on GA + CXR [for some] + smear [for some]",c.d.soc.dh.examCXRxga,38.51224146,41.62548229,,43.72641481,48.95479415,,43.12975934,48.39378108,,42.08314563,47.3152308,,39.78403402,46.33829491,,43.16227242,47.26740436,,45.68536466,50.00357747
+,"IDH, at DH: clinical exam + CXR + Xpert Ultra on NPA & stool/sputum",c.d.idh.dh.examCXRxns,46.85765854,52.23542658,,57.60926138,65.21788825,,55.80485989,63.82367816,,48.1650899,55.39479184,,45.39290319,54.00946827,,49.66531961,55.92812396,,58.45658415,65.21193085
+,"IPH, at DH: clinical exam + CXR + Xpert Ultra on NPA & stool/sputum",c.d.iph.dh.examCXRxns,70.44569171,78.16829944,,79.41793931,90.01999765,,79.2112472,90.12358633,,77.2350921,87.82934869,,75.0139658,87.49139236,,78.23706924,87.45212971,,82.92680149,92.52857
+,"IPD, at DH: clinical exam + CXR + Xpert Ultra on NPA & stool/sputum",c.d.ipd.dh.examCXRxns,70.44569171,78.16829944,,79.41793931,90.01999765,,79.2112472,90.12358633,,77.2350921,87.82934869,,75.0139658,87.49139236,,78.23706924,87.45212971,,82.92680149,92.52857
+,"IPH, at PHC: clinical exam + Xpert Ultra on NPA & stool/sputum",c.d.iph.phc.examxns,70.44569171,78.16829944,,79.41793931,90.01999765,,79.2112472,90.12358633,,77.2350921,87.82934869,,75.0139658,87.49139236,,78.23706924,87.45212971,,82.92680149,92.52857
+,"IPD, at PHC: clinical exam + Xpert Ultra on sputum",c.d.ipd.phc.examxsp,68.84770018,76.24176644,,77.40600948,87.53066839,,76.39374456,86.58225125,,75.29377157,85.245478,,72.40652769,83.39910459,,76.11759138,84.45359769,,79.97190864,88.93829946
+,"SOC, at PHC: clinical exam + Xpert Ultra on sputum + smear [for some]",c.d.soc.phc.examxsp,37.82154998,40.80877027,,42.82159538,47.85689404,,41.92422271,46.90848565,,41.15927399,46.13628578,,38.75299482,44.77087708,,42.26705604,46.04961348,,44.37298293,48.44017056
+Referral,"SOC, at PHC: refer to DH",c.d.soc.phc.refer,37.99674257,40.99867089,,43.0891207,48.15907387,,42.21677032,47.23625652,,41.48515327,46.50240615,,38.9109093,44.95103323,,42.47158821,46.2740197,,44.74387524,48.84925352
 ,"IDH, at PHC: refer to DH",c.d.idh.phc.refer,,,,,,,,,,,,,,,,,,,,
 ,"IPH, at PHC: refer to DH",c.d.iph.phc.refer,,,,,,,,,,,,,,,,,,,,
 ,"IPD, at PHC: refer to DH",c.d.ipd.phc.refer,,,,,,,,,,,,,,,,,,,,
-Treatment,"IDH, dx at DH: rifampicin-sensitive anti-TB treatment",c.d.idh.dh.rsATT,36.06,38.02,,32.44,35.94,,43.03,47.85,,37.23,41.66,,40.68,55.67,,32.01,37.98,,43.85,48.42
-,"IPH, dx at DH: rifampicin-sensitive anti-TB treatment",c.d.iph.dh.rsATT,36.06,38.02,,32.44,35.94,,43.03,47.85,,37.23,41.66,,40.68,55.67,,32.01,37.98,,43.85,48.42
-,"IPH, dx at PHC: rifampicin-sensitive anti-TB treatment",c.d.iph.phc.rsATT,36.06,38.02,,32.44,35.94,,43.03,47.85,,37.23,41.66,,40.68,55.67,,32.01,37.98,,43.85,48.42
-,"IPD, dx at DH: rifampicin-sensitive anti-TB treatment",c.d.ipd.dh.rsATT,36.06,38.02,,32.44,35.94,,43.03,47.85,,37.23,41.66,,40.68,55.67,,32.01,37.98,,43.85,48.42
-,"IPD, dx at PHC: rifampicin-sensitive anti-TB treatment",c.d.ipd.phc.rsATT,36.06,38.02,,32.44,35.94,,43.03,47.85,,37.23,41.66,,40.68,55.67,,32.01,37.98,,43.85,48.42
-,"SOC, dx at DH: rifampicin-sensitive anti-TB treatment",c.d.soc.dh.rsATT,36.06,38.02,,32.44,35.94,,43.03,47.85,,37.23,41.66,,40.68,55.67,,32.01,37.98,,43.85,48.42
-,"SOC, dx at PHC: rifampicin-sensitive anti-TB treatment",c.d.soc.phc.rsATT,36.06,38.02,,32.44,35.94,,43.03,47.85,,37.23,41.66,,40.68,55.67,,32.01,37.98,,43.85,48.42
-,"IDH, dx at DH: rifampicin-resistant anti-TB treatment",c.d.idh.dh.rrATT,1436.50,1451.93,,1452.61,1480.21,,1491.78,1529.75,,1453.13,1488.04,,1491.40,1609.55,,1445.70,1492.75,,1505.29,1541.27
-,"IPH, dx at DH: rifampicin-resistant anti-TB treatment",c.d.iph.dh.rrATT,1436.50,1451.93,,1452.61,1480.21,,1491.78,1529.75,,1453.13,1488.04,,1491.40,1609.55,,1445.70,1492.75,,1505.29,1541.27
-,"IPH, dx at PHC: rifampicin-resistant anti-TB treatment",c.d.iph.phc.rrATT,1436.50,1451.93,,1452.61,1480.21,,1491.78,1529.75,,1453.13,1488.04,,1491.40,1609.55,,1445.70,1492.75,,1505.29,1541.27
-,"IPD, dx at DH: rifampicin-resistant anti-TB treatment",c.d.ipd.dh.rrATT,1436.50,1451.93,,1452.61,1480.21,,1491.78,1529.75,,1453.13,1488.04,,1491.40,1609.55,,1445.70,1492.75,,1505.29,1541.27
-,"IPD, dx at PHC: rifampicin-resistant anti-TB treatment",c.d.ipd.phc.rrATT,1436.50,1451.93,,1452.61,1480.21,,1491.78,1529.75,,1453.13,1488.04,,1491.40,1609.55,,1445.70,1492.75,,1505.29,1541.27
-,"SOC, dx at DH: rifampicin-resistant anti-TB treatment",c.d.soc.dh.rrATT,1436.50,1451.93,,1452.61,1480.21,,1491.78,1529.75,,1453.13,1488.04,,1491.40,1609.55,,1445.70,1492.75,,1505.29,1541.27
-,"SOC, dx at PHC: rifampicin-resistant anti-TB treatment",c.d.soc.phc.rrATT,1436.50,1451.93,,1452.61,1480.21,,1491.78,1529.75,,1453.13,1488.04,,1491.40,1609.55,,1445.70,1492.75,,1505.29,1541.27
+Treatment,"IDH, dx at DH: rifampicin-sensitive anti-TB treatment",c.d.idh.dh.rsATT,36.06454479,38.0346805,,32.43926609,35.95464545,,43.03486761,47.8645942,,37.2371523,41.67930779,,40.68052059,55.68314975,,32.01228821,37.99468638,,43.8544501,48.43265803
+,"IPH, dx at DH: rifampicin-sensitive anti-TB treatment",c.d.iph.dh.rsATT,36.06454479,38.0346805,,32.43926609,35.95464545,,43.03486761,47.8645942,,37.2371523,41.67930779,,40.68052059,55.68314975,,32.01228821,37.99468638,,43.8544501,48.43265803
+,"IPH, dx at PHC: rifampicin-sensitive anti-TB treatment",c.d.iph.phc.rsATT,36.06454479,38.0346805,,32.43926609,35.95464545,,43.03486761,47.8645942,,37.2371523,41.67930779,,40.68052059,55.68314975,,32.01228821,37.99468638,,43.8544501,48.43265803
+,"IPD, dx at DH: rifampicin-sensitive anti-TB treatment",c.d.ipd.dh.rsATT,36.06454479,38.0346805,,32.43926609,35.95464545,,43.03486761,47.8645942,,37.2371523,41.67930779,,40.68052059,55.68314975,,32.01228821,37.99468638,,43.8544501,48.43265803
+,"IPD, dx at PHC: rifampicin-sensitive anti-TB treatment",c.d.ipd.phc.rsATT,36.06454479,38.0346805,,32.43926609,35.95464545,,43.03486761,47.8645942,,37.2371523,41.67930779,,40.68052059,55.68314975,,32.01228821,37.99468638,,43.8544501,48.43265803
+,"SOC, dx at DH: rifampicin-sensitive anti-TB treatment",c.d.soc.dh.rsATT,36.06454479,38.0346805,,32.43926609,35.95464545,,43.03486761,47.8645942,,37.2371523,41.67930779,,40.68052059,55.68314975,,32.01228821,37.99468638,,43.8544501,48.43265803
+,"SOC, dx at PHC: rifampicin-sensitive anti-TB treatment",c.d.soc.phc.rsATT,36.06454479,38.0346805,,32.43926609,35.95464545,,43.03486761,47.8645942,,37.2371523,41.67930779,,40.68052059,55.68314975,,32.01228821,37.99468638,,43.8544501,48.43265803
+,"IDH, dx at DH: rifampicin-resistant anti-TB treatment",c.d.idh.dh.rrATT,1436.530686,1452.060197,,1452.637063,1480.346892,,1491.808916,1529.879031,,1453.153734,1488.168836,,1491.425158,1609.682746,,1445.726577,1492.882577,,1505.314303,1541.401833
+,"IPH, dx at DH: rifampicin-resistant anti-TB treatment",c.d.iph.dh.rrATT,1436.530686,1452.060197,,1452.637063,1480.346892,,1491.808916,1529.879031,,1453.153734,1488.168836,,1491.425158,1609.682746,,1445.726577,1492.882577,,1505.314303,1541.401833
+,"IPH, dx at PHC: rifampicin-resistant anti-TB treatment",c.d.iph.phc.rrATT,1436.530686,1452.060197,,1452.637063,1480.346892,,1491.808916,1529.879031,,1453.153734,1488.168836,,1491.425158,1609.682746,,1445.726577,1492.882577,,1505.314303,1541.401833
+,"IPD, dx at DH: rifampicin-resistant anti-TB treatment",c.d.ipd.dh.rrATT,1436.530686,1452.060197,,1452.637063,1480.346892,,1491.808916,1529.879031,,1453.153734,1488.168836,,1491.425158,1609.682746,,1445.726577,1492.882577,,1505.314303,1541.401833
+,"IPD, dx at PHC: rifampicin-resistant anti-TB treatment",c.d.ipd.phc.rrATT,1436.530686,1452.060197,,1452.637063,1480.346892,,1491.808916,1529.879031,,1453.153734,1488.168836,,1491.425158,1609.682746,,1445.726577,1492.882577,,1505.314303,1541.401833
+,"SOC, dx at DH: rifampicin-resistant anti-TB treatment",c.d.soc.dh.rrATT,1436.530686,1452.060197,,1452.637063,1480.346892,,1491.808916,1529.879031,,1453.153734,1488.168836,,1491.425158,1609.682746,,1445.726577,1492.882577,,1505.314303,1541.401833
+,"SOC, dx at PHC: rifampicin-resistant anti-TB treatment",c.d.soc.phc.rrATT,1436.530686,1452.060197,,1452.637063,1480.346892,,1491.808916,1529.879031,,1453.153734,1488.168836,,1491.425158,1609.682746,,1445.726577,1492.882577,,1505.314303,1541.401833
