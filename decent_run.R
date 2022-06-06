@@ -247,6 +247,41 @@ GP
 ggsave(GP,file=gh('graphs/CEAC1_{prevapproach}.png'),w=7,h=5)
 
 
+## ------ no ZMB versions of graphs ------
+
+## plot
+GP <- ggplot(ceaclm[iso3 !='ZMB'],
+             aes(threshold,value,
+                 col=country,lty=Intervention)) +
+  geom_line() +
+  theme_classic() +
+  theme(legend.position = 'top',legend.title = element_blank())+
+  ggpubr::grids()+
+  ylab('Probability cost-effective')+
+  xlab('Cost-effectiveness threshold (USD/DALY)')+
+  scale_colour_manual(values=cbPalette)
+GP
+
+ggsave(GP,file=gh('graphs/CEAC_noZMB_{prevapproach}.png'),w=7,h=5)
+
+
+
+## plot
+GP <- ggplot(ceaclm[variable=='idh' & iso3 !='ZMB'],
+             aes(threshold,value,
+                 col=country)) +
+  geom_line() +
+  theme_classic() +
+  theme(legend.position = 'top',legend.title = element_blank())+
+  ggpubr::grids()+
+  ylab('Probability cost-effective')+
+  xlab('Cost-effectiveness threshold (USD/DALY)')+
+  scale_colour_manual(values=cbPalette) ## + xlim(x=c(0,1500))
+GP
+
+ggsave(GP,file=gh('graphs/CEAC1_noZMB_{prevapproach}.png'),w=7,h=5)
+
+
 
 
 
