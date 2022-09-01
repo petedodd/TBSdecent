@@ -72,8 +72,10 @@ AddOutcomes <- function(D){
   ## NOTE change for b version
   MergeByName(D,notbtxo,'Not presumptive TB',leavesonly = TRUE) #NOTE need to restrict to leaves, although not necessary
   MergeByName(D,notbtxo,'Does not reach DH',leavesonly = TRUE) #NOTE need to restrict to leaves, although not necessary
-  MergeByName(D,tbtxb,'TB diagnosed (bacteriological)')
+  MergeByName(D, tbtxb,'TB diagnosed (bacteriological)')
   MergeByName(D,tbtxc,'TB diagnosed (clinical)')
+  MergeByName(D,notbtxo,'Does not attend reassessment',leavesonly = TRUE)
+
 
   ## ===========  other counters
   ## check
@@ -110,20 +112,20 @@ AddOutcomes <- function(D){
 
 
 ## === SOC
-SOC <- MSorg2tree(here('indata/dSOCb.txt'))
+SOC <- MSorg2tree(here('indata/dSOCc.txt'))
 SOC <- top(SOC)
 print(SOC)
 ## merge in extras, write out
 SOC <- AddOutcomes(SOC)
 
-tree2file(SOC,filename = here('indata/CSV/SOCb0.csv'),
+tree2file(SOC,filename = here('indata/CSV/SOCc0.csv'),
           'p','cost','deaths','lives','refers','dxc','dxb','att',
           'check',
           'DH.presented','DH.screened','DH.presumed','DH.treated',
           'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
 
 ## create version with probs/costs
-fn <- here('indata/CSV/SOCb1.csv')
+fn <- here('indata/CSV/SOCc1.csv')
 if(file.exists(fn)){
   ## read
   labz <- fread(fn)
@@ -140,26 +142,27 @@ if(file.exists(fn)){
   SOC$Set(PHC.presumed=labz$PHC.presumed)
   SOC$Set(PHC.treated=labz$PHC.treated)
   ## save out
-  tree2file(SOC,filename = here('indata/CSV/SOCb2.csv'),
+  tree2file(SOC,filename = here('indata/CSV/SOCc2.csv'),
             'p','cost','deaths','lives','refers','dxc','dxb','att',
             'check',
             'DH.presented','DH.screened','DH.presumed','DH.treated',
             'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
 }
 
+
 ## === IPD
-IPD <- MSorg2tree(here('indata/dIPDb.txt'))
+IPD <- MSorg2tree(here('indata/dIPDc.txt'))
 IPD <- top(IPD)
 print(IPD)
 IPD <- AddOutcomes(IPD)
-tree2file(IPD,filename = here('indata/CSV/IPDb0.csv'),
+tree2file(IPD,filename = here('indata/CSV/IPDc0.csv'),
           'p','cost','deaths','lives','refers','dxc','dxb','att',
           'check',
           'DH.presented','DH.screened','DH.presumed','DH.treated',
           'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
 
 ## create version with probs/costs
-fn <- here('indata/CSV/IPDb1.csv')
+fn <- here('indata/CSV/IPDc1.csv')
 if(file.exists(fn)){
   ## read
   labz <- fread(fn)
@@ -175,7 +178,7 @@ if(file.exists(fn)){
   IPD$Set(PHC.screened=labz$PHC.screened)
   IPD$Set(PHC.presumed=labz$PHC.presumed)
   IPD$Set(PHC.treated=labz$PHC.treated)
-  tree2file(IPD,filename = here('indata/CSV/IPDb2.csv'),
+  tree2file(IPD,filename = here('indata/CSV/IPDc2.csv'),
             'p','cost','deaths','lives','refers','dxc','dxb','att',
             'check',
             'DH.presented','DH.screened','DH.presumed','DH.treated',
@@ -183,18 +186,18 @@ if(file.exists(fn)){
 }
 
 ## === IDH
-IDH <- MSorg2tree(here('indata/dIDHb.txt'))
+IDH <- MSorg2tree(here('indata/dIDHc.txt'))
 IDH <- top(IDH)
 print(IDH)
 IDH <- AddOutcomes(IDH)
-tree2file(IDH,filename = here('indata/CSV/IDHb0.csv'),
+tree2file(IDH,filename = here('indata/CSV/IDHc0.csv'),
           'p','cost','deaths','lives','refers','dxc','dxb','att',
           'check',
           'DH.presented','DH.screened','DH.presumed','DH.treated',
           'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
 
 ## create version with probs/costs
-fn <- here('indata/CSV/IDHb1.csv')
+fn <- here('indata/CSV/IDHc1.csv')
 if(file.exists(fn)){
   ## read
   labz <- fread(fn)
@@ -210,7 +213,7 @@ if(file.exists(fn)){
   IDH$Set(PHC.screened=labz$PHC.screened)
   IDH$Set(PHC.presumed=labz$PHC.presumed)
   IDH$Set(PHC.treated=labz$PHC.treated)
-  tree2file(IDH,filename = here('indata/CSV/IDHb2.csv'),
+  tree2file(IDH,filename = here('indata/CSV/IDHc2.csv'),
             'p','cost','deaths','lives','refers','dxc','dxb','att',
             'check',
             'DH.presented','DH.screened','DH.presumed','DH.treated',
@@ -218,18 +221,18 @@ if(file.exists(fn)){
 }
 
 ## === IPH
-IPH <- MSorg2tree(here('indata/dIPHb.txt'))
+IPH <- MSorg2tree(here('indata/dIPHc.txt'))
 IPH <- top(IPH)
 print(IPH)
 IPH <- AddOutcomes(IPH)
-tree2file(IPH,filename = here('indata/CSV/IPHb0.csv'),
+tree2file(IPH,filename = here('indata/CSV/IPHc0.csv'),
           'p','cost','deaths','lives','refers','dxc','dxb','att',
           'check',
           'DH.presented','DH.screened','DH.presumed','DH.treated',
           'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
 
 ## create version with probs/costs
-fn <- here('indata/CSV/IPHb1.csv')
+fn <- here('indata/CSV/IPHc1.csv')
 if(file.exists(fn)){
   ## read
   labz <- fread(fn)
@@ -245,7 +248,7 @@ if(file.exists(fn)){
   IPH$Set(PHC.screened=labz$PHC.screened)
   IPH$Set(PHC.presumed=labz$PHC.presumed)
   IPH$Set(PHC.treated=labz$PHC.treated)
-  tree2file(IPH,filename = here('indata/CSV/IPHb2.csv'),
+  tree2file(IPH,filename = here('indata/CSV/IPHc2.csv'),
             'p','cost','deaths','lives','refers','dxc','dxb','att',
             'check',
             'DH.presented','DH.screened','DH.presumed','DH.treated',
@@ -358,7 +361,3 @@ IPD.F$checkfun(A) #NOTE OK
 IPH.F$checkfun(A) #NOTE OK
 IDH.F$checkfun(A) #NOTE OK
 SOC.F$checkfun(A) #NOTE OK
-
-
-## TODO add showAllParmz to HE dtree, also tester and runall
-
