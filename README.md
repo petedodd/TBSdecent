@@ -2,7 +2,8 @@
 TB Speed decentralization
 
 
-TODO
+TODO list
 
 - stratified tx costs
 - PPV
+
