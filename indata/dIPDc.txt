@@ -11,7 +11,7 @@ Partly-decentralized PHCs
 							No TB diagnosed
 						Does not attend reassessment
 			Not presumptive TB
-		All other patients
+		Not screened
 	Present at PHC
 		Systematic TB screening
 			Presumptive TB
@@ -43,4 +43,4 @@ Partly-decentralized PHCs
 								Does not attend reassessment
 						Does not reach DH
 			Not presumptive TB
-		All other patients
+		Not screened

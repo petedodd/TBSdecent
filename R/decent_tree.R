@@ -68,6 +68,7 @@ AddOutcomes <- function(D){
   ## === merge to create final tree ===
   MergeByName(D,notbtxo,'No TB diagnosed',leavesonly = TRUE) #NOTE need to restrict to leaves, although not necessary
   MergeByName(D,notbtxo,'All other patients',leavesonly = TRUE) #NOTE need to restrict to leaves, although not necessary
+  MergeByName(D,notbtxo,'Not screened',leavesonly = TRUE) #NOTE need to restrict to leaves, although not necessary
   ## MergeByName(D,notbtxo,'Unidentified presumptive TB',leavesonly = TRUE) #NOTE need to restrict to leaves, although not necessary
   ## NOTE change for b version
   MergeByName(D,notbtxo,'Not presumptive TB',leavesonly = TRUE) #NOTE need to restrict to leaves, although not necessary

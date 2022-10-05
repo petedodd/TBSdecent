@@ -44,7 +44,7 @@ Partly-decentralized PHCs                                                      ,
  ¦   ¦   °--Not presumptive TB                                                 ,1-d.dh.prsmptv*d.ipd.dh.presumed,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
  ¦   ¦       ¦--Survives                                                       ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
  ¦   ¦       °--Dies                                                           ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
- ¦   °--All other patients                                                     ,1-d.ipd.dh.assess,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+ ¦   °--Not screened                                                           ,1-d.ipd.dh.assess,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
  ¦       ¦--Survives                                                           ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
  ¦       °--Dies                                                               ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
  °--Present at PHC                                                             ,d.ipd.pphc,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
@@ -83,7 +83,7 @@ Partly-decentralized PHCs                                                      ,
      ¦   ¦   ¦   ¦   ¦   ¦       ¦--Survives                                   ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦   ¦       °--Dies                                       ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦   °--Invited for reassessment                           ,(1-d.ipd.dhrefnotest.test.ptbc)*(1-d.ipd.dhrefnotest.ptbxns),0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-     ¦   ¦   ¦   ¦   ¦       ¦--Reassessed at 7 days                           ,1-d.ipd.dh.7dltfu,c.d.ipd.dh.sreassess70,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+     ¦   ¦   ¦   ¦   ¦       ¦--Reassessed at 7 days                           ,1-d.ipd.dh.7dltfu,c.d.ipd.dh.sreassess7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦       ¦   ¦--TB diagnosed (clinical)                    ,d.ipd.dh.test7.ptbc,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
      ¦   ¦   ¦   ¦   ¦       ¦   ¦   ¦--RifS-TB treatment                      ,1-d.ptltfu.ipd,c.d.ipd.dh.rsATT,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
      ¦   ¦   ¦   ¦   ¦       ¦   ¦   ¦   ¦--Survives                           ,1-d.cfr.tx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
@@ -174,6 +174,6 @@ Partly-decentralized PHCs                                                      ,
      ¦   °--Not presumptive TB                                                 ,1-d.phc.prsmptv*d.ipd.phc.presumed,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
      ¦       ¦--Survives                                                       ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
      ¦       °--Dies                                                           ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
-     °--All other patients                                                     ,1-d.ipd.phc.assess,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+     °--Not screened                                                           ,1-d.ipd.phc.assess,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
          ¦--Survives                                                           ,1-d.cfr.notx,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
          °--Dies                                                               ,d.cfr.notx,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0

@@ -11,7 +11,7 @@ DH-focused strategy
 							No TB diagnosed
 						Does not attend reassessment
 			Not presumptive TB
-		All other patients
+		Not screened
 	Present at PHC
 		Systematic TB screening
 			Presumptive TB
@@ -26,4 +26,4 @@ DH-focused strategy
 							Does not attend reassessment
 					Does not reach DH
 			Not presumptive TB
-		All other patients
+		Not screened
