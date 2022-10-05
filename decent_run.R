@@ -58,6 +58,7 @@ PD1 <- PD0[PD0$DISTRIBUTION=="",]
 PD0 <- PD0[PD0$DISTRIBUTION!="",]
 
 ## this computes and saves out the average accuracy of dx cascades
+if(!file.exists(here('graphs'))) dir.create(here('graphs'))
 DxA <- computeDxAccuracy(PD0,PD1,C,nreps)
 
 ## this computes and saves model parameters derived from cascade data
