@@ -157,7 +157,7 @@ lz <- seq(from = 0,to=topl,length.out = 1000) #threshold vector for CEACs
 
 ## containers & loop
 allout <- allpout <- list() #tabular outputs
-ceacl <- list()             #CEAC outputs
+ceacl <- NMB <- list()             #CEAC outputs etc
 ## cn <- isoz[1]
 for(cn in isoz){
   cat('running model for:',cn,'\n')
@@ -196,6 +196,8 @@ for(cn in isoz){
   outs[,iso3:=cn]; pouts[,iso3:=cn]
   ## capture tabular
   allout[[cn]] <- outs; allpout[[cn]] <- pouts
+  ## capture data for NMB
+  NMB[[cn]] <- out[,.(iso3=cn,DLYL.iph,Dcost.iph,DLYL.idh,Dcost.idh)]
   ## ceac data
   ceacl[[cn]] <- data.table(iso3=cn,
                             iph=make.ceac(out[,.(Q=-DLYL.iph,P=Dcost.iph)],lz),
@@ -205,10 +207,12 @@ for(cn in isoz){
 allout <- rbindlist(allout)
 allpout <- rbindlist(allpout)
 ceacl <- rbindlist(ceacl)
+NMB <- rbindlist(NMB)
 
 fwrite(allout,file=gh('graphs/allout_{prevapproach}.csv'))
 fwrite(allpout,file=gh('graphs/allpout_{prevapproach}.csv'))
 save(ceacl,file=gh('graphs/ceacl_{prevapproach}.Rdata'))
+save(NMB,file=gh('graphs/NMB_{prevapproach}.Rdata'))
 
 
 ## CEAC plot
