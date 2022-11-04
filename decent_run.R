@@ -181,7 +181,7 @@ for(cn in isoz){
   out[,Ddeaths.iph:=deaths.iph-deaths.soc]; out[,Ddeaths.idh:=deaths.idh-deaths.soc] #inc deaths
   out[,DLYL.iph:=LYL.iph-LYL.soc]; out[,DLYL.idh:=LYL.idh-LYL.soc] #inc LYLs
   ## per whatever
-  out[,DcostperATT.iph:=Dcost.iph/Datt.iph];out[,DcostperATT.idh:=Dcost.idh/Datt.idh]
+  out[,DcostperATT.iph:=Dcost.iph/Datt.iph];out[,DcostperATT.idh:=Dcost.idh/Datt.idh];out[,DcostperATT.soc:=cost.soc/att.soc]
   out[,Dcostperdeaths.iph:=-Dcost.iph/Ddeaths.iph];out[,Dcostperdeaths.idh:=-Dcost.idh/Ddeaths.idh]
   out[,DcostperLYS.iph:=-Dcost.iph/DLYL.iph];out[,DcostperLYS.idh:=-Dcost.idh/DLYL.idh]
   ## summarize

@@ -671,7 +671,10 @@ outsummary <- function(out){
                   DcostperATT.iph.hi=hi(DcostperATT.iph),
                   DcostperATT.idh.mid=mean(DcostperATT.idh),
                   DcostperATT.idh.lo=lo(DcostperATT.idh),
-                  DcostperATT.idh.hi=hi(DcostperATT.idh))]
+                  DcostperATT.idh.hi=hi(DcostperATT.idh),
+                  DcostperATT.soc.mid=mean(DcostperATT.soc), 
+                  DcostperATT.soc.lo=lo(DcostperATT.soc), 
+                  DcostperATT.soc.hi=hi(DcostperATT.soc))]
   outs2 <- out[,.(DcostperLYS.iph.mid=mean(DcostperLYS.iph),
                   DcostperLYS.iph.lo=lo(DcostperLYS.iph),
                   DcostperLYS.iph.hi=hi(DcostperLYS.iph),
