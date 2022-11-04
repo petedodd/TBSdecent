@@ -682,7 +682,8 @@ MLH <- function(dat){
 outsummary <- function(out){
 
   ## mid/lo/hi
-  outa <- MLH(out[,.(DcostperATT.iph,DcostperATT.idh,DcostperATT.soc,
+  outa <- MLH(out[,.(costperATT.soc,costperATT.iph,costperATT.idh,
+                     DcostperATT.iph,DcostperATT.idh,
                      Ddeaths.iph,Ddeaths.idh,
                      DLYL.iph,DLYL.idh,
                      DLYL0.iph,DLYL0.idh,
@@ -699,9 +700,13 @@ outsummary <- function(out){
   outs <- do.call(cbind,list(outa$M,outa$L,outa$H,outi)) #combine
 
   ## pretty version
-  pouts <- outs[,.(DcostperATT.iph = brkt(DcostperATT.iph.mid,DcostperATT.iph.lo,DcostperATT.iph.hi),
-                  DcostperATT.idh = brkt(DcostperATT.idh.mid,DcostperATT.idh.lo,DcostperATT.idh.hi),
-                  DcostperLYS0.iph = brkt(DcostperLYS0.iph.mid,DcostperLYS0.iph.lo,DcostperLYS0.iph.hi),
+  pouts <- outs[,.(costperATT.soc = brkt(costperATT.soc.mid,costperATT.soc.lo,costperATT.soc.hi),
+                   costperATT.iph = brkt(costperATT.iph.mid,costperATT.iph.lo,costperATT.iph.hi),
+                   costperATT.idh = brkt(costperATT.idh.mid,costperATT.idh.lo,costperATT.idh.hi),
+                   DcostperATT.iph = brkt(DcostperATT.iph.mid,DcostperATT.iph.lo,DcostperATT.iph.hi),
+                   DcostperATT.idh = brkt(DcostperATT.idh.mid,DcostperATT.idh.lo,DcostperATT.idh.hi),
+                   DcostperLYS0.iph = brkt(DcostperLYS0.iph.mid,
+                                           DcostperLYS0.iph.lo,DcostperLYS0.iph.hi),
                   DcostperLYS0.idh = brkt(DcostperLYS0.idh.mid,DcostperLYS0.idh.lo,DcostperLYS0.idh.hi),
                   DcostperLYS.iph = brkt(DcostperLYS.iph.mid,DcostperLYS.iph.lo,DcostperLYS.iph.hi),
                   DcostperLYS.idh = brkt(DcostperLYS.idh.mid,DcostperLYS.idh.lo,DcostperLYS.idh.hi),

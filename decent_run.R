@@ -179,6 +179,9 @@ for(cn in isoz){
                    LYS0*deaths.soc,LYS0*deaths.idh,LYS0*deaths.iph)] #LYL per pop by arm
   ## out[,sum(value),by=id]                                       #CHECK
   out <- out[,lapply(.SD,function(x) sum(x*value)),.SDcols=tosum,by=id] #sum against popn
+  ## non-incremental cost per ATT
+  out[,costperATT.soc:=cost.soc/att.soc];
+  out[,costperATT.iph:=cost.iph/att.iph]; out[,costperATT.idh:=cost.idh/att.idh];
   ## increments wrt SOC (per child presenting at either DH/PHC)
   out[,Dcost.iph:=cost.iph-cost.soc]; out[,Dcost.idh:=cost.idh-cost.soc] #inc costs
   out[,Datt.iph:=att.iph-att.soc]; out[,Datt.idh:=att.idh-att.soc] #inc atts
@@ -186,7 +189,7 @@ for(cn in isoz){
   out[,DLYL0.iph:=LYL0.iph-LYL0.soc]; out[,DLYL0.idh:=LYL0.idh-LYL0.soc] #inc LYLs w/o discount
   out[,DLYL.iph:=LYL.iph-LYL.soc]; out[,DLYL.idh:=LYL.idh-LYL.soc] #inc LYLs
   ## per whatever
-  out[,DcostperATT.iph:=Dcost.iph/Datt.iph];out[,DcostperATT.idh:=Dcost.idh/Datt.idh];out[,DcostperATT.soc:=cost.soc/att.soc]
+  out[,DcostperATT.iph:=Dcost.iph/Datt.iph];out[,DcostperATT.idh:=Dcost.idh/Datt.idh];
   out[,Dcostperdeaths.iph:=-Dcost.iph/Ddeaths.iph];out[,Dcostperdeaths.idh:=-Dcost.idh/Ddeaths.idh]
   out[,DcostperLYS0.iph:=-Dcost.iph/DLYL0.iph];out[,DcostperLYS0.idh:=-Dcost.idh/DLYL0.idh]
   out[,DcostperLYS.iph:=-Dcost.iph/DLYL.iph];out[,DcostperLYS.idh:=-Dcost.idh/DLYL.idh]
