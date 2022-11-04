@@ -5,6 +5,7 @@ library(here)
 ## load other scripts
 source(here('R/decent_tree.R'))           #tree structure and namings: also tree functions & libraries
 source(here('R/decent_functions.R'))      #functions for tree parameters
+bia <- ''                                 #are we running BIA? set to 'BIA' if yes
 
 ## cascade data
 DD <- fread(here('indata/DD.csv')) #cascade data for plots
@@ -42,7 +43,7 @@ if(!LYSdone){
 
 ## read and make cost data
 csts <- fread(here('indata/testcosts.csv'))         #read cost data
-rcsts <- fread(here('indata/TBS.DECENT.costs.csv'),skip = 1)    #read cost data
+rcsts <- fread(gh('indata/TBS.DECENT.costs{bia}.csv'),skip = 1)    #read cost data
 ## check
 setdiff(unique(rcsts$NAME),
         unique(csts$cost))
@@ -125,11 +126,11 @@ GP2 <- ggplot(AS2,aes(stage,vpl))+
   geom_text(data=DD,aes(label=txt),col='cyan',vjust=2,hjust=1)
 GP2
 
-ggsave(GP2,file=gh('graphs/cascade_plt_{prevapproach}.png'),w=15,h=15)
+ggsave(GP2,file=gh('graphs/{bia}cascade_plt_{prevapproach}.png'),w=15,h=15)
 
 ## Treated true TB per 100K presented by arm
 TTB <- AS[stage=='treated' & TB=='TB',.(TTBpl=1e5*sum(mid)),by=arm]
-fwrite(TTB,file=gh('graphs/TTB_{prevapproach}.csv'))
+fwrite(TTB,file=gh('graphs/{bia}TTB_{prevapproach}.csv'))
 
 
 
@@ -212,10 +213,10 @@ allpout <- rbindlist(allpout)
 ceacl <- rbindlist(ceacl)
 NMB <- rbindlist(NMB)
 
-fwrite(allout,file=gh('graphs/allout_{prevapproach}.csv'))
-fwrite(allpout,file=gh('graphs/allpout_{prevapproach}.csv'))
-save(ceacl,file=gh('graphs/ceacl_{prevapproach}.Rdata'))
-save(NMB,file=gh('graphs/NMB_{prevapproach}.Rdata'))
+fwrite(allout,file=gh('graphs/{bia}allout_{prevapproach}.csv'))
+fwrite(allpout,file=gh('graphs/{bia}allpout_{prevapproach}.csv'))
+save(ceacl,file=gh('graphs/{bia}ceacl_{prevapproach}.Rdata'))
+save(NMB,file=gh('graphs/{bia}NMB_{prevapproach}.Rdata'))
 
 
 ## CEAC plot
@@ -242,7 +243,7 @@ GP <- ggplot(ceaclm,aes(threshold,value,
   scale_colour_manual(values=cbPalette)
 GP
 
-ggsave(GP,file=gh('graphs/CEAC_{prevapproach}.png'),w=7,h=5)
+ggsave(GP,file=gh('graphs/{bia}CEAC_{prevapproach}.png'),w=7,h=5)
 
 
 
@@ -258,7 +259,7 @@ GP <- ggplot(ceaclm[variable=='idh'],aes(threshold,value,
   scale_colour_manual(values=cbPalette) ## + xlim(x=c(0,1500))
 GP
 
-ggsave(GP,file=gh('graphs/CEAC1_{prevapproach}.png'),w=7,h=5)
+ggsave(GP,file=gh('graphs/{bia}CEAC1_{prevapproach}.png'),w=7,h=5)
 
 
 ## ------ no ZMB versions of graphs ------
@@ -276,7 +277,7 @@ GP <- ggplot(ceaclm[iso3 !='ZMB'],
   scale_colour_manual(values=cbPalette)
 GP
 
-ggsave(GP,file=gh('graphs/CEAC_noZMB_{prevapproach}.png'),w=7,h=5)
+ggsave(GP,file=gh('graphs/{bia}CEAC_noZMB_{prevapproach}.png'),w=7,h=5)
 
 
 
@@ -293,7 +294,7 @@ GP <- ggplot(ceaclm[variable=='idh' & iso3 !='ZMB'],
   scale_colour_manual(values=cbPalette) ## + xlim(x=c(0,1500))
 GP
 
-ggsave(GP,file=gh('graphs/CEAC1_noZMB_{prevapproach}.png'),w=7,h=5)
+ggsave(GP,file=gh('graphs/{bia}CEAC1_noZMB_{prevapproach}.png'),w=7,h=5)
 
 
 
