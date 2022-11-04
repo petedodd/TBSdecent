@@ -663,57 +663,66 @@ computeCascadeParameters <- function(DD,ICS,DxA,using='mean'){
 }
 
 
+## calculate mid/lo/hi
+MLH <- function(dat){
+  nnmz <- names(dat)
+  lnmz <- paste0(nnmz,'.lo')
+  hnmz <- paste0(nnmz,'.hi')
+  mnmz <- paste0(nnmz,'.mid')
+  L <- dat[,lapply(.SD,lo),.SDcols=nnmz]
+  M <- dat[,lapply(.SD,mean),.SDcols=nnmz]
+  H <- dat[,lapply(.SD,hi),.SDcols=nnmz]
+  setnames(L,nnmz,lnmz); setnames(M,nnmz,mnmz); setnames(H,nnmz,hnmz);
+  list(L=L,M=M,H=H)
+}
+## MLH(out[,.(DcostperATT.iph,DcostperATT.soc)]) #test
+
+
 ## =========== output formatters
 outsummary <- function(out){
-  ## compute mean/lo/hi etc
-  outs1 <- out[,.(DcostperATT.iph.mid=mean(DcostperATT.iph),
-                  DcostperATT.iph.lo=lo(DcostperATT.iph),
-                  DcostperATT.iph.hi=hi(DcostperATT.iph),
-                  DcostperATT.idh.mid=mean(DcostperATT.idh),
-                  DcostperATT.idh.lo=lo(DcostperATT.idh),
-                  DcostperATT.idh.hi=hi(DcostperATT.idh),
-                  DcostperATT.soc.mid=mean(DcostperATT.soc), 
-                  DcostperATT.soc.lo=lo(DcostperATT.soc), 
-                  DcostperATT.soc.hi=hi(DcostperATT.soc))]
-  outs2 <- out[,.(DcostperLYS.iph.mid=mean(DcostperLYS.iph),
-                  DcostperLYS.iph.lo=lo(DcostperLYS.iph),
-                  DcostperLYS.iph.hi=hi(DcostperLYS.iph),
-                  DcostperLYS.idh.mid=mean(DcostperLYS.idh),
-                  DcostperLYS.idh.lo=lo(DcostperLYS.idh),
-                  DcostperLYS.idh.hi=hi(DcostperLYS.idh))]
-  outs3 <- out[,.(Dcostperdeaths.iph.mid=mean(Dcostperdeaths.iph),
-                  Dcostperdeaths.iph.lo=lo(Dcostperdeaths.iph),
-                  Dcostperdeaths.iph.hi=hi(Dcostperdeaths.iph),
-                  Dcostperdeaths.idh.mid=mean(Dcostperdeaths.idh),
-                  Dcostperdeaths.idh.lo=lo(Dcostperdeaths.idh),
-                  Dcostperdeaths.idh.hi=hi(Dcostperdeaths.idh))]
-  outs4 <- out[,.(DcostPerOPD.iph.mid=mean(Dcost.iph),
-                  DcostPerOPD.iph.lo=lo(Dcost.iph),
-                  DcostPerOPD.iph.hi=hi(Dcost.iph),
-                  DcostPerOPD.idh.mid=mean(Dcost.idh),
-                  DcostPerOPD.idh.lo=lo(Dcost.idh),
-                  DcostPerOPD.idh.hi=hi(Dcost.idh))]
-  outs5 <- out[,.(DdeathsPer100kOPD.iph.mid=-1e5*mean(Ddeaths.iph),
-                  DdeathsPer100kOPD.iph.lo=-1e5*hi(Ddeaths.iph),
-                  DdeathsPer100kOPD.iph.hi=-1e5*lo(Ddeaths.iph),
-                  DdeathsPer100kOPD.idh.mid=-1e5*mean(Ddeaths.idh),
-                  DdeathsPer100kOPD.idh.lo=-1e5*hi(Ddeaths.idh),
-                  DdeathsPer100kOPD.idh.hi=-1e5*lo(Ddeaths.idh))]
+
+  ## mid/lo/hi
+  outa <- MLH(out[,.(DcostperATT.iph,DcostperATT.idh,DcostperATT.soc,
+                     Ddeaths.iph,Ddeaths.idh,
+                     DLYL.iph,DLYL.idh,
+                     DLYL0.iph,DLYL0.idh,
+                     DcostperLYS0.iph,DcostperLYS0.idh,
+                     DcostperLYS.iph,DcostperLYS.idh,
+                     Dcostperdeaths.iph,Dcostperdeaths.idh,
+                     Dcost.iph,Dcost.idh)])
+
+  ## more bespoke statistics
   outi <- out[,.(ICER.iph= -mean(Dcost.iph) / mean(DLYL.iph),
                  ICER.idh= -mean(Dcost.idh) / mean(DLYL.idh))]
-  outs <- cbind(cbind(cbind(cbind(cbind(outs1,outs2),outs3),outs4),outs5),outi)
+
+  ## join
+  outs <- do.call(cbind,list(outa$M,outa$L,outa$H,outi)) #combine
 
   ## pretty version
   pouts <- outs[,.(DcostperATT.iph = brkt(DcostperATT.iph.mid,DcostperATT.iph.lo,DcostperATT.iph.hi),
                   DcostperATT.idh = brkt(DcostperATT.idh.mid,DcostperATT.idh.lo,DcostperATT.idh.hi),
+                  DcostperLYS0.iph = brkt(DcostperLYS0.iph.mid,DcostperLYS0.iph.lo,DcostperLYS0.iph.hi),
+                  DcostperLYS0.idh = brkt(DcostperLYS0.idh.mid,DcostperLYS0.idh.lo,DcostperLYS0.idh.hi),
                   DcostperLYS.iph = brkt(DcostperLYS.iph.mid,DcostperLYS.iph.lo,DcostperLYS.iph.hi),
                   DcostperLYS.idh = brkt(DcostperLYS.idh.mid,DcostperLYS.idh.lo,DcostperLYS.idh.hi),
-                  Dcostperdeaths.iph = brkt(Dcostperdeaths.iph.mid,Dcostperdeaths.iph.lo,Dcostperdeaths.iph.hi),
-                  Dcostperdeaths.idh = brkt(Dcostperdeaths.idh.mid,Dcostperdeaths.idh.lo,Dcostperdeaths.idh.hi),
-                  DcostPerOPD.iph = brkt(DcostPerOPD.iph.mid,DcostPerOPD.iph.lo,DcostPerOPD.iph.hi),
-                  DcostPerOPD.idh = brkt(DcostPerOPD.idh.mid,DcostPerOPD.idh.lo,DcostPerOPD.idh.hi),
-                  DdeathsPer100kOPD.iph = brkt(DdeathsPer100kOPD.iph.mid,DdeathsPer100kOPD.iph.lo,DdeathsPer100kOPD.iph.hi),
-                  DdeathsPer100kOPD.idh = brkt(DdeathsPer100kOPD.idh.mid,DdeathsPer100kOPD.idh.lo,DdeathsPer100kOPD.idh.hi),
+                  Dcostperdeaths.iph = brkt(Dcostperdeaths.iph.mid,
+                                            Dcostperdeaths.iph.lo,Dcostperdeaths.iph.hi),
+                  Dcostperdeaths.idh = brkt(Dcostperdeaths.idh.mid,
+                                            Dcostperdeaths.idh.lo,Dcostperdeaths.idh.hi),
+                  DcostPerOPD.iph = brkt(Dcost.iph.mid,Dcost.iph.lo,Dcost.iph.hi),
+                  DcostPerOPD.idh = brkt(Dcost.idh.mid,Dcost.idh.lo,Dcost.idh.hi),
+                  DdeathsPer100kOPD.iph = brkt(-1e5*Ddeaths.iph.mid,
+                                               -1e5*Ddeaths.iph.hi,-1e5*Ddeaths.iph.lo),
+                  DdeathsPer100kOPD.idh = brkt(-1e5*Ddeaths.idh.mid,
+                                               -1e5*Ddeaths.idh.hi,-1e5*Ddeaths.idh.lo),
+                  DLYS0Per100kOPD.iph = brkt(-1e5*DLYL0.iph.mid,
+                                               -1e5*DLYL0.iph.hi,-1e5*DLYL0.iph.lo),
+                  DLYS0Per100kOPD.idh = brkt(-1e5*DLYL0.idh.mid,
+                                            -1e5*DLYL0.idh.hi,-1e5*DLYL0.idh.lo),
+                  DLYSPer100kOPD.iph = brkt(-1e5*DLYL.iph.mid,
+                                            -1e5*DLYL.iph.hi,-1e5*DLYL.iph.lo),
+                  DLYSPer100kOPD.idh = brkt(-1e5*DLYL.idh.mid,
+                                            -1e5*DLYL.idh.hi,-1e5*DLYL.idh.lo),
                   ICER.iph=round(ICER.iph,0),ICER.idh=round(ICER.idh,0))]
 
   ## return value

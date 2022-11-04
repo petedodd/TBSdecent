@@ -29,7 +29,9 @@ LYSdone <- TRUE
 if(!LYSdone){
   ## make discounted life-years if they haven't been done
   LYKc <- GetLifeYears(isolist=isoz,discount.rate=0.03,yearfrom=2021)
-  LYK <- LYKc[,.(LYS=mean(LYS)),by=.(age)] #averaged life-years 4 generic tests
+  LYKc0 <- GetLifeYears(isolist=isoz,discount.rate=0.00,yearfrom=2021)
+  LYKc <- merge(LYKc,LYKc0[,.(iso3,age,LYS0=LYS)],by=c('iso3','age'))
+  LYK <- LYKc[,.(LYS=mean(LYS),LYS0=mean(LYS0)),by=.(age)] #averaged life-years 4 generic tests
   save(LYKc,file=here('indata/LYKc.Rdata'))
   save(LYK,file=here('indata/LYK.Rdata'))
 } else {
@@ -137,10 +139,11 @@ cnmz <- cnmz[cnmz!='id']
 toget <- c('id','cost.soc','cost.iph','cost.idh',
            'att.soc','att.idh','att.iph',
            'deaths.soc','deaths.idh','deaths.iph',
-           'LYS','value'
+           'LYS','LYS0','value'
            )
-notwt <- c('id','LYS','value') #variables not to weight against value
+notwt <- c('id','LYS','LYS0','value') #variables not to weight against value
 lyarm <- c('LYL.soc','LYL.idh','LYL.iph')
+lyarm <- c(lyarm,gsub('\\.','0\\.',lyarm)) #include undiscounted
 tosum <- c(setdiff(toget,notwt),lyarm)
 ## heuristic to scale top value for thresholds:
 heur <- c('id','value','deaths.iph','deaths.soc')
@@ -166,23 +169,26 @@ for(cn in isoz){
   D <- merge(D,C,by='id',all.x = TRUE)        #merge into PSA
   ## --- DALYs
   ## drop any that are there
-  if('LYS' %in% names(D)) D[,LYS:=NULL]
-  D <- merge(D,LYKc[iso3==cn,.(age,LYS)],by='age',all.x = TRUE)        #merge into PSA
+  if('LYS' %in% names(D)) D[,c('LYS','LYS0'):=NULL]
+  D <- merge(D,LYKc[iso3==cn,.(age,LYS,LYS0)],by='age',all.x = TRUE)        #merge into PSA
   ## --- run model (quietly)
   invisible(capture.output(D <- runallfuns(D,arm=notIPD)))
   ## --- grather outcomes
   out <- D[,..toget]
-  out[,c(lyarm):=.(LYS*deaths.soc,LYS*deaths.idh,LYS*deaths.iph)] #LYL per pop by arm
+  out[,c(lyarm):=.(LYS*deaths.soc,LYS*deaths.idh,LYS*deaths.iph,
+                   LYS0*deaths.soc,LYS0*deaths.idh,LYS0*deaths.iph)] #LYL per pop by arm
   ## out[,sum(value),by=id]                                       #CHECK
   out <- out[,lapply(.SD,function(x) sum(x*value)),.SDcols=tosum,by=id] #sum against popn
   ## increments wrt SOC (per child presenting at either DH/PHC)
   out[,Dcost.iph:=cost.iph-cost.soc]; out[,Dcost.idh:=cost.idh-cost.soc] #inc costs
   out[,Datt.iph:=att.iph-att.soc]; out[,Datt.idh:=att.idh-att.soc] #inc atts
   out[,Ddeaths.iph:=deaths.iph-deaths.soc]; out[,Ddeaths.idh:=deaths.idh-deaths.soc] #inc deaths
+  out[,DLYL0.iph:=LYL0.iph-LYL0.soc]; out[,DLYL0.idh:=LYL0.idh-LYL0.soc] #inc LYLs w/o discount
   out[,DLYL.iph:=LYL.iph-LYL.soc]; out[,DLYL.idh:=LYL.idh-LYL.soc] #inc LYLs
   ## per whatever
   out[,DcostperATT.iph:=Dcost.iph/Datt.iph];out[,DcostperATT.idh:=Dcost.idh/Datt.idh];out[,DcostperATT.soc:=cost.soc/att.soc]
   out[,Dcostperdeaths.iph:=-Dcost.iph/Ddeaths.iph];out[,Dcostperdeaths.idh:=-Dcost.idh/Ddeaths.idh]
+  out[,DcostperLYS0.iph:=-Dcost.iph/DLYL0.iph];out[,DcostperLYS0.idh:=-Dcost.idh/DLYL0.idh]
   out[,DcostperLYS.iph:=-Dcost.iph/DLYL.iph];out[,DcostperLYS.idh:=-Dcost.idh/DLYL.idh]
   ## summarize
   smy <- outsummary(out)
