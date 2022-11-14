@@ -1,11 +1,38 @@
 ## top level handler for DECENTRALIZATION
-rm(list=ls())
+## rm(list=ls())
+
+## argument handling:
+
+args <- commandArgs(trailingOnly = TRUE)
+
+nargs <- length(args)
+variant <- as.character(args[1])
+if(variant=='BIA'){
+  cat('Running BIA! \n')
+  bia <- 'bia'
+} else if(variant=='CEA') {
+  cat('Running CEA! \n')
+  bia <- ''
+} else {
+  stop('First argument must either by BIA or CEA!')
+}
+
+if(nargs==1){
+  postpend <- 'DECENT'
+  cat('...using full costs \n')
+} else{
+  postpend <- as.character(args[2])
+  cat('...using costs for ',postpend,'\n')
+  ## postpend <- paste0('.',postpend) 
+}
+
+
+## arguments defined: begin script
 library(here)
 
 ## load other scripts
 source(here('R/decent_tree.R'))           #tree structure and namings: also tree functions & libraries
 source(here('R/decent_functions.R'))      #functions for tree parameters
-bia <- ''                                 #are we running BIA? set to 'BIA' if yes
 
 ## cascade data
 DD <- fread(here('indata/DD.csv')) #cascade data for plots
@@ -43,7 +70,7 @@ if(!LYSdone){
 
 ## read and make cost data
 csts <- fread(here('indata/testcosts.csv'))         #read cost data
-rcsts <- fread(gh('indata/TBS.DECENT.costs{bia}.csv'),skip = 1)    #read cost data
+rcsts <- fread(gh('indata/TBS.{postpend}.costs{bia}.csv'),skip = 1)    #read cost data
 ## check
 setdiff(unique(rcsts$NAME),
         unique(csts$cost))
@@ -126,11 +153,11 @@ GP2 <- ggplot(AS2,aes(stage,vpl))+
   geom_text(data=DD,aes(label=txt),col='cyan',vjust=2,hjust=1)
 GP2
 
-ggsave(GP2,file=gh('graphs/{bia}cascade_plt_{prevapproach}.png'),w=15,h=15)
+ggsave(GP2,file=gh('graphs/{bia}cascade_plt_{prevapproach}.{postpend}.png'),w=15,h=15)
 
 ## Treated true TB per 100K presented by arm
 TTB <- AS[stage=='treated' & TB=='TB',.(TTBpl=1e5*sum(mid)),by=arm]
-fwrite(TTB,file=gh('graphs/{bia}TTB_{prevapproach}.csv'))
+fwrite(TTB,file=gh('graphs/{bia}TTB_{prevapproach}.{postpend}.csv'))
 
 
 
@@ -213,10 +240,10 @@ allpout <- rbindlist(allpout)
 ceacl <- rbindlist(ceacl)
 NMB <- rbindlist(NMB)
 
-fwrite(allout,file=gh('graphs/{bia}allout_{prevapproach}.csv'))
-fwrite(allpout,file=gh('graphs/{bia}allpout_{prevapproach}.csv'))
-save(ceacl,file=gh('graphs/{bia}ceacl_{prevapproach}.Rdata'))
-save(NMB,file=gh('graphs/{bia}NMB_{prevapproach}.Rdata'))
+fwrite(allout,file=gh('graphs/{bia}allout_{prevapproach}.{postpend}.csv'))
+fwrite(allpout,file=gh('graphs/{bia}allpout_{prevapproach}.{postpend}.csv'))
+save(ceacl,file=gh('graphs/{bia}ceacl_{prevapproach}.{postpend}.Rdata'))
+save(NMB,file=gh('graphs/{bia}NMB_{prevapproach}.{postpend}.Rdata'))
 
 
 ## CEAC plot
@@ -243,7 +270,7 @@ GP <- ggplot(ceaclm,aes(threshold,value,
   scale_colour_manual(values=cbPalette)
 GP
 
-ggsave(GP,file=gh('graphs/{bia}CEAC_{prevapproach}.png'),w=7,h=5)
+ggsave(GP,file=gh('graphs/{bia}CEAC_{prevapproach}.{postpend}.png'),w=7,h=5)
 
 
 
@@ -259,7 +286,7 @@ GP <- ggplot(ceaclm[variable=='idh'],aes(threshold,value,
   scale_colour_manual(values=cbPalette) ## + xlim(x=c(0,1500))
 GP
 
-ggsave(GP,file=gh('graphs/{bia}CEAC1_{prevapproach}.png'),w=7,h=5)
+ggsave(GP,file=gh('graphs/{bia}CEAC1_{prevapproach}.{postpend}.png'),w=7,h=5)
 
 
 ## ------ no ZMB versions of graphs ------
@@ -277,7 +304,7 @@ GP <- ggplot(ceaclm[iso3 !='ZMB'],
   scale_colour_manual(values=cbPalette)
 GP
 
-ggsave(GP,file=gh('graphs/{bia}CEAC_noZMB_{prevapproach}.png'),w=7,h=5)
+ggsave(GP,file=gh('graphs/{bia}CEAC_noZMB_{prevapproach}.{postpend}.png'),w=7,h=5)
 
 
 
@@ -294,7 +321,7 @@ GP <- ggplot(ceaclm[variable=='idh' & iso3 !='ZMB'],
   scale_colour_manual(values=cbPalette) ## + xlim(x=c(0,1500))
 GP
 
-ggsave(GP,file=gh('graphs/{bia}CEAC1_noZMB_{prevapproach}.png'),w=7,h=5)
+ggsave(GP,file=gh('graphs/{bia}CEAC1_noZMB_{prevapproach}.{postpend}.png'),w=7,h=5)
 
 
 

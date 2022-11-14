@@ -1,9 +1,3 @@
-## TODO questions:
-## 
-## - stool/sputum
-## - flag assumption = groups for SA or pending data
-## 
-
 ## ========= UTILITIES ===============
 logit <- function(x) log(odds(x))
 ilogit <- function(x) iodds(exp(x))

@@ -1,5 +1,5 @@
 ## looking at tree 7
-rm(list=ls())
+## rm(list=ls())
 library(here)
 library(HEdtree)
 library(discly)
