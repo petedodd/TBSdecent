@@ -1,0 +1,45 @@
+,,,Cambodia,,,Cameroon,,,Côte d'Ivoire,,,Mozambique,,,Sierra Leone,,,Uganda,,,Zambia,
+COSTS,DESCRIPTION,NAME,Low,High,,Low,High,,Low,High,,Low,High,,Low,High,,Low,High,,Low,High
+Screening,"SOC, at DH: non-systematic initial assessment",c.d.soc.dh.nsassess,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001
+,"SOC, at PHC: non-systematic initial assessment",c.d.soc.phc.nsassess,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001
+,"IDH, at DH: systematic initial screening assessment",c.d.idh.dh.sassess,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001
+,"IDH, at PHC: systematic initial screening assessment",c.d.idh.phc.sassess,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001
+,"IPH, at DH: systematic initial screening assessment",c.d.iph.dh.sassess,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001
+,"IPH, at PHC: systematic initial screening assessment",c.d.iph.phc.sassess,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001
+,"IPD, at DH: systematic initial screening assessment",c.d.ipd.dh.sassess,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001
+,"IPD, at PHC: systematic initial screening assessment",c.d.ipd.phc.sassess,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001,,0.001,0.001
+Reassessment,"IDH, at DH: systematic clinical reassessment after 7 days",c.d.idh.dh.sreassess7,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002
+,"IPH, at DH: systematic clinical reassessment after 7 days",c.d.iph.dh.sreassess7,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002
+,"IPH, at PHC: systematic clinical reassessment after 7 days",c.d.iph.phc.sreassess7,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002
+,"IPD, at DH: systematic clinical reassessment after 7 days",c.d.ipd.dh.sreassess7,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002
+Exams & tests,"IPH, at DH: CXR only",c.d.iph.dh.CXR,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002
+,"IPH, at PHC: clinical exam only",c.d.ipd.phc.exam,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002,,0.002,0.002
+,"SOC, at PHC: clinical exam + smear [for some]",c.d.soc.phc.exam,0.003,0.003,,0.003,0.003,,0.003,0.003,,0.003,0.003,,0.003,0.003,,0.003,0.003,,0.003,0.003
+,"SOC, at DH: clinical exam + smear [for some]",c.d.soc.dh.exam,0.003,0.003,,0.003,0.003,,0.003,0.003,,0.003,0.003,,0.002,0.002,,0.003,0.003,,0.003,0.003
+,"SOC, at DH: clinical exam + CXR [for some] + smear [for some]",c.d.soc.dh.examCXR,0.003,0.003,,0.003,0.003,,0.003,0.003,,0.003,0.003,,0.003,0.003,,0.003,0.003,,0.003,0.003
+,"SOC, at DH: clinical exam + Xpert Ultra on sputum + CXR [for some] + smear [for some]",c.d.soc.dh.examCXRxsp,0.009,0.009,,0.009,0.009,,0.009,0.009,,0.009,0.009,,0.009,0.009,,0.009,0.009,,0.009,0.009
+,"SOC, at DH: clinical exam + Xpert Ultra on GA + CXR [for some] + smear [for some]",c.d.soc.dh.examCXRxga,0.009,0.009,,0.009,0.009,,0.009,0.009,,0.009,0.009,,0.009,0.009,,0.009,0.009,,0.009,0.009
+,"IDH, at DH: clinical exam + CXR + Xpert Ultra on NPA & stool/sputum",c.d.idh.dh.examCXRxns,0.016,0.016,,0.016,0.016,,0.016,0.016,,0.016,0.016,,0.016,0.016,,0.016,0.016,,0.016,0.016
+,"IPH, at DH: clinical exam + CXR + Xpert Ultra on NPA & stool/sputum",c.d.iph.dh.examCXRxns,0.016,0.016,,0.016,0.016,,0.016,0.016,,0.016,0.016,,0.016,0.016,,0.016,0.016,,0.016,0.016
+,"IPD, at DH: clinical exam + CXR + Xpert Ultra on NPA & stool/sputum",c.d.ipd.dh.examCXRxns,0.016,0.016,,0.016,0.016,,0.016,0.016,,0.016,0.016,,0.016,0.016,,0.016,0.016,,0.016,0.016
+,"IPH, at PHC: clinical exam + Xpert Ultra on NPA & stool/sputum",c.d.iph.phc.examxns,0.014,0.014,,0.014,0.014,,0.014,0.014,,0.014,0.014,,0.014,0.014,,0.014,0.014,,0.014,0.014
+,"IPD, at PHC: clinical exam + Xpert Ultra on sputum",c.d.ipd.phc.examxsp,0.008,0.008,,0.008,0.008,,0.008,0.008,,0.008,0.008,,0.008,0.008,,0.008,0.008,,0.008,0.008
+,"SOC, at PHC: clinical exam + Xpert Ultra on sputum + smear [for some]",c.d.soc.phc.examxsp,0.008,0.008,,0.008,0.008,,0.008,0.008,,0.008,0.008,,0.008,0.008,,0.008,0.008,,0.008,0.008
+Referral,"SOC, at PHC: refer to DH",c.d.soc.phc.refer,,,,,,,,,,,,,,,,,,,,
+,"IDH, at PHC: refer to DH",c.d.idh.phc.refer,,,,,,,,,,,,,,,,,,,,
+,"IPH, at PHC: refer to DH",c.d.iph.phc.refer,,,,,,,,,,,,,,,,,,,,
+,"IPD, at PHC: refer to DH",c.d.ipd.phc.refer,,,,,,,,,,,,,,,,,,,,
+Treatment,"IDH, dx at DH: rifampicin-sensitive anti-TB treatment",c.d.idh.dh.rsATT,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000
+,"IPH, dx at DH: rifampicin-sensitive anti-TB treatment",c.d.iph.dh.rsATT,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000
+,"IPH, dx at PHC: rifampicin-sensitive anti-TB treatment",c.d.iph.phc.rsATT,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000
+,"IPD, dx at DH: rifampicin-sensitive anti-TB treatment",c.d.ipd.dh.rsATT,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000
+,"IPD, dx at PHC: rifampicin-sensitive anti-TB treatment",c.d.ipd.phc.rsATT,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000
+,"SOC, dx at DH: rifampicin-sensitive anti-TB treatment",c.d.soc.dh.rsATT,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000
+,"SOC, dx at PHC: rifampicin-sensitive anti-TB treatment",c.d.soc.phc.rsATT,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000
+,"IDH, dx at DH: rifampicin-resistant anti-TB treatment",c.d.idh.dh.rrATT,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000
+,"IPH, dx at DH: rifampicin-resistant anti-TB treatment",c.d.iph.dh.rrATT,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000
+,"IPH, dx at PHC: rifampicin-resistant anti-TB treatment",c.d.iph.phc.rrATT,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000
+,"IPD, dx at DH: rifampicin-resistant anti-TB treatment",c.d.ipd.dh.rrATT,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000
+,"IPD, dx at PHC: rifampicin-resistant anti-TB treatment",c.d.ipd.phc.rrATT,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000
+,"SOC, dx at DH: rifampicin-resistant anti-TB treatment",c.d.soc.dh.rrATT,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000
+,"SOC, dx at PHC: rifampicin-resistant anti-TB treatment",c.d.soc.phc.rrATT,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000,,0.000,0.000
