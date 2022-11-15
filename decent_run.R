@@ -9,7 +9,7 @@ nargs <- length(args)
 variant <- as.character(args[1])
 if(variant=='BIA'){
   cat('Running BIA! \n')
-  bia <- 'bia'
+  bia <- 'BIA'
 } else if(variant=='CEA') {
   cat('Running CEA! \n')
   bia <- ''
@@ -70,7 +70,11 @@ if(!LYSdone){
 
 ## read and make cost data
 csts <- fread(here('indata/testcosts.csv'))         #read cost data
-rcsts <- fread(gh('indata/TBS.{postpend}.costs{bia}.csv'),skip = 1)    #read cost data
+fn <- gh('indata/TBS.{postpend}.costs{bia}.csv')
+rcsts <- fread(fn,skip = 1)    #read cost data
+cat('!!!!!!!!!! Using costs from ',fn,' !!!!!!\n')
+print(head(rcsts))
+
 ## check
 setdiff(unique(rcsts$NAME),
         unique(csts$cost))
