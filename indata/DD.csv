@@ -10,11 +10,11 @@ idh,dh,5-14,treated,2191.519771,2192
 idh,phc,0-4,presented,100000,
 idh,phc,0-4,screened,89399.70121,89400
 idh,phc,0-4,presumed,1147.630042,1148
-idh,phc,0-4,treated,40.74426185,41
+idh,phc,0-4,treated,0.000,0
 idh,phc,5-14,presented,100000,
 idh,phc,5-14,screened,93089.2376,93089
 idh,phc,5-14,presumed,2377.555873,2378
-idh,phc,5-14,treated,126.8029799,127
+idh,phc,5-14,treated,0.000,0
 ipd,dh,0-4,presented,100000,
 ipd,dh,0-4,screened,72754.57948,72755
 ipd,dh,0-4,presumed,2467.008076,2467
