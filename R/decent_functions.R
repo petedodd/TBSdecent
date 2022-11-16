@@ -688,10 +688,16 @@ outsummary <- function(out){
                      Ddeaths.iph,Ddeaths.idh,
                      DLYL.iph,DLYL.idh,
                      DLYL0.iph,DLYL0.idh,
+                     Dcost.iph,Dcost.idh,
                      DcostperLYS0.iph,DcostperLYS0.idh,
                      DcostperLYS.iph,DcostperLYS.idh,
                      Dcostperdeaths.iph,Dcostperdeaths.idh,
-                     Dcost.iph,Dcost.idh)])
+                     ## D/D
+                     DcostperDATT.iph,DcostperDATT.idh,
+                     DcostperDLYS0.iph,DcostperDLYS0.idh,
+                     DcostperDLYS.iph,DcostperDLYS.idh,
+                     DcostperDdeaths.iph,DcostperDdeaths.idh
+                     )])
 
   ## more bespoke statistics
   outi <- out[,.(ICER.iph= -mean(Dcost.iph) / mean(DLYL.iph),
@@ -708,28 +714,41 @@ outsummary <- function(out){
                    DcostperATT.idh = brkt(DcostperATT.idh.mid,DcostperATT.idh.lo,DcostperATT.idh.hi),
                    DcostperLYS0.iph = brkt(DcostperLYS0.iph.mid,
                                            DcostperLYS0.iph.lo,DcostperLYS0.iph.hi),
-                  DcostperLYS0.idh = brkt(DcostperLYS0.idh.mid,DcostperLYS0.idh.lo,DcostperLYS0.idh.hi),
-                  DcostperLYS.iph = brkt(DcostperLYS.iph.mid,DcostperLYS.iph.lo,DcostperLYS.iph.hi),
-                  DcostperLYS.idh = brkt(DcostperLYS.idh.mid,DcostperLYS.idh.lo,DcostperLYS.idh.hi),
-                  Dcostperdeaths.iph = brkt(Dcostperdeaths.iph.mid,
+                   DcostperLYS0.idh = brkt(DcostperLYS0.idh.mid,DcostperLYS0.idh.lo,DcostperLYS0.idh.hi),
+                   DcostperLYS.iph = brkt(DcostperLYS.iph.mid,DcostperLYS.iph.lo,DcostperLYS.iph.hi),
+                   DcostperLYS.idh = brkt(DcostperLYS.idh.mid,DcostperLYS.idh.lo,DcostperLYS.idh.hi),
+                   Dcostperdeaths.iph = brkt(Dcostperdeaths.iph.mid,
                                             Dcostperdeaths.iph.lo,Dcostperdeaths.iph.hi),
-                  Dcostperdeaths.idh = brkt(Dcostperdeaths.idh.mid,
-                                            Dcostperdeaths.idh.lo,Dcostperdeaths.idh.hi),
-                  DcostPerOPD.iph = brkt(Dcost.iph.mid,Dcost.iph.lo,Dcost.iph.hi),
-                  DcostPerOPD.idh = brkt(Dcost.idh.mid,Dcost.idh.lo,Dcost.idh.hi),
-                  DdeathsPer100kOPD.iph = brkt(-1e5*Ddeaths.iph.mid,
+                   Dcostperdeaths.idh = brkt(Dcostperdeaths.idh.mid,
+                                             Dcostperdeaths.idh.lo,Dcostperdeaths.idh.hi),
+                   ## D/D
+                   DcostperDATT.iph = brkt(DcostperDATT.iph.mid,DcostperDATT.iph.lo,DcostperDATT.iph.hi),
+                   DcostperDATT.idh = brkt(DcostperDATT.idh.mid,DcostperDATT.idh.lo,DcostperDATT.idh.hi),
+                   DcostperDLYS0.iph = brkt(DcostperDLYS0.iph.mid,
+                                           DcostperDLYS0.iph.lo,DcostperDLYS0.iph.hi),
+                   DcostperDLYS0.idh = brkt(DcostperDLYS0.idh.mid,DcostperDLYS0.idh.lo,DcostperDLYS0.idh.hi),
+                   DcostperDLYS.iph = brkt(DcostperDLYS.iph.mid,DcostperDLYS.iph.lo,DcostperDLYS.iph.hi),
+                   DcostperDLYS.idh = brkt(DcostperDLYS.idh.mid,DcostperDLYS.idh.lo,DcostperDLYS.idh.hi),
+                   DcostperDdeaths.iph = brkt(DcostperDdeaths.iph.mid,
+                                             DcostperDdeaths.iph.lo,DcostperDdeaths.iph.hi),
+                   DcostperDdeaths.idh = brkt(DcostperDdeaths.idh.mid,
+                                             DcostperDdeaths.idh.lo,DcostperDdeaths.idh.hi),
+                   ## end D/D
+                   DcostPerOPD.iph = brkt(Dcost.iph.mid,Dcost.iph.lo,Dcost.iph.hi),
+                   DcostPerOPD.idh = brkt(Dcost.idh.mid,Dcost.idh.lo,Dcost.idh.hi),
+                   DdeathsPer100kOPD.iph = brkt(-1e5*Ddeaths.iph.mid,
                                                -1e5*Ddeaths.iph.hi,-1e5*Ddeaths.iph.lo),
-                  DdeathsPer100kOPD.idh = brkt(-1e5*Ddeaths.idh.mid,
+                   DdeathsPer100kOPD.idh = brkt(-1e5*Ddeaths.idh.mid,
                                                -1e5*Ddeaths.idh.hi,-1e5*Ddeaths.idh.lo),
-                  DLYS0Per100kOPD.iph = brkt(-1e5*DLYL0.iph.mid,
-                                               -1e5*DLYL0.iph.hi,-1e5*DLYL0.iph.lo),
-                  DLYS0Per100kOPD.idh = brkt(-1e5*DLYL0.idh.mid,
-                                            -1e5*DLYL0.idh.hi,-1e5*DLYL0.idh.lo),
-                  DLYSPer100kOPD.iph = brkt(-1e5*DLYL.iph.mid,
-                                            -1e5*DLYL.iph.hi,-1e5*DLYL.iph.lo),
-                  DLYSPer100kOPD.idh = brkt(-1e5*DLYL.idh.mid,
-                                            -1e5*DLYL.idh.hi,-1e5*DLYL.idh.lo),
-                  ICER.iph=round(ICER.iph,0),ICER.idh=round(ICER.idh,0))]
+                   DLYS0Per100kOPD.iph = brkt(-1e5*DLYL0.iph.mid,
+                                              -1e5*DLYL0.iph.hi,-1e5*DLYL0.iph.lo),
+                   DLYS0Per100kOPD.idh = brkt(-1e5*DLYL0.idh.mid,
+                                              -1e5*DLYL0.idh.hi,-1e5*DLYL0.idh.lo),
+                   DLYSPer100kOPD.iph = brkt(-1e5*DLYL.iph.mid,
+                                             -1e5*DLYL.iph.hi,-1e5*DLYL.iph.lo),
+                   DLYSPer100kOPD.idh = brkt(-1e5*DLYL.idh.mid,
+                                             -1e5*DLYL.idh.hi,-1e5*DLYL.idh.lo),
+                   ICER.iph=round(ICER.iph,0),ICER.idh=round(ICER.idh,0))]
 
   ## return value
   list(outs=outs,pouts=pouts)

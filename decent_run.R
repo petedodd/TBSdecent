@@ -25,11 +25,11 @@ if(nargs==1){
   cat('...using costs for ',postpend,'\n')
 }
 
-## ## some by-hand setting
-## bia <- ''
-## postpend <- 'DECENT'
-## ## postpend <- 'DECENT_PERSONNEL'
-## ## postpend <- 'DECENT_SUPPLY'
+## some by-hand setting
+bia <- ''
+postpend <- 'DECENT'
+## postpend <- 'DECENT_PERSONNEL'
+## postpend <- 'DECENT_SUPPLY'
 
 ## arguments defined: begin script
 library(here)
@@ -185,7 +185,7 @@ heur <- c('id','value','deaths.iph','deaths.soc')
 out <- D[,..heur]
 out <- out[,lapply(.SD,function(x) sum(x*value)),.SDcols=c('deaths.iph','deaths.soc'),by=id] #sum against popn
 ## topl <- 0.25/out[,mean(deaths.soc-deaths.iph)]
-topl <- 300
+topl <- 100
 lz <- seq(from = 0,to=topl,length.out = 1000) #threshold vector for CEACs
 
 
@@ -224,10 +224,19 @@ for(cn in isoz){
   out[,DLYL0.iph:=LYL0.iph-LYL0.soc]; out[,DLYL0.idh:=LYL0.idh-LYL0.soc] #inc LYLs w/o discount
   out[,DLYL.iph:=LYL.iph-LYL.soc]; out[,DLYL.idh:=LYL.idh-LYL.soc] #inc LYLs
   ## per whatever
-  out[,DcostperATT.iph:=Dcost.iph/Datt.iph];out[,DcostperATT.idh:=Dcost.idh/Datt.idh];
-  out[,Dcostperdeaths.iph:=-Dcost.iph/Ddeaths.iph];out[,Dcostperdeaths.idh:=-Dcost.idh/Ddeaths.idh]
-  out[,DcostperLYS0.iph:=-Dcost.iph/DLYL0.iph];out[,DcostperLYS0.idh:=-Dcost.idh/DLYL0.idh]
-  out[,DcostperLYS.iph:=-Dcost.iph/DLYL.iph];out[,DcostperLYS.idh:=-Dcost.idh/DLYL.idh]
+  out[,DcostperATT.iph:=cost.iph/att.iph-cost.soc/att.soc];
+  out[,DcostperATT.idh:=cost.idh/att.idh-cost.soc/att.soc];
+  out[,Dcostperdeaths.iph:=-cost.iph/deaths.iph+cost.soc/deaths.soc];
+  out[,Dcostperdeaths.idh:=-cost.idh/deaths.idh+cost.soc/deaths.soc]
+  out[,DcostperLYS0.iph:=-cost.iph/LYL0.iph+cost.soc/LYL0.soc];
+  out[,DcostperLYS0.idh:=-cost.idh/LYL0.idh+cost.soc/LYL0.soc]
+  out[,DcostperLYS.iph:=-cost.iph/LYL.iph+cost.soc/LYL.soc];
+  out[,DcostperLYS.idh:=-cost.idh/LYL.idh+cost.soc/LYL.soc]
+  ## D/D
+  out[,DcostperDATT.iph:=Dcost.iph/Datt.iph];out[,DcostperDATT.idh:=Dcost.idh/Datt.idh];
+  out[,DcostperDdeaths.iph:=-Dcost.iph/Ddeaths.iph];out[,DcostperDdeaths.idh:=-Dcost.idh/Ddeaths.idh]
+  out[,DcostperDLYS0.iph:=-Dcost.iph/DLYL0.iph];out[,DcostperDLYS0.idh:=-Dcost.idh/DLYL0.idh]
+  out[,DcostperDLYS.iph:=-Dcost.iph/DLYL.iph];out[,DcostperDLYS.idh:=-Dcost.idh/DLYL.idh]
   ## summarize
   smy <- outsummary(out)
   outs <- smy$outs; pouts <- smy$pouts;
@@ -252,6 +261,10 @@ fwrite(allpout,file=gh('graphs/{bia}allpout_{prevapproach}.{postpend}.csv'))
 save(ceacl,file=gh('graphs/{bia}ceacl_{prevapproach}.{postpend}.Rdata'))
 save(NMB,file=gh('graphs/{bia}NMB_{prevapproach}.{postpend}.Rdata'))
 
+## check
+allout[,.(costperATT.iph.mid-costperATT.soc.mid,DcostperATT.iph.mid)]
+
+
 
 ## CEAC plot
 cbPalette <- c("#999999", "#E69F00", "#56B4E9","#009E73",
@@ -264,6 +277,41 @@ ckey <- data.table(iso3=c('KHM','CMR','CIV','MOZ','SLE','UGA','ZMB'),
                              'Mozambique','Sierra Leone','Uganda','Zambia'))
 
 ceaclm <- merge(ceaclm,ckey,by='iso3',all.x=TRUE)
+
+
+
+## plot: IPH only
+GP <- ggplot(ceaclm[variable=='iph' &
+                    iso3 %in% c('KHM', 'CIV', 'CMR', 'MOZ', 'SLE', 'UGA')],
+             aes(threshold,value,
+                 col=country,lty=Intervention)) +
+  geom_line() +
+  theme_classic() +
+  theme(legend.position = 'top',legend.title = element_blank())+
+  ggpubr::grids()+
+  ylab('Probability cost-effective')+
+  xlab('Cost-effectiveness threshold (USD/DALY)')+
+  scale_colour_manual(values=cbPalette)
+GP
+
+ggsave(GP,file=gh('graphs/{bia}CEAC_IPHonly_{prevapproach}.{postpend}.png'),w=7,h=5)
+
+
+## plot: IDH only
+GP <- ggplot(ceaclm[variable=='idh'  &
+                    iso3 %in% c('KHM', 'CIV', 'CMR')],aes(threshold,value,
+                        col=country,lty=Intervention)) +
+  geom_line() +
+  theme_classic() +
+  theme(legend.position = 'top',legend.title = element_blank())+
+  ggpubr::grids()+
+  ylab('Probability cost-effective')+
+  xlab('Cost-effectiveness threshold (USD/DALY)')+
+  scale_colour_manual(values=cbPalette)
+GP
+
+ggsave(GP,file=gh('graphs/{bia}CEAC_IDHonly_{prevapproach}.{postpend}.png'),w=7,h=5)
+
 
 ## plot
 GP <- ggplot(ceaclm,aes(threshold,value,
@@ -278,7 +326,6 @@ GP <- ggplot(ceaclm,aes(threshold,value,
 GP
 
 ggsave(GP,file=gh('graphs/{bia}CEAC_{prevapproach}.{postpend}.png'),w=7,h=5)
-
 
 
 ## plot
