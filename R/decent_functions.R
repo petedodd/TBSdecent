@@ -437,9 +437,16 @@ reformatCosts <- function(rcsts){
   drop <- grep('drop',names(rcsts),value=TRUE)
   rcsts[,c(drop):=NULL]
   rcsts[is.na(rcsts)] <- 0.1 #dummy
+  ## drop the extra columns if existing
+  if(ncol(rcsts)>(which(names(rcsts)=='ZMB.hi')+1)){
+    drop <- (which(names(rcsts)=='ZMB.hi')+1):ncol(rcsts)
+    drop <- names(rcsts)[drop]
+    rcsts[,c(drop):=NULL]
+  }
   rcsts <- melt(rcsts,id=c('NAME','DESCRIPTION'))
   rcsts[,DESCRIPTION:=NULL]
   rcsts[,c('iso3','hilo'):=tstrsplit(variable,split="\\.")]
+  rcsts <- rcsts[NAME!=''] #drop extra rows if existing
   rcsts <- dcast(rcsts,iso3 + NAME ~ hilo,value.var = 'value')
   rcsts[,c('cost.m','cost.sd'):=.((lo+hi)/2,(hi-lo)/3.92)]
   rcsts <- rcsts[,.(iso3,cost=NAME,cost.m,cost.sd)]

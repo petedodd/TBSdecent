@@ -2,30 +2,34 @@
 ## rm(list=ls())
 
 ## argument handling:
-
+## see NOTE comments for how to set by hand for interactive use of script below
 args <- commandArgs(trailingOnly = TRUE)
 
 nargs <- length(args)
 variant <- as.character(args[1])
 if(variant=='BIA'){
   cat('Running BIA! \n')
-  bia <- 'BIA'
+  bia <- 'BIA' #NOTE set variable by hand if BIA
 } else if(variant=='CEA') {
   cat('Running CEA! \n')
-  bia <- ''
+  bia <- '' #NOTE set variable by hand if CEA
 } else {
   stop('First argument must either by BIA or CEA!')
 }
 
 if(nargs==1){
-  postpend <- 'DECENT'
+  postpend <- 'DECENT' #NOTE set by hand for base full-cost analysis
   cat('...using full costs \n')
 } else{
-  postpend <- as.character(args[2])
+  postpend <- as.character(args[2]) #NOTE set variable to 'DECENT_EQUIPMENT' etc if partial cost analysis
   cat('...using costs for ',postpend,'\n')
-  ## postpend <- paste0('.',postpend) 
 }
 
+## ## some by-hand setting
+## bia <- ''
+## postpend <- 'DECENT'
+## ## postpend <- 'DECENT_PERSONNEL'
+## ## postpend <- 'DECENT_SUPPLY'
 
 ## arguments defined: begin script
 library(here)
@@ -72,8 +76,7 @@ if(!LYSdone){
 csts <- fread(here('indata/testcosts.csv'))         #read cost data
 fn <- gh('indata/TBS.{postpend}.costs{bia}.csv')
 rcsts <- fread(fn,skip = 1)    #read cost data
-cat('!!!!!!!!!! Using costs from ',fn,' !!!!!!\n')
-print(head(rcsts))
+cat('!!! Using costs from ',fn,' !!!\n')
 
 ## check
 setdiff(unique(rcsts$NAME),

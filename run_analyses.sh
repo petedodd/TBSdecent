@@ -18,4 +18,4 @@ R --slave --vanilla --args <decent_run.R BIA
 # NOTE
 # if adding for BIA:
 # R --slave --vanilla --args <decent_run.R BIA DECENT_TRAINING
-# with inputs files like TBS.DECENT.DECENT_TRAINING.costsBIA.csv etc
+# with inputs files like TBS.DECENT_TRAINING.costsBIA.csv etc
