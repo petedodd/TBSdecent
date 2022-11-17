@@ -26,8 +26,8 @@ if(nargs==1){
 }
 
 ## some by-hand setting
-bia <- ''
-postpend <- 'DECENT'
+## bia <- ''
+## postpend <- 'DECENT'
 ## postpend <- 'DECENT_PERSONNEL'
 ## postpend <- 'DECENT_SUPPLY'
 
