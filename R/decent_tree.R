@@ -111,6 +111,11 @@ AddOutcomes <- function(D){
   return(D)
 }
 
+## names of stage counters
+stagecounters <- c('DH.presented','DH.screened','DH.presumed','DH.treated',
+                   'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
+scc <- paste0(stagecounters,'.cost')
+labdat <- c('p','cost',stagecounters,scc)
 
 ## === SOC
 SOC <- MSorg2tree(here('indata/dSOCb.txt'))
@@ -131,17 +136,8 @@ if(file.exists(fn)){
   ## read
   labz <- fread(fn)
   labz$p <- gsub("p\\.rr","prr",labz$p) #NOTE fixing typo
-  SOC$Set(p=labz$p)
-  SOC$Set(cost=labz$cost)
-  ## DH/PHC cascade counters
-  SOC$Set(DH.presented=labz$DH.presented)
-  SOC$Set(DH.screened=labz$DH.screened)
-  SOC$Set(DH.presumed=labz$DH.presumed)
-  SOC$Set(DH.treated=labz$DH.treated)
-  SOC$Set(PHC.presented=labz$PHC.presented)
-  SOC$Set(PHC.screened=labz$PHC.screened)
-  SOC$Set(PHC.presumed=labz$PHC.presumed)
-  SOC$Set(PHC.treated=labz$PHC.treated)
+  labz[,(scc):=lapply(.SD,function(x)paste(x,cost,sep='*')),.SDcols=stagecounters] #costs by stage
+  LabelFromData(SOC,labz[,..labdat]) #add label data
   ## save out
   tree2file(SOC,filename = here('indata/CSV/SOCb2.csv'),
             'p','cost','deaths','lives','refers','dxc','dxb','att',
@@ -167,17 +163,8 @@ if(file.exists(fn)){
   ## read
   labz <- fread(fn)
   labz$p <- gsub("p\\.rr","prr",labz$p) #NOTE fixing typo
-  IPD$Set(p=labz$p)
-  IPD$Set(cost=labz$cost)
-  ## DH/PHC cascade counters
-  IPD$Set(DH.presented=labz$DH.presented)
-  IPD$Set(DH.screened=labz$DH.screened)
-  IPD$Set(DH.presumed=labz$DH.presumed)
-  IPD$Set(DH.treated=labz$DH.treated)
-  IPD$Set(PHC.presented=labz$PHC.presented)
-  IPD$Set(PHC.screened=labz$PHC.screened)
-  IPD$Set(PHC.presumed=labz$PHC.presumed)
-  IPD$Set(PHC.treated=labz$PHC.treated)
+  labz[,(scc):=lapply(.SD,function(x)paste(x,cost,sep='*')),.SDcols=stagecounters] #costs by stage
+  LabelFromData(IPD,labz[,..labdat]) #add label data
   tree2file(IPD,filename = here('indata/CSV/IPDc2.csv'),
             'p','cost','deaths','lives','refers','dxc','dxb','att',
             'check',
@@ -202,17 +189,8 @@ if(file.exists(fn)){
   ## read
   labz <- fread(fn)
   labz$p <- gsub("p\\.rr","prr",labz$p) #NOTE fixing typo
-  IDH$Set(p=labz$p)
-  IDH$Set(cost=labz$cost)
-  ## DH/PHC cascade counters
-  IDH$Set(DH.presented=labz$DH.presented)
-  IDH$Set(DH.screened=labz$DH.screened)
-  IDH$Set(DH.presumed=labz$DH.presumed)
-  IDH$Set(DH.treated=labz$DH.treated)
-  IDH$Set(PHC.presented=labz$PHC.presented)
-  IDH$Set(PHC.screened=labz$PHC.screened)
-  IDH$Set(PHC.presumed=labz$PHC.presumed)
-  IDH$Set(PHC.treated=labz$PHC.treated)
+  labz[,(scc):=lapply(.SD,function(x)paste(x,cost,sep='*')),.SDcols=stagecounters] #costs by stage
+  LabelFromData(IDH,labz[,..labdat]) #add label data
   tree2file(IDH,filename = here('indata/CSV/IDHc2.csv'),
             'p','cost','deaths','lives','refers','dxc','dxb','att',
             'check',
@@ -237,17 +215,8 @@ if(file.exists(fn)){
   ## read
   labz <- fread(fn)
   labz$p <- gsub("p\\.rr","prr",labz$p) #NOTE fixing typo
-  IPH$Set(p=labz$p)
-  IPH$Set(cost=labz$cost)
-  ## DH/PHC cascade counters
-  IPH$Set(DH.presented=labz$DH.presented)
-  IPH$Set(DH.screened=labz$DH.screened)
-  IPH$Set(DH.presumed=labz$DH.presumed)
-  IPH$Set(DH.treated=labz$DH.treated)
-  IPH$Set(PHC.presented=labz$PHC.presented)
-  IPH$Set(PHC.screened=labz$PHC.screened)
-  IPH$Set(PHC.presumed=labz$PHC.presumed)
-  IPH$Set(PHC.treated=labz$PHC.treated)
+  labz[,(scc):=lapply(.SD,function(x)paste(x,cost,sep='*')),.SDcols=stagecounters] #costs by stage
+  LabelFromData(IPH,labz[,..labdat]) #add label data
   tree2file(IPH,filename = here('indata/CSV/IPHc2.csv'),
             'p','cost','deaths','lives','refers','dxc','dxb','att',
             'check',
@@ -259,8 +228,8 @@ if(file.exists(fn)){
 ## make functions
 fnmz <- c('check','cost','deaths','att',
           'lives','refers','dxc','dxb',
-          'DH.presented','DH.screened','DH.presumed','DH.treated',
-          'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
+          stagecounters,
+          scc)
 
 SOC.F <- makeTfuns(SOC,fnmz)
 IPD.F <- makeTfuns(IPD,fnmz)

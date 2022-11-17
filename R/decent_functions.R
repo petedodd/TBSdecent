@@ -458,6 +458,7 @@ reformatCosts <- function(rcsts){
 computeCascadeData <- function(D){
   nmz <- names(D)
   rnmz0 <- grep("DH\\.|PHC\\.",nmz,value=TRUE)
+  rnmz0 <- rnmz0[!grepl('cost',rnmz0)] #don't include the cost-by-stage data
   rnmz <- c('id','age','tb','value',rnmz0)
   A <- D[,..rnmz]
   ## A[,sum(value),by=id] #CHECK
@@ -682,22 +683,26 @@ MLH <- function(dat){
 ## =========== output formatters
 outsummary <- function(out){
 
+  keep <- c('costperATT.soc','costperATT.iph','costperATT.idh',
+            'DcostperATT.iph','DcostperATT.idh',
+            'Ddeaths.iph','Ddeaths.idh',
+            'DLYL.iph','DLYL.idh',
+            'DLYL0.iph','DLYL0.idh',
+            'Dcost.iph','Dcost.idh',
+            'DcostperLYS0.iph','DcostperLYS0.idh',
+            'DcostperLYS.iph','DcostperLYS.idh',
+            'Dcostperdeaths.iph','Dcostperdeaths.idh',
+            ## D/D
+            'DcostperDATT.iph','DcostperDATT.idh',
+            'DcostperDLYS0.iph','DcostperDLYS0.idh',
+            'DcostperDLYS.iph','DcostperDLYS.idh',
+            'DcostperDdeaths.iph','DcostperDdeaths.idh')
+  scr <- c(psoc.sc,piph.sc,pidh.sc)
+  scrm <- paste0(scr,'.mid')
+  keep <- c(keep,scr)
+
   ## mid/lo/hi
-  outa <- MLH(out[,.(costperATT.soc,costperATT.iph,costperATT.idh,
-                     DcostperATT.iph,DcostperATT.idh,
-                     Ddeaths.iph,Ddeaths.idh,
-                     DLYL.iph,DLYL.idh,
-                     DLYL0.iph,DLYL0.idh,
-                     Dcost.iph,Dcost.idh,
-                     DcostperLYS0.iph,DcostperLYS0.idh,
-                     DcostperLYS.iph,DcostperLYS.idh,
-                     Dcostperdeaths.iph,Dcostperdeaths.idh,
-                     ## D/D
-                     DcostperDATT.iph,DcostperDATT.idh,
-                     DcostperDLYS0.iph,DcostperDLYS0.idh,
-                     DcostperDLYS.iph,DcostperDLYS.idh,
-                     DcostperDdeaths.iph,DcostperDdeaths.idh
-                     )])
+  outa <- MLH(out[,..keep])
 
   ## more bespoke statistics
   outi <- out[,.(ICER.iph= -mean(Dcost.iph) / mean(DLYL.iph),
@@ -750,8 +755,11 @@ outsummary <- function(out){
                                              -1e5*DLYL.idh.hi,-1e5*DLYL.idh.lo),
                    ICER.iph=round(ICER.iph,0),ICER.idh=round(ICER.idh,0))]
 
+  ## staged costs
+  scouts <- outa$M[,..scrm]
+
   ## return value
-  list(outs=outs,pouts=pouts)
+  list(outs=outs,pouts=pouts,scouts=scouts)
 }
 
 

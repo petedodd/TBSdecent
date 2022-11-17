@@ -171,7 +171,17 @@ fwrite(TTB,file=gh('graphs/{bia}TTB_{prevapproach}.{postpend}.csv'))
 ## --- run over different countries
 cnmz <- names(C)
 cnmz <- cnmz[cnmz!='id']
-toget <- c('id','cost.soc','cost.iph','cost.idh',
+costsbystg <- c('DH.presented.cost.soc','DH.presented.cost.iph','DH.presented.cost.idh',
+                'DH.screened.cost.soc','DH.screened.cost.iph','DH.screened.cost.idh',
+                'DH.presumed.cost.soc','DH.presumed.cost.iph','DH.presumed.cost.idh',
+                'DH.treated.cost.soc','DH.treated.cost.iph','DH.treated.cost.idh',
+                'PHC.presented.cost.soc','PHC.presented.cost.iph','PHC.presented.cost.idh',
+                'PHC.screened.cost.soc','PHC.screened.cost.iph','PHC.screened.cost.idh',
+                'PHC.presumed.cost.soc','PHC.presumed.cost.iph','PHC.presumed.cost.idh',
+                'PHC.treated.cost.soc','PHC.treated.cost.iph','PHC.treated.cost.idh')
+toget <- c('id',
+           'cost.soc','cost.iph','cost.idh',
+           costsbystg,
            'att.soc','att.idh','att.iph',
            'deaths.soc','deaths.idh','deaths.iph',
            'LYS','LYS0','value'
@@ -187,11 +197,14 @@ out <- out[,lapply(.SD,function(x) sum(x*value)),.SDcols=c('deaths.iph','deaths.
 ## topl <- 0.25/out[,mean(deaths.soc-deaths.iph)]
 topl <- 100
 lz <- seq(from = 0,to=topl,length.out = 1000) #threshold vector for CEACs
-
+## staged costs by arm
+soc.sc <- grep('soc',costsbystg,value=TRUE); psoc.sc <- paste0('perATT.',soc.sc)
+iph.sc <- grep('iph',costsbystg,value=TRUE); piph.sc <- paste0('perATT.',iph.sc)
+idh.sc <- grep('idh',costsbystg,value=TRUE); pidh.sc <- paste0('perATT.',idh.sc)
 
 
 ## containers & loop
-allout <- allpout <- list() #tabular outputs
+allout <- allpout <- allscout <- list() #tabular outputs
 ceacl <- NMB <- list()             #CEAC outputs etc
 ## cn <- isoz[1]
 for(cn in isoz){
@@ -215,8 +228,9 @@ for(cn in isoz){
   ## out[,sum(value),by=id]                                       #CHECK
   out <- out[,lapply(.SD,function(x) sum(x*value)),.SDcols=tosum,by=id] #sum against popn
   ## non-incremental cost per ATT
-  out[,costperATT.soc:=cost.soc/att.soc];
-  out[,costperATT.iph:=cost.iph/att.iph]; out[,costperATT.idh:=cost.idh/att.idh];
+  out[,costperATT.soc:=cost.soc/att.soc]; out[,(psoc.sc):=lapply(.SD,function(x) x/att.soc),.SDcols=soc.sc]
+  out[,costperATT.iph:=cost.iph/att.iph]; out[,(piph.sc):=lapply(.SD,function(x) x/att.iph),.SDcols=iph.sc]
+  out[,costperATT.idh:=cost.idh/att.idh]; out[,(pidh.sc):=lapply(.SD,function(x) x/att.idh),.SDcols=idh.sc]
   ## increments wrt SOC (per child presenting at either DH/PHC)
   out[,Dcost.iph:=cost.iph-cost.soc]; out[,Dcost.idh:=cost.idh-cost.soc] #inc costs
   out[,Datt.iph:=att.iph-att.soc]; out[,Datt.idh:=att.idh-att.soc] #inc atts
@@ -239,10 +253,10 @@ for(cn in isoz){
   out[,DcostperDLYS.iph:=-Dcost.iph/DLYL.iph];out[,DcostperDLYS.idh:=-Dcost.idh/DLYL.idh]
   ## summarize
   smy <- outsummary(out)
-  outs <- smy$outs; pouts <- smy$pouts;
-  outs[,iso3:=cn]; pouts[,iso3:=cn]
+  outs <- smy$outs; pouts <- smy$pouts; scouts <- smy$scouts
+  outs[,iso3:=cn]; pouts[,iso3:=cn]; scouts[,iso3:=cn]
   ## capture tabular
-  allout[[cn]] <- outs; allpout[[cn]] <- pouts
+  allout[[cn]] <- outs; allpout[[cn]] <- pouts; allscout[[cn]] <- scouts
   ## capture data for NMB
   NMB[[cn]] <- out[,.(iso3=cn,DLYL.iph,Dcost.iph,DLYL.idh,Dcost.idh)]
   ## ceac data
@@ -253,6 +267,7 @@ for(cn in isoz){
 }
 allout <- rbindlist(allout)
 allpout <- rbindlist(allpout)
+allscout <- rbindlist(allscout)
 ceacl <- rbindlist(ceacl)
 NMB <- rbindlist(NMB)
 
@@ -260,6 +275,7 @@ fwrite(allout,file=gh('graphs/{bia}allout_{prevapproach}.{postpend}.csv'))
 fwrite(allpout,file=gh('graphs/{bia}allpout_{prevapproach}.{postpend}.csv'))
 save(ceacl,file=gh('graphs/{bia}ceacl_{prevapproach}.{postpend}.Rdata'))
 save(NMB,file=gh('graphs/{bia}NMB_{prevapproach}.{postpend}.Rdata'))
+save(allscout,file=gh('graphs/{bia}allscout_{prevapproach}.{postpend}.Rdata'))
 
 ## check
 allout[,.(costperATT.iph.mid-costperATT.soc.mid,DcostperATT.iph.mid)]
