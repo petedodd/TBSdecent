@@ -13,7 +13,7 @@ R --slave --vanilla --args <decent_run.R CEA
 
 
 # main BIA
-R --slave --vanilla --args <decent_run.R BIA
+# R --slave --vanilla --args <decent_run.R BIA
 
 # NOTE
 # if adding for BIA:
