@@ -100,7 +100,9 @@ DxA <- computeDxAccuracy(PD0,PD1,C,nreps)
 
 ## this computes and saves model parameters derived from cascade data
 prevapproach <- 'gm'
-PD1 <- computeCascadeParameters(DD,ICS,DxA,prevapproach)
+## PD1 <- computeCascadeParameters(DD,ICS,DxA,prevapproach)
+PD1 <- read.csv(here('indata/calcparms_gm_in.csv'))
+
 
 ## combine different parameter types
 P1 <- parse.parmtable(PD0)             #convert into parameter object
@@ -195,7 +197,7 @@ heur <- c('id','value','deaths.iph','deaths.soc')
 out <- D[,..heur]
 out <- out[,lapply(.SD,function(x) sum(x*value)),.SDcols=c('deaths.iph','deaths.soc'),by=id] #sum against popn
 ## topl <- 0.25/out[,mean(deaths.soc-deaths.iph)]
-topl <- 100
+topl <- 300 #100
 lz <- seq(from = 0,to=topl,length.out = 1000) #threshold vector for CEACs
 ## staged costs by arm
 soc.sc <- grep('soc',costsbystg,value=TRUE); psoc.sc <- paste0('perATT.',soc.sc)
@@ -228,12 +230,16 @@ for(cn in isoz){
   ## out[,sum(value),by=id]                                       #CHECK
   out <- out[,lapply(.SD,function(x) sum(x*value)),.SDcols=tosum,by=id] #sum against popn
   ## non-incremental cost per ATT
-  out[,costperATT.soc:=cost.soc/att.soc]; out[,(psoc.sc):=lapply(.SD,function(x) x/att.soc),.SDcols=soc.sc]
-  out[,costperATT.iph:=cost.iph/att.iph]; out[,(piph.sc):=lapply(.SD,function(x) x/att.iph),.SDcols=iph.sc]
-  out[,costperATT.idh:=cost.idh/att.idh]; out[,(pidh.sc):=lapply(.SD,function(x) x/att.idh),.SDcols=idh.sc]
+  out[,costperATT.soc:=cost.soc/att.soc];
+  out[,(psoc.sc):=lapply(.SD,function(x) x/att.soc),.SDcols=soc.sc]
+  out[,costperATT.iph:=cost.iph/att.iph];
+  out[,(piph.sc):=lapply(.SD,function(x) x/att.iph),.SDcols=iph.sc]
+  out[,costperATT.idh:=cost.idh/att.idh];
+  out[,(pidh.sc):=lapply(.SD,function(x) x/att.idh),.SDcols=idh.sc]
   ## increments wrt SOC (per child presenting at either DH/PHC)
   out[,Dcost.iph:=cost.iph-cost.soc]; out[,Dcost.idh:=cost.idh-cost.soc] #inc costs
   out[,Datt.iph:=att.iph-att.soc]; out[,Datt.idh:=att.idh-att.soc] #inc atts
+  out[,attPC.iph:=1e2*att.iph/att.soc]; out[,attPC.idh:=1e2*att.idh/att.soc] #rel inc atts
   out[,Ddeaths.iph:=deaths.iph-deaths.soc]; out[,Ddeaths.idh:=deaths.idh-deaths.soc] #inc deaths
   out[,DLYL0.iph:=LYL0.iph-LYL0.soc]; out[,DLYL0.idh:=LYL0.idh-LYL0.soc] #inc LYLs w/o discount
   out[,DLYL.iph:=LYL.iph-LYL.soc]; out[,DLYL.idh:=LYL.idh-LYL.soc] #inc LYLs
@@ -271,14 +277,23 @@ allscout <- rbindlist(allscout)
 ceacl <- rbindlist(ceacl)
 NMB <- rbindlist(NMB)
 
+## checks
+out[,.(att.iph/att.soc,att.idh/att.soc)]
+out[,.(Datt.iph/att.soc,Datt.idh/att.soc)]
+out[,.(att.soc,att.iph,att.idh)]
+out[,.(Ddeaths.iph/Datt.iph,Ddeaths.idh/Datt.idh)] #OK
+out[,.(DLYL.iph/Ddeaths.iph,DLYL.idh/Ddeaths.idh)] #OK
+## check
+allout[,.(costperATT.iph.mid-costperATT.soc.mid,DcostperATT.iph.mid)]
+
+
+
 fwrite(allout,file=gh('graphs/{bia}allout_{prevapproach}.{postpend}.csv'))
 fwrite(allpout,file=gh('graphs/{bia}allpout_{prevapproach}.{postpend}.csv'))
 save(ceacl,file=gh('graphs/{bia}ceacl_{prevapproach}.{postpend}.Rdata'))
 save(NMB,file=gh('graphs/{bia}NMB_{prevapproach}.{postpend}.Rdata'))
 save(allscout,file=gh('graphs/{bia}allscout_{prevapproach}.{postpend}.Rdata'))
 
-## check
-allout[,.(costperATT.iph.mid-costperATT.soc.mid,DcostperATT.iph.mid)]
 
 
 

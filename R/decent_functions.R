@@ -689,6 +689,7 @@ outsummary <- function(out){
             'DLYL.iph','DLYL.idh',
             'DLYL0.iph','DLYL0.idh',
             'Dcost.iph','Dcost.idh',
+            'attPC.iph','attPC.idh',
             'DcostperLYS0.iph','DcostperLYS0.idh',
             'DcostperLYS.iph','DcostperLYS.idh',
             'Dcostperdeaths.iph','Dcostperdeaths.idh',
@@ -753,6 +754,10 @@ outsummary <- function(out){
                                              -1e5*DLYL.iph.hi,-1e5*DLYL.iph.lo),
                    DLYSPer100kOPD.idh = brkt(-1e5*DLYL.idh.mid,
                                              -1e5*DLYL.idh.hi,-1e5*DLYL.idh.lo),
+                   attPC.iph = brkt(attPC.iph.mid,attPC.iph.lo,attPC.iph.hi),
+                   attPC.idh = brkt(attPC.idh.mid,attPC.idh.lo,attPC.idh.hi),
+                   DattPC.iph = brkt(attPC.iph.mid-1e2,attPC.iph.lo-1e2,attPC.iph.hi-1e2),
+                   DattPC.idh = brkt(attPC.idh.mid-1e2,attPC.idh.lo-1e2,attPC.idh.hi-1e2),
                    ICER.iph=round(ICER.iph,0),ICER.idh=round(ICER.idh,0))]
 
   ## staged costs
