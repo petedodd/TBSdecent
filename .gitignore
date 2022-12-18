@@ -43,6 +43,11 @@ vignettes/*.pdf
 
 # graphs ignored for now
 graphs/*
+!graphs/cascades/
+graphs/cascades/*
+!graphs/cascades/data/
+
+# outdata ignored for now
 outdata/*
 
 # gnumeric/numbers temporary files
