@@ -506,7 +506,7 @@ computeCascadeData <- function(D){
 }
 
 ## --- function for preliminary run throughts to compute mean sense/spec
-computeDxAccuracy <- function(PD0,PD1,C,nreps){
+computeDxAccuracy <- function(PD0,PD1,C,nreps,writeout=TRUE){
   PD1[,2] <- "0.5" #not relevant but needed to generate answers
   P1 <- parse.parmtable(PD0)             #convert into parameter object
   P2 <- parse.parmtable(PD1)             #convert into parameter object
@@ -527,9 +527,11 @@ computeDxAccuracy <- function(PD0,PD1,C,nreps){
                by=c('arm','age','location'),all.x=TRUE)
   sense <- AS2[stage=='treated',.(sense=round(1e2*mid/prmid,1),
                                   arm,age,location)]
-  fwrite(sense,file=here('graphs/sense.csv'))
-  cat('mean dx sensitivity computed outputed to graphs/sense.csv:\n')
-  print(sense)
+  if(writeout){
+    fwrite(sense,file=here('graphs/sense.csv'))
+    cat('mean dx sensitivity computed outputed to graphs/sense.csv:\n')
+    print(sense)
+  }
 
   ## NOTE for computing spec
   P2$d.TBprev.ICS.o5 <- 1e-5
@@ -547,9 +549,11 @@ computeDxAccuracy <- function(PD0,PD1,C,nreps){
                by=c('arm','age','location'),all.x=TRUE)
   spec <- AS2[stage=='treated',.(spec=round(1e2*(1-mid/prmid),1),
                                  arm,age,location)]
-  fwrite(spec,file=here('graphs/spec.csv'))
-  cat('mean dx specificity computed outputed to graphs/spec.csv:\n')
-  print(spec)
+  if(writeout){
+    fwrite(spec,file=here('graphs/spec.csv'))
+    cat('mean dx specificity computed outputed to graphs/spec.csv:\n')
+    print(spec)
+  }
 
   ## output
   merge(sense,spec,by=c('arm','age','location'))
