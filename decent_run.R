@@ -98,6 +98,37 @@ PD0 <- PD0[PD0$DISTRIBUTION!="",]
 if(!file.exists(here('graphs'))) dir.create(here('graphs'))
 DxA <- computeDxAccuracy(PD0,PD1,C,nreps)
 
+## looking at effect of clin spec on outputs
+DxA <- computeDxAccuracy(PD0,PD1,C,nreps,writeout = FALSE)
+DxA
+## TODO what's going on with sense? NOTE problem only for unused idh arm
+
+PD0[PD0$NAME %in% c('spec.clin','spec.clinCXR.soc'),]
+spv <- seq(from=0.8,to=1,l=10)
+tmpi <- PD0
+
+DAD <- list()
+for(i in 1:length(spv)){
+  print(i)
+  tmpi[tmpi$NAME %in% c('spec.clin','spec.clinCXR.soc'),'DISTRIBUTION'] <- paste0(spv[i])
+  tmpo <- computeDxAccuracy(tmpi,PD1,C,nreps,writeout = FALSE)
+  tmpo[,sp:=spv[i]]
+  DAD[[i]] <- tmpo
+}
+DAD <- rbindlist(DAD)
+
+DAD
+
+ggplot(DAD[arm!='idh'],aes(sp,spec/1e2,shape=paste(arm,age),col=location))+geom_point()+
+  xlab('Clinical spec')+ylab('Mean dx-algo spec') +
+  scale_x_continuous(label=percent)+scale_y_continuous(label=percent)
+
+ggsave('~/Downloads/tmp.pdf',w=7,h=5)
+
+## TODO check clin spec prior -- seems v tight
+## TODO modify approach to cascade to work on DF rather than means
+## TODO sample prev/clin.spec so as to impose D/C in the cascade
+
 ## this computes and saves model parameters derived from cascade data
 prevapproach <- 'gm'
 ## PD1 <- computeCascadeParameters(DD,ICS,DxA,prevapproach)
