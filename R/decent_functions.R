@@ -454,8 +454,27 @@ reformatCosts <- function(rcsts){
 }
 
 
+## --- sampling spec and tbprev condiotional on cascade (by sideeffect)
+BayesSpecPrev <- function(DI){
+  ## to generate conditional sample, need treated/presumed
+  ## Y = l - (se-l) * (a+b*x)
+  ## Y = [l - (se-l) * a]  - (se-l) * b* x
+  ## exp[ -(x-mx)^2/(2*Sx^2)) -(y-my)^2/(2*Sy^2)) ] = 
+  ## exp[ -(x-mx)^2/(2*Sx^2)) -([l - (se-l)*a]-(se-l)*b*x-my)^2/(2*Sy^2)) ] =
+  ## exp[ -(x-mx)^2/(2*Sx^2)) -(x-(l-(se-l)*a-my)/((se-l)*b))^2/(2*Sy^2/((se-l)*b)^2) ] =
+  ## 1/V = 1/Sx^2 + ((se-l)*b)^2/Sy^2
+  ## M =  { mx/Sx^2 + [(l-(se-l)*a-my)*((se-l)*b)]/Sy^2 } * V
+  DI[,V:=1/(1/prior.tbprev$sd^2 + ((sense-DoC)/b)^2/prior.phi$sd^2)]
+  DI[,M:=V * (prior.tbprev$mean/prior.tbprev$sd^2 +
+                (DoC-a-b*prior.phi$mean)*(sense-DoC)/(b^2*prior.phi$sd^2))]
+
+  DI[,tbprev:=rnorm(nrow(DI),mean=M,sd=sqrt(V))]
+  DI[,phi:=(DoC-a)/b-((sense-DoC)/b)*tbprev]
+  DI[,tbprev:=iodds(tbprev)]
+}
+
 ## --- for computing cascades
-computeCascadeData <- function(D){
+computeCascadeData <- function(D,PSA=FALSE){
   nmz <- names(D)
   rnmz0 <- grep("DH\\.|PHC\\.",nmz,value=TRUE)
   rnmz0 <- rnmz0[!grepl('cost',rnmz0)] #don't include the cost-by-stage data
@@ -481,6 +500,9 @@ computeCascadeData <- function(D){
   AM[,c('location','stage','arm'):=tstrsplit(variable,split='\\.')]
   ## sum over other attributes
   AM <- AM[,.(value=sum(value)),by=.(id,arm,age,location,stage,TB)]
+  ## version with PSA id
+  if(PSA==TRUE) return(AM[,.(value=sum(value)),by=.(id,arm,age,location,stage)]) 
+
   ## nrow(AM) # CHECK
   ## aggregate/average
   ## TB version
@@ -506,7 +528,7 @@ computeCascadeData <- function(D){
 }
 
 ## --- function for preliminary run throughts to compute mean sense/spec
-computeDxAccuracy <- function(PD0,PD1,C,nreps,writeout=TRUE){
+computeDxAccuracy <- function(PD0,PD1,C,nreps){
   PD1[,2] <- "0.5" #not relevant but needed to generate answers
   P1 <- parse.parmtable(PD0)             #convert into parameter object
   P2 <- parse.parmtable(PD1)             #convert into parameter object
@@ -527,11 +549,9 @@ computeDxAccuracy <- function(PD0,PD1,C,nreps,writeout=TRUE){
                by=c('arm','age','location'),all.x=TRUE)
   sense <- AS2[stage=='treated',.(sense=round(1e2*mid/prmid,1),
                                   arm,age,location)]
-  if(writeout){
-    fwrite(sense,file=here('graphs/sense.csv'))
-    cat('mean dx sensitivity computed outputed to graphs/sense.csv:\n')
-    print(sense)
-  }
+  fwrite(sense,file=here('graphs/sense.csv'))
+  cat('mean dx sensitivity computed outputed to graphs/sense.csv:\n')
+  print(sense)
 
   ## NOTE for computing spec
   P2$d.TBprev.ICS.o5 <- 1e-5
@@ -549,15 +569,54 @@ computeDxAccuracy <- function(PD0,PD1,C,nreps,writeout=TRUE){
                by=c('arm','age','location'),all.x=TRUE)
   spec <- AS2[stage=='treated',.(spec=round(1e2*(1-mid/prmid),1),
                                  arm,age,location)]
-  if(writeout){
-    fwrite(spec,file=here('graphs/spec.csv'))
-    cat('mean dx specificity computed outputed to graphs/spec.csv:\n')
-    print(spec)
-  }
+  fwrite(spec,file=here('graphs/spec.csv'))
+  cat('mean dx specificity computed outputed to graphs/spec.csv:\n')
+  print(spec)
 
   ## output
   merge(sense,spec,by=c('arm','age','location'))
 
+}
+
+
+
+computeDxAccuracy4PSA <- function(DI){
+  cat('calculating sense...\n')
+  ## ## NOTE for computing sense
+  DI$d.TBprev.ICS.o5 <- DI$d.TBprev.ICS.u5 <- 0.9999
+  invisible(capture.output(D <- makeAttributes(DI) ))
+  invisible(MakeTreeParms(D,P))
+  D <- merge(D,C,by='id',all.x = TRUE)        #merge into PSA
+  invisible(capture.output( D <- runallfuns(D,arm=notIPD)))
+  AM <- computeCascadeData(D,PSA=TRUE)
+  AM <- dcast(AM,id+arm+age+location~stage,value.var = 'value')
+  ANS <- AM[,.(id,arm,age,location,sense=treated/presumed)]
+
+  cat('calculating spec...\n') #computes spec with given parameter vals
+  DI$d.TBprev.ICS.o5 <- DI$d.TBprev.ICS.u5 <- 1e-5
+  invisible(capture.output( D <- makeAttributes(DI) ))
+  invisible(MakeTreeParms(D,P))
+  D <- merge(D,C,by='id',all.x = TRUE)        #merge into PSA
+  invisible(capture.output( D <- runallfuns(D,arm=notIPD)))
+  AM <- computeCascadeData(D,PSA=TRUE)
+  AM <- dcast(AM,id+arm+age+location~stage,value.var = 'value')
+  ANS2 <- AM[,.(id,arm,age,location,spec=1-treated/presumed)]
+
+  cat('calculating spec1...\n') #computes spec with raw parm=1
+  DI$d.TBprev.ICS.o5 <- DI$d.TBprev.ICS.u5 <- 1e-5
+  DI$spec.clin <- DI$spec.clinCXR.soc <- 1-1e-5
+  invisible(capture.output( D <- makeAttributes(DI) ))
+  invisible(MakeTreeParms(D,P))
+  D <- merge(D,C,by='id',all.x = TRUE)        #merge into PSA
+  invisible(capture.output( D <- runallfuns(D,arm=notIPD)))
+  AM <- computeCascadeData(D,PSA=TRUE)
+  AM <- dcast(AM,id+arm+age+location~stage,value.var = 'value')
+  ANS3 <- AM[,.(id,arm,age,location,spec1=1-treated/presumed)]
+
+  ## output
+  ANS <- merge(ANS,ANS2,by=c('id','arm','age','location'))
+  ANS <- merge(ANS,ANS3,by=c('id','arm','age','location'))
+  ANS
 }
 
 

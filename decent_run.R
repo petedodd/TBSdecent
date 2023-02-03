@@ -94,40 +94,54 @@ PD1 <- PD0[PD0$DISTRIBUTION=="",]
 ## the rest
 PD0 <- PD0[PD0$DISTRIBUTION!="",]
 
+## ps - look to compute dxa for each rep of PSA
+## build PSA
+set.seed(1234) #random number seed
+PD1[,2] <- "0.5" #not relevant but needed to generate answers (tbc)
+P1 <- parse.parmtable(PD0)             #convert into parameter object
+P2 <- parse.parmtable(PD1)             #convert into parameter object
+notIPD <- c('SOC','IDH','IPH')
+P2$d.TBprev.ICS.o5 <- P2$d.TBprev.ICS.u5 <- 0.9999 ## NOTE for computing sense
+P <- c(P1,P2)
+D <- makePSA(nreps,P,dbls = list(c('cfrhivor','cfrartor')))
+
+## spec and prev priors
+prior.tbprev <- list(mean=odds(0.1),sd=0.03) #normal in odds
+prior.phi <- list(mean=(0.1),sd=0.025) #normal: phi = 1-spec clinical
+D[,tbprev:=iodds(rnorm(nreps,mean=prior.tbprev$mean,sd=prior.tbprev$sd))]
+D[,phi:=rnorm(nreps,mean=prior.phi$mean,sd=prior.phi$sd)]
+D$spec.clin <- D$spec.clinCXR.soc <- pmin(1,1-D$phi)
+
+## add in relevant parameters:
+DxAZ <- computeDxAccuracy4PSA(D)
+addon <- D[,.(tbprev,phi)] #corresonding parameters
+addon[,id:=1:nreps]
+DxAZ <- merge(DxAZ,addon,by=c('id'),all.x=TRUE)
+## linear approx for algorithm specificity as fn of phi
+## 1-spec = a + b*phi
+## 1-spec1 = a + b*0
+## 1-spec = a + b*phi
+## a = 1-spec1; b = (1-spec-a)/phi
+DxAZ[,a:=1-spec1]
+DxAZ[,b:=(1-spec-a)/phi]
+
+## TODO 
+DxAZ[,DoC:=0.1] #test value for final cascade step now
+
+## sample conditional on D/C cascade value
+BayesSpecPrev(DxAZ) #acts by side-effect
+
+## checks
+DxAZ[,hist(tbprev)]
+DxAZ[,hist(phi)]
+DxAZ[,summary(sense*tbprev+(a+b*phi)*(1-tbprev))] #all at level
+## TODO check in range
+## TODO real DoC and next steps
+
+
 ## this computes and saves out the average accuracy of dx cascades
 if(!file.exists(here('graphs'))) dir.create(here('graphs'))
 DxA <- computeDxAccuracy(PD0,PD1,C,nreps)
-
-## looking at effect of clin spec on outputs
-DxA <- computeDxAccuracy(PD0,PD1,C,nreps,writeout = FALSE)
-DxA
-## TODO what's going on with sense? NOTE problem only for unused idh arm
-
-PD0[PD0$NAME %in% c('spec.clin','spec.clinCXR.soc'),]
-spv <- seq(from=0.8,to=1,l=10)
-tmpi <- PD0
-
-DAD <- list()
-for(i in 1:length(spv)){
-  print(i)
-  tmpi[tmpi$NAME %in% c('spec.clin','spec.clinCXR.soc'),'DISTRIBUTION'] <- paste0(spv[i])
-  tmpo <- computeDxAccuracy(tmpi,PD1,C,nreps,writeout = FALSE)
-  tmpo[,sp:=spv[i]]
-  DAD[[i]] <- tmpo
-}
-DAD <- rbindlist(DAD)
-
-DAD
-
-ggplot(DAD[arm!='idh'],aes(sp,spec/1e2,shape=paste(arm,age),col=location))+geom_point()+
-  xlab('Clinical spec')+ylab('Mean dx-algo spec') +
-  scale_x_continuous(label=percent)+scale_y_continuous(label=percent)
-
-ggsave('~/Downloads/tmp.pdf',w=7,h=5)
-
-## TODO check clin spec prior -- seems v tight
-## TODO modify approach to cascade to work on DF rather than means
-## TODO sample prev/clin.spec so as to impose D/C in the cascade
 
 ## this computes and saves model parameters derived from cascade data
 prevapproach <- 'gm'
@@ -142,7 +156,7 @@ P <- c(P1,P2)
 names(P)
 
 ## make base PSA dataset
-set.seed(1234) #random number seed
+
 D <- makePSA(nreps,P,dbls = list(c('cfrhivor','cfrartor')))
 
 ## ## NOTE temporary introduction of noise:
