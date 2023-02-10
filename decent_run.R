@@ -145,18 +145,12 @@ D[,tbprev:=iodds(rnorm(nreps,mean=prior.tbprev$mean,sd=prior.tbprev$sd))]
 D[,phi:=rnorm(nreps,mean=prior.phi$mean,sd=prior.phi$sd)]
 D$spec.clin <- D$spec.clinCXR.soc <- pmin(1,1-D$phi)
 
-## DI <- copy(D)
-## AM[arm=='idh' & location=='PHC']
-## ## d.soc.phc.ptbxsp
-## D[,.(d.idh.pphc,d.idh.phc.assess,d.phc.prsmptv,d.idh.phc.presumed)]
-
-
 ## add in relevant parameters:
 DxAZ <- computeDxAccuracy4PSA(D)
 addon <- D[,.(tbprev,phi,
               BoA=F_alpha,CoB=F_presume,
               `DoC_5-14`,`DoC_0-4`,
-              F_ICS)] #corresonding parameters
+              F_ICS,F_omega_flat)] #corresonding parameters
 addon[,id:=1:nreps]
 DxAZ <- merge(DxAZ,addon,by=c('id'),all.x=TRUE)
 ## DxAZ[(arm=='idh' & location=='PHC')] #NOTE check
@@ -173,102 +167,47 @@ DxAZ[,b:=(1-spec-a)/phi]
 ## age-specific DoC
 DxAZ[,DoC:=ifelse(age=='0-4',`DoC_0-4`,`DoC_5-14`)]
 
+## joint sampling of phi/prev
+BayesSpecPrev(DxAZ) #NOTE acts by side-effect as *over* writing phi/prev
 
-## ## NOTE test
-## DxAZ[,DoC:=0.1] #test value for final cascade step now
+## calculate TB dependent cascade parmaeters
+tbdcp.prev <- computeCascadePSAPrev(DxAZ)
+save(tbdcp.prev,file=here('graphs/cascades/data/tbdcp.prev.Rdata')) #NOTE for reporting
 
-## ## sample conditional on D/C cascade value
-## BayesSpecPrev(DxAZ) #acts by side-effect
+## add these results back into D:
+D[,c("d.TBprev.ICS.u5","d.TBprev.ICS.o5","phi"):=tbdcp.prev$TBics[,.(tbu5,tbo5,phi)]]
+D$spec.clin <- D$spec.clinCXR.soc <- pmin(1,1-D$phi)
+D[,c("d.OR.dh.if.TB.idh.u5","d.OR.dh.if.TB.iph.u5","d.OR.dh.if.TB.soc.u5",
+     "d.OR.dh.if.TB.soc.o5","d.OR.dh.if.TB.idh.o5","d.OR.dh.if.TB.iph.o5"):=
+     tbdcp.prev$TBics[,.(ORu5,ORu5,ORu5,ORo5,ORo5,ORo5)]]
 
-## ## checks
-## DxAZ[,summary(tbprev)]
-## DxAZ[,summary(phi)]
-## DxAZ[,summary(sense*tbprev+(a+b*phi)*(1-tbprev))] #at level
+## calculate TB dependent cascade parameters - specificity of presuming
+tbdcp.spec <- computeCascadePSASpec(D,tbdcp.prev$TBP)
+save(tbdcp.spec,file=here('graphs/cascades/data/tbdcp.spec.Rdata')) #NOTE for reporting
 
-## ## TODO
-## ## BoA is alpha
-## ## CoB is from F_presume
-## ## DoC is TPS.csv
+## add these results back into D:
+D[,c(
+  "d.soc.dh.presumesp.u5","d.soc.dh.presumesp.o5",
+  "d.idh.dh.presumesp.u5","d.idh.dh.presumesp.o5",
+  "d.iph.dh.presumesp.u5","d.iph.dh.presumesp.o5",
+  "d.soc.phc.presumesp.u5","d.soc.phc.presumesp.o5",
+  "d.idh.phc.presumesp.u5","d.idh.phc.presumesp.o5",
+  "d.iph.phc.presumesp.u5","d.iph.phc.presumesp.o5"
+):=tbdcp.spec[,.(
+     `sigmad_soc_0-4`,`sigmad_soc_5-14`,
+     `sigmad_iph_0-4`,`sigmad_iph_5-14`, #NOTE using iph for idh
+     `sigmad_iph_0-4`,`sigmad_iph_5-14`,
+     `sigmap_soc_0-4`,`sigmap_soc_5-14`,
+     `sigmap_iph_0-4`,`sigmap_iph_5-14`, #NOTE using iph for idh
+     `sigmap_iph_0-4`,`sigmap_iph_5-14`
+   )]]
 
-## ## TODO real DoC and next steps
-## DDW <- dcast(DD,arm+location+age~stage,value.var='vpl')
-## DxAZ <- merge(DxAZ,DDW[,.(arm,location,age,
-##                           DoC=treated/presumed,CoB=presumed/screened,BoA=screened/1e5)],
-##               by=c('arm','location','age'),all.x=TRUE)
-
-BayesSpecPrev(DxAZ) #acts by side-effect
-
-## ## checks
-## DxAZ[,summary(tbprev)]
-## DxAZ[,summary(phi)]
-## DxAZ[,summary(sense*tbprev+(a+b*phi)*(1-tbprev)-DoC)] #at level
-
-## ## looking at results TODO save some out
-## DxAZ[,.(clinspec.m=mean(1-phi),clinspec.sd=sd(1-phi),
-##         prev.m=mean(tbprev),prev.s=mean(tbprev)),by=.(age)]
-
-## DxAZ[,.(clinspec.m=mean(1-phi),clinspec.sd=sd(1-phi),
-##         prev.m=mean(tbprev),prev.s=mean(tbprev)),by=.(arm)]
-
-## DxAZ[,.(clinspec.m=mean(1-phi),clinspec.sd=sd(1-phi),
-##         prev.m=mean(tbprev),prev.s=mean(tbprev)),by=.(location)]
-
-
-## tmp <- DxAZ[,.(clinspec.m=mean(1-phi),clinspec.sd=sd(1-phi),
-##                prev.m=mean(tbprev),prev.s=mean(tbprev)),by=.(arm,location,age)]
-
-## tmp[order(age,location,arm)][arm!='idh']
-## tmp[order(age,arm,location)][arm!='idh']
-
-## ## version with SOC and IPH sharing prevalence
-## Dx2arm <- dcast(DxAZ[arm!='idh'],age+location+id ~ arm,value.var = c('sense','a','b','DoC'))
-## setnames(Dx2arm,old=c("sense_iph","sense_soc",
-##                       "a_iph","a_soc",
-##                       "b_iph","b_soc",
-##                       "DoC_iph","DoC_soc"),
-##          new=c('sense2','sense1','a2','a1','b2','b1','DoC2','DoC1'))
-
-## BayesSpecPrev2(Dx2arm)
-
-## Dx2arm
-
-
-DxAZ
-
-
-
-
-
-## TODO choose value for X-arm comparisons
+## TODO record out calculated parameters
+## TODO check idh
 
 ## this computes and saves out the average accuracy of dx cascades
 if(!file.exists(here('graphs'))) dir.create(here('graphs'))
-## DxA <- computeDxAccuracy(PD0,PD1,C,nreps)
 
-## ## this computes and saves model parameters derived from cascade data
-## prevapproach <- 'gm'
-## ## PD1 <- computeCascadeParameters(DD,ICS,DxA,prevapproach)
-## PD1 <- read.csv(here('indata/calcparms_gm_in.csv'))
-
-
-## ## combine different parameter types
-## P1 <- parse.parmtable(PD0)             #convert into parameter object
-## P2 <- parse.parmtable(PD1)             #convert into parameter object
-## P <- c(P1,P2)
-## names(P)
-
-## ## make base PSA dataset
-
-## D <- makePSA(nreps,P,dbls = list(c('cfrhivor','cfrartor')))
-
-## ## NOTE temporary introduction of noise:
-## for(nm in setdiff(PD1$NAME,'d.OR.dh.if.TB')){ #loop over probs
-##   D[[nm]] <- ilogit(logit(D[[nm]]) + rnorm(nreps)/5)
-## }
-## D[['d.OR.dh.if.TB']] <- exp(log(D[['d.OR.dh.if.TB']]) + rnorm(nreps)/5)
-
-Dx2arm
-## jj
 ## use these parameters to construct intput data by attribute
 D <- makeAttributes(D)
 D[,sum(value),by=id] #CHECK
