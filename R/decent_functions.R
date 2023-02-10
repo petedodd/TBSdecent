@@ -643,7 +643,6 @@ computeCascadePSAPrev <- function(Dx   #Dx solution
   TBP[,piC:=tbprev]
   TBP[,piB:=piC * CoB]
   TBP[,piA:=piB]
-  TBIW <- dcast(TBI,id~age,value.var = 'tbi')
 
   ## ICS given TB
   TBP[,pl:=ifelse(location=='PHC',F_ICS,1-F_ICS)]
@@ -654,6 +653,7 @@ computeCascadePSAPrev <- function(Dx   #Dx solution
   TBIA[,OR:= (DH/PHC) / ((1-DH)/(1-PHC))]
   ## TBIA[,summary(OR)]
   TBIAW <- dcast(TBIA[,.(id,age,OR)],id~age,value.var = 'OR')
+  TBIW <- dcast(TBI,id~age,value.var = 'tbi')
 
   ## join for output
   TBics <- merge(TBIW[,.(id,tbu5=`0-4`,tbo5=`5-14`)],
