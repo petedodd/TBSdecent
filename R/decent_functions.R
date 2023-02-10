@@ -132,7 +132,6 @@ AddSampleTests <- function(D){
 
 
 ## ========= OUTCOMES ===============
-## TODO - remove excess RNG here
 CFRtxY <- function(age,hiv=0,art=0,P){#NB optimized for clarity not speed
   if(length(age)>1 & length(hiv)==1) hiv <- rep(hiv,length(age))
   if(length(age)>1 & length(art)==1) art <- rep(art,length(age))
@@ -477,139 +476,59 @@ BayesSpecPrev <- function(DI){
 }
 
 
-## ## version with same prev shared across two arms
-## ## x = prev; y = phi
-## BayesSpecPrev2 <- function(DI){
-##   ## to generate conditional sample, need treated/presumed
-##   ## Y1 = l1 - (se1-l1) * (a1+b1*x)
-##   ## Y2 = l2 - (se2-l2) * (a2+b2*x)
-##   ## Yi = [li - (sei-li) * ai]  - (sei-li) * bi * x
-##   ## exp[ -(x-mx)^2/(2*Sx^2)) -((y1-my)^2+(y2-my)^2)/(2*Sy^2)) ] = 
-##   ## exp[ -(x-mx)^2/(2*Sx^2)) -
-##   ## (([l1 - (se1-l1)*a1]-(se1-l1)*b1*x-my)^2+([l2 - (se2-l2)*a2]-(se2-l2)*b2*x-my)^2)/(2*Sy^2)) ] =
-##   ## exp[ -(x-mx)^2/(2*Sx^2))
-##   ## -(x-(l1-(se1-l1)*a1-my)/((se1-l1)*b1))^2/(2*Sy^2/((se1-l1)*b1)^2)
-##   ## -(x-(l2-(se2-l2)*a2-my)/((se2-l2)*b2))^2/(2*Sy^2/((se2-l2)*b2)^2) ] =
-##   ## 1/V = 1/Sx^2 + ((se1-l1)*b1)^2/Sy^2 + ((se2-l2)*b2)^2/Sy^2
-##   ## M =  V * { mx/Sx^2 +
-##   ## [(l1-(se1-l1)*a1-my)*((se1-l1)*b1)]/Sy^2 + [(l2-(se2-l2)*a2-my)*((se2-l2)*b2)]/Sy^2 }
-##   DI[,V:=1/(1/prior.tbprev$sd^2 +
-##             ((sense1-DoC1)/b1)^2/prior.phi$sd^2 + ((sense2-DoC2)/b2)^2/prior.phi$sd^2)]
-##   DI[,M:=V * (prior.tbprev$mean/prior.tbprev$sd^2 +
-##               (DoC1-a1-b1*prior.phi$mean)*(sense1-DoC1)/(b1^2*prior.phi$sd^2) +
-##               (DoC2-a2-b2*prior.phi$mean)*(sense2-DoC2)/(b2^2*prior.phi$sd^2))]
-
-##   DI[,tbprev:=rnorm(nrow(DI),mean=M,sd=sqrt(V))]
-##   DI[,phi1:=abs((DoC1-a1)/b1-((sense1-DoC1)/b1)*tbprev)]
-##   DI[,phi2:=abs((DoC2-a2)/b2-((sense2-DoC2)/b2)*tbprev)]
-##   DI[,tbprev:=iodds(abs(tbprev))]
-## }
-
-
 ## --- for computing cascades
-## computeCascadeData <- function(D,PSA=FALSE){
-##   nmz <- names(D)
-##   rnmz0 <- grep("DH\\.|PHC\\.",nmz,value=TRUE)
-##   rnmz0 <- rnmz0[!grepl('cost',rnmz0)] #don't include the cost-by-stage data
-##   rnmz <- c('id','age','tb','value',rnmz0)
-##   A <- D[,..rnmz]
-##   ## A[,sum(value),by=id] #CHECK
-##   A[,pop:=value]       #rename for melting
-##   A[,value:=NULL]
-##   A[,TB:=ifelse(tb!='noTB','TB','not TB')] #simple version of TB indicator
-##   A[,tb:=NULL]                             #drop
-##   ## nrow(A) #240K (attributes x nreps)
-##   ## A[,sum(pop),by=id] #CHECK
-##   ## A[TB=='TB',1e2*sum(pop),by=id] #CHECK
-##   ## A[,sum(pop),by=.(id,age)] #CHECK
+computeCascadeData <- function(D,PSA=FALSE){
+  nmz <- names(D)
+  rnmz0 <- grep("DH\\.|PHC\\.",nmz,value=TRUE)
+  rnmz0 <- rnmz0[!grepl('cost',rnmz0)] #don't include the cost-by-stage data
+  rnmz <- c('id','age','tb','value',rnmz0)
+  A <- D[,..rnmz]
+  ## A[,sum(value),by=id] #CHECK
+  A[,pop:=value]       #rename for melting
+  A[,value:=NULL]
+  A[,TB:=ifelse(tb!='noTB','TB','not TB')] #simple version of TB indicator
+  A[,tb:=NULL]                             #drop
+  ## nrow(A) #240K (attributes x nreps)
+  ## A[,sum(pop),by=id] #CHECK
+  ## A[TB=='TB',1e2*sum(pop),by=id] #CHECK
+  ## A[,sum(pop),by=.(id,age)] #CHECK
 
-##   ## population scaling
-##   A[,c(rnmz0):=lapply(.SD,function(x) x*pop),
-##     .SDcols=rnmz0] #multiply variables by population
-##   A[,pop:=NULL]                                             #can drop now
+  ## population scaling
+  A[,c(rnmz0):=lapply(.SD,function(x) x*pop),
+    .SDcols=rnmz0] #multiply variables by population
+  A[,pop:=NULL]                                             #can drop now
 
-##   ## melt
-##   AM <- melt(A,id=c('id','age','TB'))
-##   AM[,c('location','stage','arm'):=tstrsplit(variable,split='\\.')]
-##   ## sum over other attributes
-##   AM <- AM[,.(value=sum(value)),by=.(id,arm,age,location,stage,TB)]
-##   ## version with PSA id
-##   if(PSA==TRUE) return(AM[,.(value=sum(value)),by=.(id,arm,age,location,stage)]) 
+  ## melt
+  AM <- melt(A,id=c('id','age','TB'))
+  AM[,c('location','stage','arm'):=tstrsplit(variable,split='\\.')]
+  ## sum over other attributes
+  AM <- AM[,.(value=sum(value)),by=.(id,arm,age,location,stage,TB)]
+  ## version with PSA id
+  if(PSA==TRUE) return(AM[,.(value=sum(value)),by=.(id,arm,age,location,stage)]) 
 
-##   ## nrow(AM) # CHECK
-##   ## aggregate/average
-##   ## TB version
-##   AS <- AM[,.(mid=mean(value)),by=.(arm,age,TB,location,stage)]
+  ## nrow(AM) # CHECK
+  ## aggregate/average
+  ## TB version
+  AS <- AM[,.(mid=mean(value)),by=.(arm,age,TB,location,stage)]
 
-##   ## no TB version
-##   AS2 <- AM[,.(mid=sum(value)),by=.(id,arm,age,location,stage)]
-##   AS2 <- AS2[,.(mid=mean(mid)),by=.(arm,age,location,stage)]
+  ## no TB version
+  AS2 <- AM[,.(mid=sum(value)),by=.(id,arm,age,location,stage)]
+  AS2 <- AS2[,.(mid=mean(mid)),by=.(arm,age,location,stage)]
 
-##   ## noTB graph version
-##   tpl <- AS2[stage=='presented']
-##   AS2 <- merge(AS2,tpl[,.(arm,age,location,pmid=mid)],
-##                by=c('arm','age','location'),all.x=TRUE)
-##   AS2[,vpl:=1e5*mid/pmid]
-##   lvls <- c('presented','screened','presumed','treated')
-##   AS2$stage <- factor(AS2$stage,levels=lvls,ordered=TRUE)
-##   AS2[,txt:=round(vpl)]
-##   AS2[stage=='presented',txt:=NA]
+  ## noTB graph version
+  tpl <- AS2[stage=='presented']
+  AS2 <- merge(AS2,tpl[,.(arm,age,location,pmid=mid)],
+               by=c('arm','age','location'),all.x=TRUE)
+  AS2[,vpl:=1e5*mid/pmid]
+  lvls <- c('presented','screened','presumed','treated')
+  AS2$stage <- factor(AS2$stage,levels=lvls,ordered=TRUE)
+  AS2[,txt:=round(vpl)]
+  AS2[stage=='presented',txt:=NA]
 
-##   ## return
-##   list(woTB=AS2,wTB=AS)
+  ## return
+  list(woTB=AS2,wTB=AS)
 
-## }
-
-## --- function for preliminary run throughts to compute mean sense/spec
-## computeDxAccuracy <- function(PD0,PD1,C,nreps){
-##   PD1[,2] <- "0.5" #not relevant but needed to generate answers
-##   P1 <- parse.parmtable(PD0)             #convert into parameter object
-##   P2 <- parse.parmtable(PD1)             #convert into parameter object
-##   notIPD <- c('SOC','IDH','IPH')
-##   ## ## NOTE for computing sense
-##   P2$d.TBprev.ICS.o5 <- 0.9999
-##   P2$d.TBprev.ICS.u5 <- 0.9999
-##   P <- c(P1,P2)
-##   cat('calculating...\n')
-##   D <- makePSA(nreps,P,dbls = list(c('cfrhivor','cfrartor')))
-##   invisible(capture.output(D <- makeAttributes(D) ))
-##   invisible(MakeTreeParms(D,P))
-##   D <- merge(D,C,by='id',all.x = TRUE)        #merge into PSA
-##   invisible(capture.output( D <- runallfuns(D,arm=notIPD)))
-##   AS2 <- computeCascadeData(D)$woTB
-##   tpl2 <- AS2[stage=='presumed']
-##   AS2 <- merge(AS2,tpl2[,.(arm,age,location,prmid=mid)],
-##                by=c('arm','age','location'),all.x=TRUE)
-##   sense <- AS2[stage=='treated',.(sense=round(1e2*mid/prmid,1),
-##                                   arm,age,location)]
-##   fwrite(sense,file=here('graphs/sense.csv'))
-##   cat('mean dx sensitivity computed outputed to graphs/sense.csv:\n')
-##   print(sense)
-
-##   ## NOTE for computing spec
-##   P2$d.TBprev.ICS.o5 <- 1e-5
-##   P2$d.TBprev.ICS.u5 <- 1e-5
-##   P <- c(P1,P2)
-##   cat('calculating...\n')
-##   D <- makePSA(nreps,P,dbls = list(c('cfrhivor','cfrartor')))
-##   invisible(capture.output( D <- makeAttributes(D) ))
-##   invisible(MakeTreeParms(D,P))
-##   D <- merge(D,C,by='id',all.x = TRUE)        #merge into PSA
-##   invisible(capture.output( D <- runallfuns(D,arm=notIPD)))
-##   AS2 <- computeCascadeData(D)$woTB
-##   tpl2 <- AS2[stage=='presumed']
-##   AS2 <- merge(AS2,tpl2[,.(arm,age,location,prmid=mid)],
-##                by=c('arm','age','location'),all.x=TRUE)
-##   spec <- AS2[stage=='treated',.(spec=round(1e2*(1-mid/prmid),1),
-##                                  arm,age,location)]
-##   fwrite(spec,file=here('graphs/spec.csv'))
-##   cat('mean dx specificity computed outputed to graphs/spec.csv:\n')
-##   print(spec)
-
-##   ## output
-##   merge(sense,spec,by=c('arm','age','location'))
-
-## }
+}
 
 
 computeDxAccuracy4PSA <- function(DI){
@@ -651,26 +570,6 @@ computeDxAccuracy4PSA <- function(DI){
   ANS
 }
 
-
-## ------------- function to compute parameters derived from cascades
-## unique(PD0$NAME)
-## unique(PD1$NAME)
-
-##  [1] "d.idh.pphc.u5"          "d.iph.pphc.u5"          "d.ipd.pphc.u5"         
-##  [4] "d.soc.pphc.u5"          "d.idh.pphc.o5"          "d.iph.pphc.o5"         
-##  [7] "d.ipd.pphc.o5"          "d.soc.pphc.o5"          "d.F.u5"                
-## [10] "d.soc.dh.assess.u5"     "d.soc.dh.assess.o5"     "d.idh.dh.assess.u5"    
-## [13] "d.idh.dh.assess.o5"     "d.iph.dh.assess.u5"     "d.iph.dh.assess.o5"    
-## [16] "d.soc.phc.assess.u5"    "d.soc.phc.assess.o5"    "d.idh.phc.assess.u5"   
-## [19] "d.idh.phc.assess.o5"    "d.iph.phc.assess.u5"    "d.iph.phc.assess.o5"   
-## [22] "d.TBprev.ICS.u5"        "d.TBprev.ICS.o5"        "d.soc.dh.presumesp.u5" 
-## [25] "d.soc.dh.presumesp.o5"  "d.idh.dh.presumesp.u5"  "d.idh.dh.presumesp.o5" 
-## [28] "d.iph.dh.presumesp.u5"  "d.iph.dh.presumesp.o5"  "d.soc.phc.presumesp.u5"
-## [31] "d.soc.phc.presumesp.o5" "d.idh.phc.presumesp.u5" "d.idh.phc.presumesp.o5"
-## [34] "d.iph.phc.presumesp.u5" "d.iph.phc.presumesp.o5" "d.OR.dh.if.TB.idh.u5"  
-## [37] "d.OR.dh.if.TB.idh.o5"   "d.OR.dh.if.TB.iph.u5"   "d.OR.dh.if.TB.iph.o5"  
-## [40] "d.OR.dh.if.TB.soc.u5"   "d.OR.dh.if.TB.soc.o5"
-
 ## for reading the cascade data meta-analyses
 cd.read <- function(f){
   fn <- here(glue('graphs/cascades/data/{f}.csv'))
@@ -686,7 +585,6 @@ cd.read <- function(f){
   }
   ans
 }
-
 
 ## F_refs             : referrals
 ## F_refu             : refusals=ltfu
@@ -741,7 +639,7 @@ TBinptCascadeParms <- function(CDD,ICS){
 computeCascadePSAPrev <- function(Dx   #Dx solution
                                   ){
   ## C -> D (diagnosis)
-  TBP <- Dx[arm=='iph']
+  TBP <- Dx[arm=='iph'] #NOTE could have flag here to use idh instead TODO
   TBP[,piC:=tbprev]
   TBP[,piB:=piC * CoB]
   TBP[,piA:=piB]
@@ -782,7 +680,7 @@ computeCascadePSASpec <- function(D,   #PSA data to alter
   armdep <- armdep[rep(1:ns,each=nrow(LTFU))]
   armdep[,id:=rep(1:nrow(LTFU),ns)]
   armdep <- merge(armdep,LTFU,by='id',all.x = TRUE)
-  armdep[,lambda:=ifelse(arm=='idh',d.idh.rltfu,1e-2)] #lambda = LTFU
+  armdep[,lambda:=ifelse(arm=='idh',d.idh.rltfu,1e-2)]    #lambda = LTFU
   armdep[,rho:=ifelse(arm=='idh',1.0-1e-2,1e-2)]          #rho = referral TODO check
   armdep[,omega:=F_omega_flat]
 
@@ -803,115 +701,6 @@ computeCascadePSASpec <- function(D,   #PSA data to alter
   ## return
   dcast(Sd[,.(id,age,arm,sigmap,sigmad)],id~arm+age,value.var = c('sigmap','sigmad'))
 }
-
-
-## calculating parameters
-## computeCascadeParameters <- function(DD,ICS,DxA,using='mean'){
-##   aal <- c('arm','age','location')
-
-##   ## prevalence of TB in presumed
-##   attinpr <- dcast(DD[stage %in% c('presumed','treated')],
-##                    arm+age+location~stage,value.var = 'vpl')
-##   attinpr[,attinpr:=treated/presumed]
-##   attinpr <- merge(attinpr,DxA,by=aal)
-##   attinpr[,tbinpr:=(attinpr+spec/1e2-1)/(spec/1e2+sense/1e2-1)]
-##   while(any(attinpr$tbinpr<0)){
-##     cat('** specificity problems **:\n')
-##     print(attinpr[tbinpr<0,.(arm,age,location,spec,tbinpr)])
-##     cat('halving FP rate\n')
-##     attinpr[tbinpr<0,spec:=100-(100-spec)/2]
-##     attinpr[,tbinpr:=(attinpr+spec/1e2-1)/(spec/1e2+sense/1e2-1)]
-##   }
-
-##   ## fraction of screened presumed
-##   prins <- dcast(DD[stage %in% c('presumed','screened')],
-##                    arm+age+location~stage,value.var = 'vpl')
-##   prins[,prins:=presumed/screened]
-##   prins <- merge(prins,attinpr[,.(arm,age,location,attinpr)],by=aal)
-##   prins[,tbinit:=prins * attinpr] #TB at screen/ICS
-##   prins[,ssp:=1-(prins-tbinit)/(1-tbinit)] #specificity of screen
-##   ssps <- prins[,.(arm,age,location,ssp)]
-##   ssps[,NAME:=paste0('d.',
-##                      arm,'.',
-##                      tolower(location),'.',
-##                      'presumesp.',
-##                      ifelse(age=='0-4','u5','o5')
-##                      )]
-##   ## age split ICS
-##   tmp <- ICS[age=='0-4',.(p=sum(icsp)),by=arm] #similar by arm
-##   d.F.u5 <- tmp[,mean(p)]
-##   agesp <- data.table(NAME='d.F.u5',DISTRIBUTION=d.F.u5)
-##   ICS[,agetotal:=sum(icsp),by=.(arm,age)]
-##   agedest <- ICS[location=='PHC',.(pphc=icsp/agetotal),by=.(arm,age)]
-##   agedest[,NAME:=paste0('d.',
-##                         arm,'.',
-##                         'pphc.',
-##                         ifelse(age=='0-4','u5','o5')
-##                         )]
-
-##   alldest <- rbind(agedest[,.(arm,age,location='PHC',pinit=pphc)],
-##                    agedest[,.(arm,age,location='DH',pinit=1-pphc)])
-##   alldest <- merge(alldest,prins[,.(arm,age,location,tbinit)],by=aal)
-##   tbagearm <- alldest[,.(tbICS=sum(pinit*tbinit)),by=.(arm,age)]
-##   cat('Implied prevalences at ICS (using ',using,'):\n')
-##   print(tbagearm[order(age),.(`TB prev @ ICE`=1e5*tbICS),by=.(age,arm)])
-##   if(using=='min')
-##     tbbyage <- tbagearm[,.(tbICS=min(tbICS)),by=age]
-##   if(using=='max')
-##     tbbyage <- tbagearm[,.(tbICS=max(tbICS)),by=age]
-##   if(using=='mean')
-##     tbbyage <- tbagearm[,.(tbICS=mean(tbICS)),by=age]
-##   if(using=='median')
-##     tbbyage <- tbagearm[,.(tbICS=median(tbICS)),by=age]
-##   if(using=='gm')
-##     tbbyage <- tbagearm[,.(tbICS=gm(tbICS)),by=age]
-##   tbbyage[,NAME:=paste0("d.TBprev.ICS.",ifelse(age=='0-4','u5','o5'))]
-##   print(tbbyage[,.(NAME,age,tbICS)])
-
-##   ## OR for DH calculations
-##   ORcalc <- dcast(data=alldest,arm+age~location,value.var = c('pinit','tbinit'))
-##   ORcalc <- merge(ORcalc,tbagearm,by=c('arm','age'))
-##   ORcalc[,probPHCifTB:=tbinit_PHC * pinit_PHC / tbICS]
-##   ORcalc[,probPHCifNotTB:=(1-tbinit_PHC) * pinit_PHC / (1-tbICS)]
-##   ORcalc[,ORDH:=(1/probPHCifTB-1)/(1/probPHCifNotTB-1)]
-##   cat('Implied OR for CS @ DH if TB+ :\n')
-##   print(ORcalc[,.(arm,age,ORDH)]) #NOTE could make arm dependent
-##   ORcalc[,NAME:=paste0('d.OR.dh.if.TB.',
-##                        arm,'.',
-##                        ifelse(age=='0-4','u5','o5')
-##                        )]
-##   ## d.OR.dh.if.TB <- ORcalc[,mean(ORDH)] #single OR
-
-##   ## and assessent coverage
-##   assess <- DD[stage %in% 'screened',.(assess=vpl/1e5,arm,age,location)]
-##   assess[,NAME:=paste0('d.',
-##                      arm,'.',
-##                      tolower(location),'.',
-##                      'assess.',
-##                      ifelse(age=='0-4','u5','o5')
-##                      )]
-
-
-##   ## combine answer
-##   ## ssps,assess,agesp,agedest,tbbyage,d.OR.dh.if.TB
-##   NP <- rbindlist(list(
-##     ssps[,.(NAME,DISTRIBUTION=ssp)],
-##     assess[,.(NAME,DISTRIBUTION=assess)],
-##     agesp,
-##     agedest[,.(NAME,DISTRIBUTION=pphc)],
-##     tbbyage[,.(NAME,DISTRIBUTION=tbICS)],
-##     ORcalc[,.(NAME,DISTRIBUTION=ORDH)]## new version with arm dependence
-##     ## data.table(NAME='d.OR.dh.if.TB',DISTRIBUTION=d.OR.dh.if.TB)
-##   ))
-
-##   cat('saving calculated parameters to indata/calcparms_',using,'.csv\n')
-##   fn <- paste0(here('indata/calcparms_'),using,'.csv')
-##   fwrite(NP,file=fn)
-
-##   ## return value
-##   as.data.frame(NP)
-## }
-
 
 ## calculate mid/lo/hi
 MLH <- function(dat){

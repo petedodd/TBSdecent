@@ -43,6 +43,7 @@ DD <- fread(here('indata/DD.csv')) #cascade data for plots
 DD$location <- toupper(DD$location)
 DDW <- dcast(DD,age~location+stage+arm,value.var='vpl')
 ICS <- fread(here('indata/ICS.csv')) #initial care-seeking props
+prevapproach <- 'iphbased'
 
 ## number of reps
 nreps <- 1e3
@@ -99,6 +100,14 @@ PD0 <- PD0[PD0$DISTRIBUTION!="",]
 tbicp <- TBinptCascadeParms(CDD,ICS) #calculate from data
 save(tbicp,file=here('graphs/cascades/data/tbicp.Rdata')) #NOTE for reporting
 
+## save outputs
+tmp <- rbindlist(tbicp,fill=TRUE)
+tmp[is.na(lo),c('lo','hi'):=.(mid-1.96*sd,mid+1.96*sd)]
+tmp <- tmp[,.(nm,mid=1e2*mid,lo=1e2*lo,hi=1e2*hi)]
+CDO.tbi <- data.table(quantity=tmp$nm,value=brkt(tmp$mid,tmp$lo,tmp$hi,ndp=1))
+fwrite(CDO.tbi,file=here('graphs/cascades/CDO.tbi.csv'))
+
+
 ## make into parmtable
 PDx <- rbind(data.frame(NAME=tbicp$prps$nm,
                          DISTRIBUTION=paste0('B(',tbicp$prps$a,',',tbicp$prps$b,')')),
@@ -145,6 +154,11 @@ D[,tbprev:=iodds(rnorm(nreps,mean=prior.tbprev$mean,sd=prior.tbprev$sd))]
 D[,phi:=rnorm(nreps,mean=prior.phi$mean,sd=prior.phi$sd)]
 D$spec.clin <- D$spec.clinCXR.soc <- pmin(1,1-D$phi)
 
+## save out
+tmp <- MLH(D[,.(clinspec=1e2-phi*1e2)])
+CDO.clinspec <- data.table(quantity='clinspec',value=brkt(tmp$M,tmp$L,tmp$H,ndp=1))
+fwrite(CDO.clinspec,file=here('graphs/cascades/CDO.clinspec.csv'))
+
 ## add in relevant parameters:
 DxAZ <- computeDxAccuracy4PSA(D)
 addon <- D[,.(tbprev,phi,
@@ -174,6 +188,11 @@ BayesSpecPrev(DxAZ) #NOTE acts by side-effect as *over* writing phi/prev
 tbdcp.prev <- computeCascadePSAPrev(DxAZ)
 save(tbdcp.prev,file=here('graphs/cascades/data/tbdcp.prev.Rdata')) #NOTE for reporting
 
+## save out
+tmp <- MLH(tbdcp.prev$TBics[,.(tbu5=tbu5*1e5,tbo5=tbo5*1e5,ORu5,ORo5)])
+CDO.tb <- data.table(quantity=names(tbdcp.prev$TBics)[-1],value=brkt(tmp$M,tmp$L,tmp$H,ndp=1))
+fwrite(CDO.tb,file=here('graphs/cascades/CDO.tb.csv'))
+
 ## add these results back into D:
 D[,c("d.TBprev.ICS.u5","d.TBprev.ICS.o5","phi"):=tbdcp.prev$TBics[,.(tbu5,tbo5,phi)]]
 D$spec.clin <- D$spec.clinCXR.soc <- pmin(1,1-D$phi)
@@ -202,7 +221,12 @@ D[,c(
      `sigmap_iph_0-4`,`sigmap_iph_5-14`
    )]]
 
-## TODO record out calculated parameters
+## save out
+tmp <- copy(tbdcp.spec); tmp[,id:=NULL]
+tmp <- tmp[,lapply(.SD,function(x)x*1e2),.SDcols=names(tmp)]; tmp <- MLH(tmp)
+CDO.spec <- data.table(quantity=names(tbdcp.spec)[-1],value=brkt(tmp$M,tmp$L,tmp$H,ndp=1))
+fwrite(CDO.spec,file=here('graphs/cascades/CDO.spec.csv'))
+
 ## TODO check idh
 
 ## this computes and saves out the average accuracy of dx cascades
@@ -233,23 +257,7 @@ D <- runallfuns(D,arm=notIPD)                      #appends anwers
 
 ## --- cascade variables checking
 CO <- computeCascadeData(D)
-AS2 <- CO$woTB
 AS <- CO$wTB
-
-## cascade plot
-GP2 <- ggplot(AS2,aes(stage,vpl))+
-  geom_bar(stat='identity')+
-  facet_grid(location+age ~ arm)+
-  scale_y_log10(label=comma)+
-  ylab('Number per 100K attending')+
-  xlab('Stage')+
-  theme_light() + rot45+
-  geom_text(aes(label=txt),col='red',vjust=0.1,hjust=-0.5) +
-  geom_point(data=DD,col='cyan',size=2)+
-  geom_text(data=DD,aes(label=txt),col='cyan',vjust=2,hjust=1)
-GP2
-
-ggsave(GP2,file=gh('graphs/{bia}cascade_plt_{prevapproach}.{postpend}.png'),w=15,h=15)
 
 ## Treated true TB per 100K presented by arm
 TTB <- AS[stage=='treated' & TB=='TB',.(TTBpl=1e5*sum(mid)),by=arm]
@@ -284,7 +292,7 @@ heur <- c('id','value','deaths.iph','deaths.soc')
 out <- D[,..heur]
 out <- out[,lapply(.SD,function(x) sum(x*value)),.SDcols=c('deaths.iph','deaths.soc'),by=id] #sum against popn
 ## topl <- 0.25/out[,mean(deaths.soc-deaths.iph)]
-topl <- 300 #100
+topl <- 1000 ## 300 #100
 lz <- seq(from = 0,to=topl,length.out = 1000) #threshold vector for CEACs
 ## staged costs by arm
 soc.sc <- grep('soc',costsbystg,value=TRUE); psoc.sc <- paste0('perATT.',soc.sc)
