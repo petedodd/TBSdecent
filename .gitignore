@@ -44,8 +44,8 @@ vignettes/*.pdf
 # graphs ignored for now
 graphs/*
 !graphs/cascades/
-graphs/cascades/*
-!graphs/cascades/data/
+# graphs/cascades/*
+# !graphs/cascades/data/
 
 # outdata ignored for now
 outdata/*

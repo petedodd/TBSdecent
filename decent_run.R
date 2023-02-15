@@ -39,10 +39,9 @@ source(here('R/decent_tree.R'))           #tree structure and namings: also tree
 source(here('R/decent_functions.R'))      #functions for tree parameters
 
 ## cascade data
-DD <- fread(here('indata/DD.csv')) #cascade data for plots
-DD$location <- toupper(DD$location)
-DDW <- dcast(DD,age~location+stage+arm,value.var='vpl')
-ICS <- fread(here('indata/ICS.csv')) #initial care-seeking props
+load(here('graphs/cascades/data/DMWA.Rdata'))
+ICS <- DMWA[location=='All',.(OPD,arm=Arm,age=Age)]
+ICS[,icsp:=OPD/sum(OPD),by=arm] #NOTE used only for Fu5
 prevapproach <- 'iphbased'
 
 ## number of reps
@@ -258,6 +257,9 @@ D <- runallfuns(D,arm=notIPD)                      #appends anwers
 ## --- cascade variables checking
 CO <- computeCascadeData(D)
 AS <- CO$wTB
+ASW <- dcast(CO$woTB,arm+age+location~stage,value.var = 'vpl')
+ASW <- ASW[,.(arm,age,location,BoA=screened/presented,CoB=presumed/screened,DoC=treated/presumed)]
+fwrite(ASW,file=gh('graphs/{bia}cascaderatios_{prevapproach}.{postpend}.csv'))
 
 ## Treated true TB per 100K presented by arm
 TTB <- AS[stage=='treated' & TB=='TB',.(TTBpl=1e5*sum(mid)),by=arm]
@@ -502,15 +504,3 @@ GP <- ggplot(ceaclm[variable=='idh' & iso3 !='ZMB'],
 GP
 
 ggsave(GP,file=gh('graphs/{bia}CEAC1_noZMB_{prevapproach}.{postpend}.png'),w=7,h=5)
-
-
-
-
-
-## ## generate some CEA outputs in graphs/ & outdata/
-## ## NOTE these folders need to be created
-## ## NOTE need ggpubr, BCEA installed
-## MakeCEAoutputs(D, #PSA dataset
-##                LYK, #discounted expected life-years by age
-##                file.id='test', #string to identify output files 
-##                Kmax=5e3,wtp=5e3)
