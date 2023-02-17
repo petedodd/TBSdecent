@@ -188,7 +188,7 @@ RS <- rbind(R[,.(type,location,mid,lo,hi)],SM)
 ggplot(RS,aes(location,y=mid,ymin=lo,ymax=hi,group=type,col=type))+
   scale_y_continuous(label=percent,limits=c(0,1))+
   geom_pointrange(position=position_dodge(0.1),shape=1)+coord_flip()+
-  ylab('LTFU') + theme_classic()+ggpubr::grids()+theme(legend.position = 'top')
+  ylab('Referral') + theme_classic()+ggpubr::grids()+theme(legend.position = 'top')
 
 ggsave(here('graphs/cascades/F_refs.png'),w=5,h=6)
 
@@ -344,42 +344,6 @@ ROW <- ROW[Arm!='SOC',.(DH=sum(DH),PHC=sum(PHC)),by=.(location,Arm)]
 ROW[,total:=DH+PHC]
 ROW[,type:='data']
 ROW[,c('mid','lo','hi'):=MLH(DH,total)]
-
-## mdl7iph <- brm(formula=DH | trials(total) ~1+(1|location),
-##                data=ROW[Arm=='IPH' & location !='All'],
-##                family=binomial(link='logit'))
-
-## mdl7idh <- brm(formula=DH | trials(total) ~1+(1|location),
-##                data=ROW[Arm=='IDH' & location !='All'],
-##                family=binomial(link='logit'))
-
-
-## ## extract data
-## SM7 <- bayessmy(mdl7iph)
-## SM7[,Arm:='IPH']
-## tmp <- bayessmy(mdl7idh)
-## tmp[,Arm:='IDH']
-## SM7 <- rbind(SM7,tmp)
-
-## ## joing and plot both
-## CS7 <- rbind(ROW[,.(type,location,Arm,mid,lo,hi)],SM7)
-
-## ggplot(CS7,aes(location,y=mid,ymin=lo,ymax=hi,group=paste(type,Arm),col=type))+
-##   scale_y_continuous(label=percent)+
-##   geom_pointrange(position=position_dodge(0.1),shape=1)+
-##   coord_flip()+
-##   facet_wrap(~Arm)+
-##   ylab('Fraction of screening at DH') + theme_classic()+ggpubr::grids()+theme(legend.position = 'top')
-
-
-
-## ## correct
-
-## work <- c('mid','lo','hi')
-## old <- paste0(work,'_raw')
-## CS7[,(old):=.(mid,lo,hi)]
-## CS7[,c(work):=.(odds(mid_raw),odds(lo_raw),odds(hi_raw))]
-
 
 ## -- flat version (ie no ARM dependence)
 ROWf <- ROW[Arm!='SOC',.(DH=sum(DH),PHC=sum(PHC)),by=.(location)]

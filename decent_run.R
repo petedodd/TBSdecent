@@ -25,9 +25,20 @@ if(nargs==1){
   cat('...using costs for ',postpend,'\n')
 }
 
+## allowing SA by prevalence
+if(nargs==3){
+  fixprev <- as.numeric(args[3])
+  cat('Fixing prevalence at ',fixprev,'...\n')
+} else {
+  fixprev <- ''
+}
+
+
 ## some by-hand setting
 ## bia <- ''
 ## postpend <- 'DECENT'
+## fixprev <- ''
+## 
 ## postpend <- 'DECENT_PERSONNEL'
 ## postpend <- 'DECENT_SUPPLY'
 
@@ -39,10 +50,10 @@ source(here('R/decent_tree.R'))           #tree structure and namings: also tree
 source(here('R/decent_functions.R'))      #functions for tree parameters
 
 ## cascade data
-DD <- fread(here('indata/DD.csv')) #cascade data for plots
-DD$location <- toupper(DD$location)
-DDW <- dcast(DD,age~location+stage+arm,value.var='vpl')
-ICS <- fread(here('indata/ICS.csv')) #initial care-seeking props
+load(here('graphs/cascades/data/DMWA.Rdata'))
+ICS <- DMWA[location=='All',.(OPD,arm=Arm,age=Age)]
+ICS[,icsp:=OPD/sum(OPD),by=arm] #NOTE used only for Fu5
+prevapproach <- 'iphbased'
 
 ## number of reps
 nreps <- 1e3
@@ -94,32 +105,147 @@ PD1 <- PD0[PD0$DISTRIBUTION=="",]
 ## the rest
 PD0 <- PD0[PD0$DISTRIBUTION!="",]
 
-## this computes and saves out the average accuracy of dx cascades
-if(!file.exists(here('graphs'))) dir.create(here('graphs'))
-DxA <- computeDxAccuracy(PD0,PD1,C,nreps)
 
-## this computes and saves model parameters derived from cascade data
-prevapproach <- 'gm'
-## PD1 <- computeCascadeParameters(DD,ICS,DxA,prevapproach)
-PD1 <- read.csv(here('indata/calcparms_gm_in.csv'))
+## calculate TB-independent cascade parameters
+tbicp <- TBinptCascadeParms(CDD,ICS) #calculate from data
+save(tbicp,file=gh('graphs/cascades/data/{fixprev}tbicp{postpend}{bia}.Rdata')) #NOTE for reporting
+
+## save outputs
+tmp <- rbindlist(tbicp,fill=TRUE)
+tmp[is.na(lo),c('lo','hi'):=.(mid-1.96*sd,mid+1.96*sd)]
+tmp <- tmp[,.(nm,mid=1e2*mid,lo=1e2*lo,hi=1e2*hi)]
+CDO.tbi <- data.table(quantity=tmp$nm,value=brkt(tmp$mid,tmp$lo,tmp$hi,ndp=1))
+fwrite(CDO.tbi,file=gh('graphs/cascades/{fixprev}CDO.tbi{postpend}{bia}.csv'))
 
 
-## combine different parameter types
+## make into parmtable
+PDx <- rbind(data.frame(NAME=tbicp$prps$nm,
+                         DISTRIBUTION=paste0('B(',tbicp$prps$a,',',tbicp$prps$b,')')),
+              data.frame(NAME=tbicp$Fu5$nm,
+                         DISTRIBUTION=paste0('B(',tbicp$Fu5$a,',',tbicp$Fu5$b,')'))
+              )
+PDx1 <- data.frame(NAME=tbicp$pstv$nm,DISTRIBUTION=paste0('G(',tbicp$pstv$gmk,',',tbicp$pstv$gmsc,')'))
+PDx <- rbind(PDx,PDx1)
+
+## ps - look to compute dxa for each rep of PSA
+## build PSA
+PD1[,2] <- "0.5" #not relevant but needed to generate answers (tbc)
 P1 <- parse.parmtable(PD0)             #convert into parameter object
 P2 <- parse.parmtable(PD1)             #convert into parameter object
-P <- c(P1,P2)
-names(P)
-
-## make base PSA dataset
-set.seed(1234) #random number seed
+Px <- parse.parmtable(PDx)             #the TB-indepdent cascade parms
+notIPD <- c('SOC','IDH','IPH')
+P2$d.TBprev.ICS.o5 <- P2$d.TBprev.ICS.u5 <- 0.9999 ## NOTE for computing sense
+P <- c(P1,P2,Px)
 D <- makePSA(nreps,P,dbls = list(c('cfrhivor','cfrartor')))
 
-## ## NOTE temporary introduction of noise:
-## for(nm in setdiff(PD1$NAME,'d.OR.dh.if.TB')){ #loop over probs
-##   D[[nm]] <- ilogit(logit(D[[nm]]) + rnorm(nreps)/5)
-## }
-## D[['d.OR.dh.if.TB']] <- exp(log(D[['d.OR.dh.if.TB']]) + rnorm(nreps)/5)
+## rename other parms based on Px
+D[,d.F.u5:=Fu5] #age mix
+D[,c("d.idh.pphc.u5","d.iph.pphc.u5","d.ipd.pphc.u5",
+  "d.soc.pphc.u5","d.idh.pphc.o5","d.iph.pphc.o5",
+  "d.ipd.pphc.o5","d.soc.pphc.o5"):=F_ICS] #ICS
+D[,c("d.soc.dh.assess.u5","d.soc.dh.assess.o5",
+     "d.soc.phc.assess.u5","d.soc.phc.assess.o5"):=F_SOC_BoA_modelled] #SOC screen
+D[,c("d.idh.dh.assess.u5","d.idh.dh.assess.o5",
+  "d.iph.dh.assess.u5","d.iph.dh.assess.o5",
+  "d.idh.phc.assess.u5","d.idh.phc.assess.o5",
+  "d.iph.phc.assess.u5","d.iph.phc.assess.o5"):=F_alpha] #INT screen
+## & the following are *over* written
+D[,c("d.idh.rltfu","d.iph.rltfu","d.ipd.rltfu","d.soc.rltfu"):=F_refu] #TODO check
+D[,c("d.iph.phc.test7.referDH","d.ipd.phc.test.referDH",
+     "d.ipd.phc.notest.referDH","d.soc.phc.test.referDH",
+     "d.soc.phc.notest.referDH"):=F_refs] #TODO check
+## D[,f:=F_omega_flat] NOTE only used in TB cascade calx
 
+
+## spec and prev priors
+prior.tbprev <- list(mean=odds(0.1),sd=0.03) #normal in odds
+prior.phi <- list(mean=(0.1),sd=0.025) #normal: phi = 1-spec clinical
+D[,tbprev:=iodds(rnorm(nreps,mean=prior.tbprev$mean,sd=prior.tbprev$sd))]
+D[,phi:=rnorm(nreps,mean=prior.phi$mean,sd=prior.phi$sd)]
+D$spec.clin <- D$spec.clinCXR.soc <- pmin(1,1-D$phi)
+
+## save out
+tmp <- MLH(D[,.(clinspec=1e2-phi*1e2)])
+CDO.clinspec <- data.table(quantity='clinspec',value=brkt(tmp$M,tmp$L,tmp$H,ndp=1))
+fwrite(CDO.clinspec,file=gh('graphs/cascades/{fixprev}CDO.clinspec{postpend}{bia}.csv'))
+
+## add in relevant parameters:
+DxAZ <- computeDxAccuracy4PSA(D)
+addon <- D[,.(tbprev,phi,
+              BoA=F_alpha,CoB=F_presume,
+              `DoC_5-14`,`DoC_0-4`,
+              F_ICS,F_omega_flat)] #corresonding parameters
+addon[,id:=1:nreps]
+DxAZ <- merge(DxAZ,addon,by=c('id'),all.x=TRUE)
+## DxAZ[(arm=='idh' & location=='PHC')] #NOTE check
+DxAZ <- DxAZ[!(arm=='idh' & location=='PHC')] #NOTE check
+
+## linear approx for algorithm specificity as fn of phi
+## 1-spec = a + b*phi
+## 1-spec1 = a + b*0
+## 1-spec = a + b*phi
+## a = 1-spec1; b = (1-spec-a)/phi
+DxAZ[,a:=1-spec1]
+DxAZ[,b:=(1-spec-a)/phi]
+
+## age-specific DoC
+DxAZ[,DoC:=ifelse(age=='0-4',`DoC_0-4`,`DoC_5-14`)]
+
+## joint sampling of phi/prev
+BayesSpecPrev(DxAZ) #NOTE acts by side-effect as *over* writing phi/prev
+
+## calculate TB dependent cascade parmaeters
+tbdcp.prev <- computeCascadePSAPrev(DxAZ)
+save(tbdcp.prev,file=gh('graphs/cascades/data/{fixprev}tbdcp.prev{postpend}{bia}.Rdata')) #NOTE for reporting
+
+## overwrite TB prevalence if in this SA
+if(fixprev!=''){
+  tbdcp.prev$TBics[,c('tbu5','tbo5'):=fixprev]
+}
+
+## save out
+tmp <- MLH(tbdcp.prev$TBics[,.(tbu5=tbu5*1e5,tbo5=tbo5*1e5,ORu5,ORo5)])
+CDO.tb <- data.table(quantity=names(tbdcp.prev$TBics)[-1],value=brkt(tmp$M,tmp$L,tmp$H,ndp=1))
+fwrite(CDO.tb,file=here('graphs/cascades/{fixprev}CDO.tb{postpend}{bia}.csv'))
+
+## add these results back into D:
+D[,c("d.TBprev.ICS.u5","d.TBprev.ICS.o5","phi"):=tbdcp.prev$TBics[,.(tbu5,tbo5,phi)]]
+D$spec.clin <- D$spec.clinCXR.soc <- pmin(1,1-D$phi)
+D[,c("d.OR.dh.if.TB.idh.u5","d.OR.dh.if.TB.iph.u5","d.OR.dh.if.TB.soc.u5",
+     "d.OR.dh.if.TB.soc.o5","d.OR.dh.if.TB.idh.o5","d.OR.dh.if.TB.iph.o5"):=
+     tbdcp.prev$TBics[,.(ORu5,ORu5,ORu5,ORo5,ORo5,ORo5)]]
+
+## calculate TB dependent cascade parameters - specificity of presuming
+tbdcp.spec <- computeCascadePSASpec(D,tbdcp.prev$TBP)
+save(tbdcp.spec,file=here('graphs/cascades/data/{fixprev}tbdcp.spec{postpend}{bia}.Rdata')) #NOTE for reporting
+
+## add these results back into D:
+D[,c(
+  "d.soc.dh.presumesp.u5","d.soc.dh.presumesp.o5",
+  "d.idh.dh.presumesp.u5","d.idh.dh.presumesp.o5",
+  "d.iph.dh.presumesp.u5","d.iph.dh.presumesp.o5",
+  "d.soc.phc.presumesp.u5","d.soc.phc.presumesp.o5",
+  "d.idh.phc.presumesp.u5","d.idh.phc.presumesp.o5",
+  "d.iph.phc.presumesp.u5","d.iph.phc.presumesp.o5"
+):=tbdcp.spec[,.(
+     `sigmad_soc_0-4`,`sigmad_soc_5-14`,
+     `sigmad_iph_0-4`,`sigmad_iph_5-14`, #NOTE using iph for idh
+     `sigmad_iph_0-4`,`sigmad_iph_5-14`,
+     `sigmap_soc_0-4`,`sigmap_soc_5-14`,
+     `sigmap_iph_0-4`,`sigmap_iph_5-14`, #NOTE using iph for idh
+     `sigmap_iph_0-4`,`sigmap_iph_5-14`
+   )]]
+
+## save out
+tmp <- copy(tbdcp.spec); tmp[,id:=NULL]
+tmp <- tmp[,lapply(.SD,function(x)x*1e2),.SDcols=names(tmp)]; tmp <- MLH(tmp)
+CDO.spec <- data.table(quantity=names(tbdcp.spec)[-1],value=brkt(tmp$M,tmp$L,tmp$H,ndp=1))
+fwrite(CDO.spec,file=gh('graphs/cascades/{fixprev}CDO.spec{postpend}{bia}.csv'))
+
+## TODO check idh
+
+## this computes and saves out the average accuracy of dx cascades
+if(!file.exists(here('graphs'))) dir.create(here('graphs'))
 
 ## use these parameters to construct intput data by attribute
 D <- makeAttributes(D)
@@ -146,27 +272,14 @@ D <- runallfuns(D,arm=notIPD)                      #appends anwers
 
 ## --- cascade variables checking
 CO <- computeCascadeData(D)
-AS2 <- CO$woTB
 AS <- CO$wTB
-
-## cascade plot
-GP2 <- ggplot(AS2,aes(stage,vpl))+
-  geom_bar(stat='identity')+
-  facet_grid(location+age ~ arm)+
-  scale_y_log10(label=comma)+
-  ylab('Number per 100K attending')+
-  xlab('Stage')+
-  theme_light() + rot45+
-  geom_text(aes(label=txt),col='red',vjust=0.1,hjust=-0.5) +
-  geom_point(data=DD,col='cyan',size=2)+
-  geom_text(data=DD,aes(label=txt),col='cyan',vjust=2,hjust=1)
-GP2
-
-ggsave(GP2,file=gh('graphs/{bia}cascade_plt_{prevapproach}.{postpend}.png'),w=15,h=15)
+ASW <- dcast(CO$woTB,arm+age+location~stage,value.var = 'vpl')
+ASW <- ASW[,.(arm,age,location,BoA=screened/presented,CoB=presumed/screened,DoC=treated/presumed)]
+fwrite(ASW,file=gh('graphs/{fixprev}{bia}cascaderatios_{prevapproach}.{postpend}.csv'))
 
 ## Treated true TB per 100K presented by arm
 TTB <- AS[stage=='treated' & TB=='TB',.(TTBpl=1e5*sum(mid)),by=arm]
-fwrite(TTB,file=gh('graphs/{bia}TTB_{prevapproach}.{postpend}.csv'))
+fwrite(TTB,file=gh('graphs/{fixprev}{bia}TTB_{prevapproach}.{postpend}.csv'))
 
 
 
@@ -197,7 +310,7 @@ heur <- c('id','value','deaths.iph','deaths.soc')
 out <- D[,..heur]
 out <- out[,lapply(.SD,function(x) sum(x*value)),.SDcols=c('deaths.iph','deaths.soc'),by=id] #sum against popn
 ## topl <- 0.25/out[,mean(deaths.soc-deaths.iph)]
-topl <- 300 #100
+topl <- 1000 ## 300 #100
 lz <- seq(from = 0,to=topl,length.out = 1000) #threshold vector for CEACs
 ## staged costs by arm
 soc.sc <- grep('soc',costsbystg,value=TRUE); psoc.sc <- paste0('perATT.',soc.sc)
@@ -288,11 +401,11 @@ allout[,.(costperATT.iph.mid-costperATT.soc.mid,DcostperATT.iph.mid)]
 
 
 
-fwrite(allout,file=gh('graphs/{bia}allout_{prevapproach}.{postpend}.csv'))
-fwrite(allpout,file=gh('graphs/{bia}allpout_{prevapproach}.{postpend}.csv'))
-save(ceacl,file=gh('graphs/{bia}ceacl_{prevapproach}.{postpend}.Rdata'))
-save(NMB,file=gh('graphs/{bia}NMB_{prevapproach}.{postpend}.Rdata'))
-save(allscout,file=gh('graphs/{bia}allscout_{prevapproach}.{postpend}.Rdata'))
+fwrite(allout,file=gh('graphs/{fixprev}{bia}allout_{prevapproach}.{postpend}.csv'))
+fwrite(allpout,file=gh('graphs/{fixprev}{bia}allpout_{prevapproach}.{postpend}.csv'))
+save(ceacl,file=gh('graphs/{fixprev}{bia}ceacl_{prevapproach}.{postpend}.Rdata'))
+save(NMB,file=gh('graphs/{fixprev}{bia}NMB_{prevapproach}.{postpend}.Rdata'))
+save(allscout,file=gh('graphs/{fixprev}{bia}allscout_{prevapproach}.{postpend}.Rdata'))
 
 
 
@@ -323,9 +436,9 @@ GP <- ggplot(ceaclm[variable=='iph' &
   ylab('Probability cost-effective')+
   xlab('Cost-effectiveness threshold (USD/DALY)')+
   scale_colour_manual(values=cbPalette)
-GP
+## GP
 
-ggsave(GP,file=gh('graphs/{bia}CEAC_IPHonly_{prevapproach}.{postpend}.png'),w=7,h=5)
+ggsave(GP,file=gh('graphs/{fixprev}{bia}CEAC_IPHonly_{prevapproach}.{postpend}.png'),w=7,h=5)
 
 
 ## plot: IDH only
@@ -339,9 +452,9 @@ GP <- ggplot(ceaclm[variable=='idh'  &
   ylab('Probability cost-effective')+
   xlab('Cost-effectiveness threshold (USD/DALY)')+
   scale_colour_manual(values=cbPalette)
-GP
+## GP
 
-ggsave(GP,file=gh('graphs/{bia}CEAC_IDHonly_{prevapproach}.{postpend}.png'),w=7,h=5)
+ggsave(GP,file=gh('graphs/{fixprev}{bia}CEAC_IDHonly_{prevapproach}.{postpend}.png'),w=7,h=5)
 
 
 ## plot
@@ -354,9 +467,9 @@ GP <- ggplot(ceaclm,aes(threshold,value,
   ylab('Probability cost-effective')+
   xlab('Cost-effectiveness threshold (USD/DALY)')+
   scale_colour_manual(values=cbPalette)
-GP
+## GP
 
-ggsave(GP,file=gh('graphs/{bia}CEAC_{prevapproach}.{postpend}.png'),w=7,h=5)
+ggsave(GP,file=gh('graphs/{fixprev}{bia}CEAC_{prevapproach}.{postpend}.png'),w=7,h=5)
 
 
 ## plot
@@ -369,9 +482,9 @@ GP <- ggplot(ceaclm[variable=='idh'],aes(threshold,value,
   ylab('Probability cost-effective')+
   xlab('Cost-effectiveness threshold (USD/DALY)')+
   scale_colour_manual(values=cbPalette) ## + xlim(x=c(0,1500))
-GP
+## GP
 
-ggsave(GP,file=gh('graphs/{bia}CEAC1_{prevapproach}.{postpend}.png'),w=7,h=5)
+ggsave(GP,file=gh('graphs/{fixprev}{bia}CEAC1_{prevapproach}.{postpend}.png'),w=7,h=5)
 
 
 ## ------ no ZMB versions of graphs ------
@@ -387,9 +500,9 @@ GP <- ggplot(ceaclm[iso3 !='ZMB'],
   ylab('Probability cost-effective')+
   xlab('Cost-effectiveness threshold (USD/DALY)')+
   scale_colour_manual(values=cbPalette)
-GP
+## GP
 
-ggsave(GP,file=gh('graphs/{bia}CEAC_noZMB_{prevapproach}.{postpend}.png'),w=7,h=5)
+ggsave(GP,file=gh('graphs/{fixprev}{bia}CEAC_noZMB_{prevapproach}.{postpend}.png'),w=7,h=5)
 
 
 
@@ -404,18 +517,6 @@ GP <- ggplot(ceaclm[variable=='idh' & iso3 !='ZMB'],
   ylab('Probability cost-effective')+
   xlab('Cost-effectiveness threshold (USD/DALY)')+
   scale_colour_manual(values=cbPalette) ## + xlim(x=c(0,1500))
-GP
+## GP
 
-ggsave(GP,file=gh('graphs/{bia}CEAC1_noZMB_{prevapproach}.{postpend}.png'),w=7,h=5)
-
-
-
-
-
-## ## generate some CEA outputs in graphs/ & outdata/
-## ## NOTE these folders need to be created
-## ## NOTE need ggpubr, BCEA installed
-## MakeCEAoutputs(D, #PSA dataset
-##                LYK, #discounted expected life-years by age
-##                file.id='test', #string to identify output files 
-##                Kmax=5e3,wtp=5e3)
+ggsave(GP,file=gh('graphs/{fixprev}{bia}CEAC1_noZMB_{prevapproach}.{postpend}.png'),w=7,h=5)

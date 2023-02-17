@@ -11,6 +11,9 @@ R --slave --vanilla --args <decent_run.R CEA DECENT_TRAINING
 # NOTE probably makes sense to run after variants in case any variant outputs are not labelled as such
 R --slave --vanilla --args <decent_run.R CEA
 
+# example SA fixing prevalence
+# R --slave --vanilla --args <decent_run.R CEA DECENT 500e-5
+
 
 # main BIA
 # R --slave --vanilla --args <decent_run.R BIA
