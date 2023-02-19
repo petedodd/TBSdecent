@@ -6,7 +6,7 @@
 .Rapp.history
 
 # Session Data files
-.RData
+.RData*
 
 # User-specific files
 .Ruserdata
@@ -46,6 +46,7 @@ graphs/*
 !graphs/cascades/
 # graphs/cascades/*
 # !graphs/cascades/data/
+!graphs/cascades/test/
 
 # outdata ignored for now
 outdata/*

@@ -140,20 +140,25 @@ D <- makePSA(nreps,P,dbls = list(c('cfrhivor','cfrartor')))
 
 ## rename other parms based on Px
 D[,d.F.u5:=Fu5] #age mix
-D[,c("d.idh.pphc.u5","d.iph.pphc.u5","d.ipd.pphc.u5",
-  "d.soc.pphc.u5","d.idh.pphc.o5","d.iph.pphc.o5",
-  "d.ipd.pphc.o5","d.soc.pphc.o5"):=F_ICS] #ICS
-D[,c("d.soc.dh.assess.u5","d.soc.dh.assess.o5",
-     "d.soc.phc.assess.u5","d.soc.phc.assess.o5"):=F_SOC_BoA_modelled] #SOC screen
-D[,c("d.idh.dh.assess.u5","d.idh.dh.assess.o5",
-  "d.iph.dh.assess.u5","d.iph.dh.assess.o5",
-  "d.idh.phc.assess.u5","d.idh.phc.assess.o5",
-  "d.iph.phc.assess.u5","d.iph.phc.assess.o5"):=F_alpha] #INT screen
+ICS.nmz <- c("d.idh.pphc.u5","d.iph.pphc.u5","d.ipd.pphc.u5",
+               "d.soc.pphc.u5","d.idh.pphc.o5","d.iph.pphc.o5",
+               "d.ipd.pphc.o5","d.soc.pphc.o5")
+D[,..ICS.nmz:=F_ICS] #ICS
+SOC.boa.nmz <- c("d.soc.dh.assess.u5","d.soc.dh.assess.o5",
+                 "d.soc.phc.assess.u5","d.soc.phc.assess.o5")
+D[,..SOC.boa.nmz:=F_SOC_BoA_modelled] #SOC screen
+INT.boa.bmz <- c("d.idh.dh.assess.u5","d.idh.dh.assess.o5",
+                 "d.iph.dh.assess.u5","d.iph.dh.assess.o5",
+                 "d.idh.phc.assess.u5","d.idh.phc.assess.o5",
+                 "d.iph.phc.assess.u5","d.iph.phc.assess.o5")
+D[,..INT.boa.bmz:=F_alpha] #INT screen
 ## & the following are *over* written
-D[,c("d.idh.rltfu","d.iph.rltfu","d.ipd.rltfu","d.soc.rltfu"):=F_refu] #TODO check
-D[,c("d.iph.phc.test7.referDH","d.ipd.phc.test.referDH",
-     "d.ipd.phc.notest.referDH","d.soc.phc.test.referDH",
-     "d.soc.phc.notest.referDH"):=F_refs] #TODO check
+refu.nmz <- c("d.idh.rltfu","d.iph.rltfu","d.ipd.rltfu","d.soc.rltfu")
+D[,..refu.nmz:=F_refu]
+refs.nmz <- c("d.iph.phc.test7.referDH","d.ipd.phc.test.referDH",
+              "d.ipd.phc.notest.referDH","d.soc.phc.test.referDH",
+              "d.soc.phc.notest.referDH")
+D[,..refs.nmz:=F_refs] #TODO check
 ## D[,f:=F_omega_flat] NOTE only used in TB cascade calx
 
 
@@ -246,6 +251,33 @@ fwrite(CDO.spec,file=gh('graphs/cascades/{fixprev}CDO.spec{postpend}{bia}.csv'))
 
 ## this computes and saves out the average accuracy of dx cascades
 if(!file.exists(here('graphs'))) dir.create(here('graphs'))
+if(!file.exists(here('graphs/test'))) dir.create(here('graphs/test'))
+tdr <- here('graphs/test')
+
+## ----- record parameters for posterity -------
+## direct cascade parms
+fwrite(PDx,file=here('graphs/PZ.cascademeta.csv'))
+tmp <- parse.parmtable(PDx,outfile = here('graphs/PZ.cascademeta.IQR.csv'),testdir = tdr)
+
+## literature parameters
+overwritten <- c('Fbc.u5','Fbc.o5','d.F.u5',
+                 'tbprev','spec.clin','spec.clinCXR',
+                 ICS.nmz,
+                 SOC.boa.nmz,
+                 INT.boa.bmz,
+                 refu.nmz,
+                 refs.nmz) #parameters that are determined elsewhere
+
+tmp <- PD0[!PD0$NAME %in% overwritten,c('NAME','DISTRIBUTION','DESCRIPTION','SOURCE')]
+fwrite(tmp,file=here('graphs/PZ.assumplit.csv'))
+tmp <- parse.parmtable(tmp,outfile = here('graphs/PZ.assumplit.IQR.csv'),testdir = tdr)
+
+## calculated cascade parms
+tmp <- as.data.frame(rbindlist(list(CDO.tb,CDO.spec,CDO.clinspec)))
+fwrite(tmp,file=here('graphs/PZ.cascadecalc.csv'))
+
+
+## ---- proceed with making PSA
 
 ## use these parameters to construct intput data by attribute
 D <- makeAttributes(D)
