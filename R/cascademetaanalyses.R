@@ -505,6 +505,30 @@ fwrite(TPS[type=='model'],file=here('graphs/cascades/data/TPS.csv'))
 fwrite(TOS[type=='model'],file=here('graphs/cascades/data/TOS.csv'))
 
 
+## NOTE remainder are stratified by age and arm
+TOMA <- TOSA <- list()
+for(arm in c('SOC','IPH','IDH')){
+  cat('working on ',arm,'...\n')
+  ## --- treated/OPD (all arms, including SOC)
+  ## data
+  tmp <- DMWA[location!='All' & Arm==arm,
+              .(Treated=sum(Treated),OPD=sum(OPD)),
+              by=location]
+  ## model
+  TOMA[[glue("{arm}")]] <- brm(formula=Treated | trials(OPD) ~1+(1|location),
+                               data=tmp,
+                               family=binomial(link='logit'))
+  ## extracts
+  SMx <- bayessmy(TOMA[[glue("{arm}")]])
+  SMx[,c('Arm'):=.(arm)]
+  TOSA[[glue("{arm}")]] <- SMx
+}
+TOSA <- rbindlist(TOSA)
+
+fwrite(TOSA,file=here('graphs/cascades/data/TOSA.csv'))
+
+
+
 ggplot(TPS,aes(location,y=mid,ymin=lo,ymax=hi,group=type,col=type))+
   scale_y_continuous(label=percent)+
   geom_pointrange(position=position_dodge(0.1),shape=1)+coord_flip()+
@@ -655,3 +679,97 @@ ggsave(here('graphs/cascades/F_SOC_BoA_modelled.png'),w=5,h=6)
 
 fwrite(A[,.(location,alpha,alpha.lo,alpha.hi)],
        file=here('graphs/cascades/data/F_SOC_BoA_modelled.csv'))
+
+
+## meta-analytic cascade figure
+## TODO
+
+
+## 1) screening coverage = B/A
+BA <- fread(here('graphs/cascades/data/F_screenOPD.csv'))
+BA2 <- fread(here('graphs/cascades/data/F_SOC_BoA_modelled.csv'))
+BA <- rbindlist(list(BA[,.(Arm='IPH',location,mid,lo,hi)],
+                     BA[,.(Arm='IDH',location,mid,lo,hi)],
+                     BA2[,.(Arm='SOC',location,mid=alpha,lo=alpha.lo,hi=alpha.hi)]))
+
+
+## 2) presuming coverage  = C/B
+CB <- fread(here('graphs/cascades/data/F_presume.csv'))
+CB <- rbindlist(list(CB[,.(Arm='SOC',location,mid,lo,hi)],
+                     CB[,.(Arm='IPH',location,mid,lo,hi)],
+                     CB[,.(Arm='IDH',location,mid,lo,hi)]
+                     ))
+
+## 3) treatment = D/C
+## TODO check which used
+DC <- fread(here('graphs/cascades/data/TOSA.csv'))
+DC[,type:=NULL]
+
+## join
+BA[,step:='screening']
+CB[,step:='presuming']
+DC[,step:='treating']
+E <- rbindlist(list(BA,CB,DC),use.names = TRUE)
+
+EW <- dcast(E[,.(Arm,location,step,mid,SD=(hi-lo)/3.92)],
+            Arm + location ~ step,
+            value.var = c('mid','SD'))
+
+
+## 0
+EW[,m_F:=1]
+EW[,s_F:=0]
+## 1
+EW[,m_S:=mid_screening]
+EW[,s_S:=SD_screening]
+## 2
+EW[,m_P:=mid_screening * mid_presuming]
+EW[,s_P:=m_P * sqrt((SD_screening/mid_screening)^2 + (SD_presuming/mid_presuming)^2)]
+## 3
+EW[,m_T:=mid_screening * mid_presuming * mid_treating]
+EW[,s_T:=m_T * sqrt((s_P/m_P)^2 + (SD_treating/mid_treating)^2)]
+
+## restrict and melt
+EW <- EW[,.(Arm,location, m_F,s_F,m_S,s_S,m_P,s_P,m_T,s_T)]
+EW <- melt(EW,id=c('Arm','location'))
+EW[,c('qty','stp'):=tstrsplit(variable,split='_')]
+EW <- dcast(EW,Arm + location + stp ~ qty,value.var = 'value')
+EW[stp=='F',step:='Presentation']
+EW[stp=='S',step:='Screened']
+EW[stp=='P',step:='Presumptive tuberculosis']
+EW[stp=='T',step:='Treated for tuberculosis']
+EW[Arm=='SOC',arm:='Standard of care']
+EW[Arm=='IPH',arm:='PHC-focussed intervention']
+EW[Arm=='IDH',arm:='DH-focussed intervention']
+
+## relevel
+EW$location <- factor(EW$location,levels = key$location,ordered = TRUE)
+EW$arm <- factor(EW$arm,levels=c('Standard of care',
+                                 'PHC-focussed intervention','DH-focussed intervention'))
+EW$step <- factor(EW$step,levels=c('Presentation','Screened',
+                                   'Presumptive tuberculosis','Treated for tuberculosis'))
+
+EW[,c('Arm','stp'):=NULL]
+
+save(EW,file=here('graphs/cascades/data/EW.Rdata'))
+
+
+## now plot
+cbPalette <- c("#000000", "#E69F00", "#56B4E9","#009E73",
+               "#F0E442", "#0072B2","#D55E00", "#CC79A7")
+
+pd <- position_dodge()
+
+ggplot(EW,aes(step,1e5*m,fill=location))+
+  geom_errorbar(aes(step,ymin=1e5*(m-s),ymax=1e5*(m+s)),
+                position=position_dodge())+
+  geom_bar(stat='identity',position=pd)+
+  scale_fill_manual(values=cbPalette)+
+  facet_wrap(~arm)+
+  scale_y_sqrt(labels=comma)+
+  theme_minimal()+
+  theme(legend.position = 'top',legend.title = element_blank())+
+  rot45+
+  xlab('') + ylab('Number (square root scale)')
+
+ggsave(here('graphs/cascades/all_cascade.png'),w=15,h=6)
