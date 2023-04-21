@@ -13,6 +13,11 @@ brkt <- function(M,L,H,ndp=0) paste0(round(M,ndp),' (',
 gm <- function(x) exp(mean(log(x))) #geometric mean
 gh <- function(x) glue(here(x))
 
+brkt2 <- function(M,L,H,ndp=0) paste0(format(round(M,ndp),big.mark = ','),' (',
+                                      format(round(L,ndp),big.mark = ','),' to ',
+                                      format(round(H,ndp),big.mark = ','),')')
+
+
 ## ========= DIAGNOSIS ===============
 
 ## function for combining sample modality with bacteriological test
@@ -834,6 +839,8 @@ make.table1 <- function(flout){
     tmpr <- tmp[iso3==cn,..keep]
     tt <- MLH(tmpr)
     tt <- cbind(tt$M,tt$L,tt$H)
+    nmz <- names(tt)
+    tt[,(nmz):=lapply(.SD,function(x) x * 1e5),.SDcols=nmz]
     tt[,iso3:=cn]
     tt[,ICER.idh:=tmpr[,-mean(Dcost.idh)/mean(DLYL.idh)]]
     tt[,ICER.iph:=tmpr[,-mean(Dcost.iph)/mean(DLYL.iph)]]
@@ -844,40 +851,56 @@ make.table1 <- function(flout){
   ## table
   tmp <- tmpl[,.(iso3,
                  ## ATT
-                 att.soc = brkt(att.soc.mid,att.soc.lo,att.soc.hi),
-                 att.idh = brkt(att.idh.mid,att.idh.lo,att.idh.hi),
-                 att.idh = brkt(att.idh.mid,att.idh.lo,att.idh.hi),
+                 att.soc = brkt2(att.soc.mid,att.soc.lo,att.soc.hi),
+                 att.idh = brkt2(att.idh.mid,att.idh.lo,att.idh.hi),
+                 att.iph = brkt2(att.iph.mid,att.iph.lo,att.iph.hi),
                  ## deaths
-                 deaths.soc = brkt(deaths.soc.mid,deaths.soc.lo,deaths.soc.hi),
-                 deaths.idh = brkt(deaths.idh.mid,deaths.idh.lo,deaths.idh.hi),
-                 deaths.idh = brkt(deaths.idh.mid,deaths.idh.lo,deaths.idh.hi),
+                 deaths.soc = brkt2(deaths.soc.mid,deaths.soc.lo,deaths.soc.hi),
+                 deaths.idh = brkt2(deaths.idh.mid,deaths.idh.lo,deaths.idh.hi),
+                 deaths.iph = brkt2(deaths.iph.mid,deaths.iph.lo,deaths.iph.hi),
                  ## costs
-                 cost.soc = brkt(cost.soc.mid,cost.soc.lo,cost.soc.hi),
-                 cost.idh = brkt(cost.idh.mid,cost.idh.lo,cost.idh.hi),
-                 cost.idh = brkt(cost.idh.mid,cost.idh.lo,cost.idh.hi),
+                 cost.soc = brkt2(cost.soc.mid,cost.soc.lo,cost.soc.hi),
+                 cost.idh = brkt2(cost.idh.mid,cost.idh.lo,cost.idh.hi),
+                 cost.iph = brkt2(cost.iph.mid,cost.iph.lo,cost.iph.hi),
                  ## LYL
-                 LYL.soc = brkt(LYL.soc.mid,LYL.soc.lo,LYL.soc.hi),
-                 LYL.idh = brkt(LYL.idh.mid,LYL.idh.lo,LYL.idh.hi),
-                 LYL.idh = brkt(LYL.idh.mid,LYL.idh.lo,LYL.idh.hi),
+                 LYL.soc = brkt2(LYL.soc.mid,LYL.soc.lo,LYL.soc.hi),
+                 LYL.idh = brkt2(LYL.idh.mid,LYL.idh.lo,LYL.idh.hi),
+                 LYL.iph = brkt2(LYL.iph.mid,LYL.iph.lo,LYL.iph.hi),
                  ## ---- incremental
                  ## ATT
-                 Datt.idh = brkt(Datt.idh.mid,Datt.idh.lo,Datt.idh.hi),
-                 Datt.idh = brkt(Datt.idh.mid,Datt.idh.lo,Datt.idh.hi),
+                 Datt.idh = brkt2(Datt.idh.mid,Datt.idh.lo,Datt.idh.hi),
+                 Datt.iph = brkt2(Datt.iph.mid,Datt.iph.lo,Datt.iph.hi),
                  ## deaths
-                 Ddeaths.idh = brkt(Ddeaths.idh.mid,Ddeaths.idh.lo,Ddeaths.idh.hi),
-                 Ddeaths.idh = brkt(Ddeaths.idh.mid,Ddeaths.idh.lo,Ddeaths.idh.hi),
+                 Ddeaths.idh = brkt2(-Ddeaths.idh.mid,-Ddeaths.idh.hi,-Ddeaths.idh.lo),
+                 Ddeaths.iph = brkt2(-Ddeaths.iph.mid,-Ddeaths.iph.hi,-Ddeaths.iph.lo),
                  ## costs
-                 Dcost.idh = brkt(Dcost.idh.mid,Dcost.idh.lo,Dcost.idh.hi),
-                 Dcost.idh = brkt(Dcost.idh.mid,Dcost.idh.lo,Dcost.idh.hi),
+                 Dcost.idh = brkt2(Dcost.idh.mid,Dcost.idh.lo,Dcost.idh.hi),
+                 Dcost.iph = brkt2(Dcost.iph.mid,Dcost.iph.lo,Dcost.iph.hi),
                  ## LYL
-                 DLYL.idh = brkt(DLYL.idh.mid,DLYL.idh.lo,DLYL.idh.hi),
-                 DLYL.idh = brkt(DLYL.idh.mid,DLYL.idh.lo,DLYL.idh.hi),
+                 DLYL.idh = brkt2(-DLYL.idh.mid,-DLYL.idh.hi,-DLYL.idh.lo),
+                 DLYL.iph = brkt2(-DLYL.iph.mid,-DLYL.iph.hi,-DLYL.iph.lo),
                  ## ICERs
-                 ICER.idh = round(ICER.idh),
-                 ICER.iph = round(ICER.iph)
+                 ICER.idh = format(round(ICER.idh),big.mark = ','),
+                 ICER.iph = format(round(ICER.iph),big.mark = ',')
                  )]
 
-  ## TODO scale, reorder, transpose
+  ## reorder, transpose
+  tmp2 <- melt(tmp,id='iso3')
+  tmp2 <- dcast(tmp2,variable ~ iso3,value.var = 'value')
+  setkey(tmp2,variable)
+
+  tmp2[c(c(
+    ## SOC
+    "att.soc","deaths.soc","cost.soc","LYL.soc",
+    ## IDH
+    "att.idh","deaths.idh","cost.idh","LYL.idh",
+    "Datt.idh","Ddeaths.idh","Dcost.idh","DLYL.idh",
+    "ICER.idh",
+    ## IPH
+    "att.iph","deaths.iph","cost.iph","LYL.iph",
+    "Datt.iph","Ddeaths.iph","Dcost.iph","DLYL.iph",
+    "ICER.iph"
+    ))]
 
 }
 

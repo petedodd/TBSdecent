@@ -435,7 +435,11 @@ out[,.(DLYL.iph/Ddeaths.iph,DLYL.idh/Ddeaths.idh)] #OK
 allout[,.(costperATT.iph.mid-costperATT.soc.mid,DcostperATT.iph.mid)]
 
 
+## table 1
+tab1 <- make.table1(flout)
 
+## write out
+fwrite(tab1,file=gh('graphs/{fixprev}{bia}tab1_{prevapproach}.{postpend}.csv'))
 fwrite(allout,file=gh('graphs/{fixprev}{bia}allout_{prevapproach}.{postpend}.csv'))
 fwrite(allpout,file=gh('graphs/{fixprev}{bia}allpout_{prevapproach}.{postpend}.csv'))
 save(ceacl,file=gh('graphs/{fixprev}{bia}ceacl_{prevapproach}.{postpend}.Rdata'))
