@@ -351,7 +351,7 @@ idh.sc <- grep('idh',costsbystg,value=TRUE); pidh.sc <- paste0('perATT.',idh.sc)
 
 
 ## containers & loop
-allout <- allpout <- allscout <- list() #tabular outputs
+allout <- allpout <- allscout <- flout <- list() #tabular outputs
 ceacl <- NMB <- list()             #CEAC outputs etc
 ## cn <- isoz[1]
 for(cn in isoz){
@@ -408,6 +408,8 @@ for(cn in isoz){
   outs[,iso3:=cn]; pouts[,iso3:=cn]; scouts[,iso3:=cn]
   ## capture tabular
   allout[[cn]] <- outs; allpout[[cn]] <- pouts; allscout[[cn]] <- scouts
+  out[,iso3:=cn]
+  flout[[cn]] <- out
   ## capture data for NMB
   NMB[[cn]] <- out[,.(iso3=cn,DLYL.iph,Dcost.iph,DLYL.idh,Dcost.idh)]
   ## ceac data
@@ -416,6 +418,7 @@ for(cn in isoz){
                             idh=make.ceac(out[,.(Q=-DLYL.idh,P=Dcost.idh)],lz),
                             threshold=lz)
 }
+flout <- rbindlist(flout)
 allout <- rbindlist(allout)
 allpout <- rbindlist(allpout)
 allscout <- rbindlist(allscout)

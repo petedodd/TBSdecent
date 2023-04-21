@@ -804,6 +804,83 @@ outsummary <- function(out){
   list(outs=outs,pouts=pouts,scouts=scouts)
 }
 
+## make table 1
+make.table1 <- function(flout){
+  ## SOC
+  ## DH-focussed
+  ## PHC-focussed
+  ## X
+  ## ATT, deaths, cost, DALYs
+
+  keep <- c(
+    ## 'full'
+    "att.soc","att.idh","att.iph",
+    "deaths.soc","deaths.idh","deaths.iph",
+    "cost.soc","cost.idh","cost.iph",
+    "LYL.soc","LYL.idh","LYL.iph",
+    ## incremental
+    "Datt.idh","Datt.iph",
+    "Ddeaths.idh","Ddeaths.iph",
+    "Dcost.idh","Dcost.iph",
+    "DLYL.idh","DLYL.iph"
+  )
+
+  keepl <- c('iso3',keep)
+  tmp <- flout[,..keepl]
+
+  ## bounds
+  tmpl <- list()
+  for(cn in flout[,unique(iso3)]){
+    tmpr <- tmp[iso3==cn,..keep]
+    tt <- MLH(tmpr)
+    tt <- cbind(tt$M,tt$L,tt$H)
+    tt[,iso3:=cn]
+    tt[,ICER.idh:=tmpr[,-mean(Dcost.idh)/mean(DLYL.idh)]]
+    tt[,ICER.iph:=tmpr[,-mean(Dcost.iph)/mean(DLYL.iph)]]
+    tmpl[[cn]] <- tt
+  }
+  tmpl <- rbindlist(tmpl)
+
+  ## table
+  tmp <- tmpl[,.(iso3,
+                 ## ATT
+                 att.soc = brkt(att.soc.mid,att.soc.lo,att.soc.hi),
+                 att.idh = brkt(att.idh.mid,att.idh.lo,att.idh.hi),
+                 att.idh = brkt(att.idh.mid,att.idh.lo,att.idh.hi),
+                 ## deaths
+                 deaths.soc = brkt(deaths.soc.mid,deaths.soc.lo,deaths.soc.hi),
+                 deaths.idh = brkt(deaths.idh.mid,deaths.idh.lo,deaths.idh.hi),
+                 deaths.idh = brkt(deaths.idh.mid,deaths.idh.lo,deaths.idh.hi),
+                 ## costs
+                 cost.soc = brkt(cost.soc.mid,cost.soc.lo,cost.soc.hi),
+                 cost.idh = brkt(cost.idh.mid,cost.idh.lo,cost.idh.hi),
+                 cost.idh = brkt(cost.idh.mid,cost.idh.lo,cost.idh.hi),
+                 ## LYL
+                 LYL.soc = brkt(LYL.soc.mid,LYL.soc.lo,LYL.soc.hi),
+                 LYL.idh = brkt(LYL.idh.mid,LYL.idh.lo,LYL.idh.hi),
+                 LYL.idh = brkt(LYL.idh.mid,LYL.idh.lo,LYL.idh.hi),
+                 ## ---- incremental
+                 ## ATT
+                 Datt.idh = brkt(Datt.idh.mid,Datt.idh.lo,Datt.idh.hi),
+                 Datt.idh = brkt(Datt.idh.mid,Datt.idh.lo,Datt.idh.hi),
+                 ## deaths
+                 Ddeaths.idh = brkt(Ddeaths.idh.mid,Ddeaths.idh.lo,Ddeaths.idh.hi),
+                 Ddeaths.idh = brkt(Ddeaths.idh.mid,Ddeaths.idh.lo,Ddeaths.idh.hi),
+                 ## costs
+                 Dcost.idh = brkt(Dcost.idh.mid,Dcost.idh.lo,Dcost.idh.hi),
+                 Dcost.idh = brkt(Dcost.idh.mid,Dcost.idh.lo,Dcost.idh.hi),
+                 ## LYL
+                 DLYL.idh = brkt(DLYL.idh.mid,DLYL.idh.lo,DLYL.idh.hi),
+                 DLYL.idh = brkt(DLYL.idh.mid,DLYL.idh.lo,DLYL.idh.hi),
+                 ## ICERs
+                 ICER.idh = round(ICER.idh),
+                 ICER.iph = round(ICER.iph)
+                 )]
+
+  ## TODO scale, reorder, transpose
+
+}
+
 
 ## ---- utilities for making CEACs
 make.ceac <- function(CEA,lamz){
