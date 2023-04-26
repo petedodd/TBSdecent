@@ -13,7 +13,9 @@ R --slave --vanilla --args <decent_run.R CEA
 
 # example SA fixing prevalence
 # R --slave --vanilla --args <decent_run.R CEA DECENT 500e-5
-
+# version fixing prevalence and using 6% discount rate
+# R --slave --vanilla --args <decent_run.R CEA DECENT 500e-5 0.06
+# (output to above prepended: 0.0050.06)
 
 # main BIA
 # R --slave --vanilla --args <decent_run.R BIA
