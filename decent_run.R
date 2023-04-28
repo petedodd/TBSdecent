@@ -233,7 +233,7 @@ D[,c("d.OR.dh.if.TB.idh.u5","d.OR.dh.if.TB.iph.u5","d.OR.dh.if.TB.soc.u5",
 
 ## calculate TB dependent cascade parameters - specificity of presuming
 tbdcp.spec <- computeCascadePSASpec(D,tbdcp.prev$TBP)
-save(tbdcp.spec,file=here('graphs/cascades/data/{fixprev}{disc.ratetxt}tbdcp.spec{postpend}{bia}.Rdata')) #NOTE for reporting
+save(tbdcp.spec,file=gh('graphs/cascades/data/{fixprev}{disc.ratetxt}tbdcp.spec{postpend}{bia}.Rdata')) #NOTE for reporting
 
 ## add these results back into D:
 D[,c(
@@ -329,14 +329,7 @@ fwrite(TTB,file=gh('graphs/{fixprev}{disc.ratetxt}{bia}TTB_{prevapproach}.{postp
 ## --- run over different countries
 cnmz <- names(C)
 cnmz <- cnmz[cnmz!='id']
-costsbystg <- c('DH.presented.cost.soc','DH.presented.cost.iph','DH.presented.cost.idh',
-                'DH.screened.cost.soc','DH.screened.cost.iph','DH.screened.cost.idh',
-                'DH.presumed.cost.soc','DH.presumed.cost.iph','DH.presumed.cost.idh',
-                'DH.treated.cost.soc','DH.treated.cost.iph','DH.treated.cost.idh',
-                'PHC.presented.cost.soc','PHC.presented.cost.iph','PHC.presented.cost.idh',
-                'PHC.screened.cost.soc','PHC.screened.cost.iph','PHC.screened.cost.idh',
-                'PHC.presumed.cost.soc','PHC.presumed.cost.iph','PHC.presumed.cost.idh',
-                'PHC.treated.cost.soc','PHC.treated.cost.iph','PHC.treated.cost.idh')
+costsbystg <- c(outer(scc,c('soc','iph','idh'),paste,sep='.'))
 toget <- c('id',
            'cost.soc','cost.iph','cost.idh',
            costsbystg,

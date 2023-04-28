@@ -114,8 +114,9 @@ AddOutcomes <- function(D){
 ## names of stage counters
 stagecounters <- c('DH.presented','DH.screened','DH.presumed','DH.treated',
                    'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
-scc <- paste0(stagecounters,'.cost')
+scc <- c('DH.screened.cost',	'DH.tested.cost',	'DH.treated.cost',	'PHC.screened.cost',	'PHC.tested.cost',	'PHC.treated.cost')
 labdat <- c('p','cost',stagecounters,scc)
+
 
 ## === SOC
 SOC <- MSorg2tree(here('indata/dSOCb.txt'))
@@ -124,78 +125,82 @@ print(SOC)
 ## merge in extras, write out
 SOC <- AddOutcomes(SOC)
 
-tree2file(SOC,filename = here('indata/CSV/SOCb0.csv'),
+tree2file(SOC,filename = here('indata/CSV/SOCd0.csv'),
           'p','cost','deaths','lives','refers','dxc','dxb','att',
           'check',
           'DH.presented','DH.screened','DH.presumed','DH.treated',
-          'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
+          'PHC.presented','PHC.screened','PHC.presumed','PHC.treated',
+          'DH.screened.cost',	'DH.tested.cost',	'DH.treated.cost',	'PHC.screened.cost',	'PHC.tested.cost',	'PHC.treated.cost')
 
 ## create version with probs/costs
-fn <- here('indata/CSV/SOCb1.csv')
+fn <- here('indata/CSV/SOCd1.csv')
 if(file.exists(fn)){
   ## read
   labz <- fread(fn)
   labz$p <- gsub("p\\.rr","prr",labz$p) #NOTE fixing typo
-  labz[,(scc):=lapply(.SD,function(x)paste(x,cost,sep='*')),.SDcols=stagecounters] #costs by stage
   LabelFromData(SOC,labz[,..labdat]) #add label data
   ## save out
   tree2file(SOC,filename = here('indata/CSV/SOCb2.csv'),
             'p','cost','deaths','lives','refers','dxc','dxb','att',
             'check',
             'DH.presented','DH.screened','DH.presumed','DH.treated',
-            'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
-}
+            'PHC.presented','PHC.screened','PHC.presumed','PHC.treated',
+            'DH.screened.cost',	'DH.tested.cost',	'DH.treated.cost',	'PHC.screened.cost',	'PHC.tested.cost',	'PHC.treated.cost')
+  }
 
 ## === IPD
 IPD <- MSorg2tree(here('indata/dIPDc.txt'))
 IPD <- top(IPD)
 print(IPD)
 IPD <- AddOutcomes(IPD)
-tree2file(IPD,filename = here('indata/CSV/IPDc0.csv'),
+tree2file(IPD,filename = here('indata/CSV/IPDd0.csv'),
           'p','cost','deaths','lives','refers','dxc','dxb','att',
           'check',
           'DH.presented','DH.screened','DH.presumed','DH.treated',
-          'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
+          'PHC.presented','PHC.screened','PHC.presumed','PHC.treated',
+          'DH.screened.cost',	'DH.tested.cost',	'DH.treated.cost',	'PHC.screened.cost',	'PHC.tested.cost',	'PHC.treated.cost')
 
 ## create version with probs/costs
-fn <- here('indata/CSV/IPDc1.csv')
+fn <- here('indata/CSV/IPDd1.csv')
 if(file.exists(fn)){
   ## read
   labz <- fread(fn)
   labz$p <- gsub("p\\.rr","prr",labz$p) #NOTE fixing typo
-  labz[,(scc):=lapply(.SD,function(x)paste(x,cost,sep='*')),.SDcols=stagecounters] #costs by stage
   LabelFromData(IPD,labz[,..labdat]) #add label data
-  tree2file(IPD,filename = here('indata/CSV/IPDc2.csv'),
+  tree2file(IPD,filename = here('indata/CSV/IPDd2.csv'),
             'p','cost','deaths','lives','refers','dxc','dxb','att',
             'check',
             'DH.presented','DH.screened','DH.presumed','DH.treated',
-            'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
+            'PHC.presented','PHC.screened','PHC.presumed','PHC.treated',
+            'DH.screened.cost',	'DH.tested.cost',	'DH.treated.cost',	'PHC.screened.cost',	'PHC.tested.cost',	'PHC.treated.cost')
 }
+
 
 ## === IDH
 IDH <- MSorg2tree(here('indata/dIDHc.txt'))
 IDH <- top(IDH)
 print(IDH)
 IDH <- AddOutcomes(IDH)
-tree2file(IDH,filename = here('indata/CSV/IDHc0.csv'),
+tree2file(IDH,filename = here('indata/CSV/IDHd0.csv'),
           'p','cost','deaths','lives','refers','dxc','dxb','att',
           'check',
           'DH.presented','DH.screened','DH.presumed','DH.treated',
-          'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
+          'PHC.presented','PHC.screened','PHC.presumed','PHC.treated',
+          'DH.screened.cost',	'DH.tested.cost',	'DH.treated.cost',	'PHC.screened.cost',	'PHC.tested.cost',	'PHC.treated.cost')
 
 ## create version with probs/costs
-fn <- here('indata/CSV/IDHc1.csv')
+fn <- here('indata/CSV/IDHd1.csv')
 if(file.exists(fn)){
   ## read
   labz <- fread(fn)
   labz$p <- gsub("p\\.rr","prr",labz$p) #NOTE fixing typo
-  labz[,(scc):=lapply(.SD,function(x)paste(x,cost,sep='*')),.SDcols=stagecounters] #costs by stage
   LabelFromData(IDH,labz[,..labdat]) #add label data
-  tree2file(IDH,filename = here('indata/CSV/IDHc2.csv'),
+  tree2file(IDH,filename = here('indata/CSV/IDHd2.csv'),
             'p','cost','deaths','lives','refers','dxc','dxb','att',
             'check',
             'DH.presented','DH.screened','DH.presumed','DH.treated',
-            'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
+            'PHC.presented','PHC.screened','PHC.presumed','PHC.treated',
+            'DH.screened.cost',	'DH.tested.cost',	'DH.treated.cost',	'PHC.screened.cost',	'PHC.tested.cost',	'PHC.treated.cost')
 }
 
 ## === IPH
@@ -203,33 +208,33 @@ IPH <- MSorg2tree(here('indata/dIPHc.txt'))
 IPH <- top(IPH)
 print(IPH)
 IPH <- AddOutcomes(IPH)
-tree2file(IPH,filename = here('indata/CSV/IPHc0.csv'),
+tree2file(IPH,filename = here('indata/CSV/IPHd0.csv'),
           'p','cost','deaths','lives','refers','dxc','dxb','att',
           'check',
           'DH.presented','DH.screened','DH.presumed','DH.treated',
-          'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
+          'PHC.presented','PHC.screened','PHC.presumed','PHC.treated',
+          'DH.screened.cost',	'DH.tested.cost',	'DH.treated.cost',	'PHC.screened.cost',	'PHC.tested.cost',	'PHC.treated.cost')
 
 ## create version with probs/costs
-fn <- here('indata/CSV/IPHc1.csv')
+fn <- here('indata/CSV/IPHd1.csv')
 if(file.exists(fn)){
   ## read
   labz <- fread(fn)
   labz$p <- gsub("p\\.rr","prr",labz$p) #NOTE fixing typo
-  labz[,(scc):=lapply(.SD,function(x)paste(x,cost,sep='*')),.SDcols=stagecounters] #costs by stage
   LabelFromData(IPH,labz[,..labdat]) #add label data
-  tree2file(IPH,filename = here('indata/CSV/IPHc2.csv'),
+  tree2file(IPH,filename = here('indata/CSV/IPHd2.csv'),
             'p','cost','deaths','lives','refers','dxc','dxb','att',
             'check',
             'DH.presented','DH.screened','DH.presumed','DH.treated',
-            'PHC.presented','PHC.screened','PHC.presumed','PHC.treated')
+            'PHC.presented','PHC.screened','PHC.presumed','PHC.treated',
+            'DH.screened.cost',	'DH.tested.cost',	'DH.treated.cost',	'PHC.screened.cost',	'PHC.tested.cost',	'PHC.treated.cost')
 }
 
 
 ## make functions
 fnmz <- c('check','cost','deaths','att',
           'lives','refers','dxc','dxb',
-          stagecounters,
-          scc)
+          stagecounters,scc)
 
 SOC.F <- makeTfuns(SOC,fnmz)
 IPD.F <- makeTfuns(IPD,fnmz)
