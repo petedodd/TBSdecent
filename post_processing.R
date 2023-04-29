@@ -179,3 +179,10 @@ GP <- ggplot(CTS,aes(stagel,value,group=arml,fill=arml,label=txt))+
   theme(legend.position = 'top') + labs(fill=NULL)+rot45
 fn <- gh('graphs/model_cascade.png')
 ggsave(GP,file=fn,h=7,w=14)
+
+chk <- CT[,.(value=mean(value)),by=.(arm,stage,age)]
+chk <- chk[age=='0-14']
+chk <- dcast(chk,arm~stage,value.var = 'value')
+chk[arm=='iph',treated]/chk[arm=='soc',treated]
+chk[arm=='idh',treated]/chk[arm=='soc',treated]
+chk[arm=='idh',treated]/chk[arm=='iph',treated]

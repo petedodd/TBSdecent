@@ -488,7 +488,7 @@ GP <- ggplot(ceaclm[variable=='iph' &
   theme(legend.position = 'top',legend.title = element_blank())+
   ggpubr::grids()+
   ylab('Probability cost-effective')+
-  xlab('Cost-effectiveness threshold (USD/DALY)')+
+  xlab('Cost-effectiveness threshold (US$/DALY)')+
   scale_colour_manual(values=cbPalette)
 ## GP
 
@@ -504,7 +504,7 @@ GP <- ggplot(ceaclm[variable=='idh'  &
   theme(legend.position = 'top',legend.title = element_blank())+
   ggpubr::grids()+
   ylab('Probability cost-effective')+
-  xlab('Cost-effectiveness threshold (USD/DALY)')+
+  xlab('Cost-effectiveness threshold (US$/DALY)')+
   scale_colour_manual(values=cbPalette)
 ## GP
 
@@ -519,7 +519,7 @@ GP <- ggplot(ceaclm,aes(threshold,value,
   theme(legend.position = 'top',legend.title = element_blank())+
   ggpubr::grids()+
   ylab('Probability cost-effective')+
-  xlab('Cost-effectiveness threshold (USD/DALY)')+
+  xlab('Cost-effectiveness threshold (US$/DALY)')+
   scale_colour_manual(values=cbPalette)
 ## GP
 
@@ -534,7 +534,7 @@ GP <- ggplot(ceaclm[variable=='idh'],aes(threshold,value,
   theme(legend.position = 'top',legend.title = element_blank())+
   ggpubr::grids()+
   ylab('Probability cost-effective')+
-  xlab('Cost-effectiveness threshold (USD/DALY)')+
+  xlab('Cost-effectiveness threshold (US$/DALY)')+
   scale_colour_manual(values=cbPalette) ## + xlim(x=c(0,1500))
 ## GP
 
@@ -552,7 +552,7 @@ GP <- ggplot(ceaclm[iso3 !='ZMB'],
   theme(legend.position = 'top',legend.title = element_blank())+
   ggpubr::grids()+
   ylab('Probability cost-effective')+
-  xlab('Cost-effectiveness threshold (USD/DALY)')+
+  xlab('Cost-effectiveness threshold (US$/DALY)')+
   scale_colour_manual(values=cbPalette)
 ## GP
 
@@ -569,7 +569,7 @@ GP <- ggplot(ceaclm[variable=='idh' & iso3 !='ZMB'],
   theme(legend.position = 'top',legend.title = element_blank())+
   ggpubr::grids()+
   ylab('Probability cost-effective')+
-  xlab('Cost-effectiveness threshold (USD/DALY)')+
+  xlab('Cost-effectiveness threshold (US$/DALY)')+
   scale_colour_manual(values=cbPalette) ## + xlim(x=c(0,1500))
 ## GP
 
