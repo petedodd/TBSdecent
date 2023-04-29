@@ -140,7 +140,7 @@ PDx <- rbind(PDx,PDx1)
 
 ## ps - look to compute dxa for each rep of PSA
 ## build PSA
-PD1[,2] <- "0.5" #not relevant but needed to generate answers (tbc)
+PD1[,2] <- "0.5" #not relevant but needed to generate answers (tbc) NOTE
 P1 <- parse.parmtable(PD0)             #convert into parameter object
 P2 <- parse.parmtable(PD1)             #convert into parameter object
 Px <- parse.parmtable(PDx)             #the TB-indepdent cascade parms
@@ -154,22 +154,22 @@ D[,d.F.u5:=Fu5] #age mix
 ICS.nmz <- c("d.idh.pphc.u5","d.iph.pphc.u5","d.ipd.pphc.u5",
                "d.soc.pphc.u5","d.idh.pphc.o5","d.iph.pphc.o5",
                "d.ipd.pphc.o5","d.soc.pphc.o5")
-D[,..ICS.nmz:=F_ICS] #ICS
+D[,c(ICS.nmz):=F_ICS] #ICS
 SOC.boa.nmz <- c("d.soc.dh.assess.u5","d.soc.dh.assess.o5",
                  "d.soc.phc.assess.u5","d.soc.phc.assess.o5")
-D[,..SOC.boa.nmz:=F_SOC_BoA_modelled] #SOC screen
+D[,c(SOC.boa.nmz):=F_SOC_BoA_modelled] #SOC screen
 INT.boa.bmz <- c("d.idh.dh.assess.u5","d.idh.dh.assess.o5",
                  "d.iph.dh.assess.u5","d.iph.dh.assess.o5",
                  "d.idh.phc.assess.u5","d.idh.phc.assess.o5",
                  "d.iph.phc.assess.u5","d.iph.phc.assess.o5")
-D[,..INT.boa.bmz:=F_alpha] #INT screen
+D[,c(INT.boa.bmz):=F_alpha] #INT screen
 ## & the following are *over* written
 refu.nmz <- c("d.idh.rltfu","d.iph.rltfu","d.ipd.rltfu","d.soc.rltfu")
-D[,..refu.nmz:=F_refu]
+D[,c(refu.nmz):=F_refu]
 refs.nmz <- c("d.iph.phc.test7.referDH","d.ipd.phc.test.referDH",
               "d.ipd.phc.notest.referDH","d.soc.phc.test.referDH",
               "d.soc.phc.notest.referDH")
-D[,..refs.nmz:=F_refs] #TODO check
+D[,c(refs.nmz):=F_refs] #TODO check
 ## D[,f:=F_omega_flat] NOTE only used in TB cascade calx
 
 
@@ -224,16 +224,17 @@ tmp <- MLH(tbdcp.prev$TBics[,.(tbu5=tbu5*1e5,tbo5=tbo5*1e5,ORu5,ORo5)])
 CDO.tb <- data.table(quantity=names(tbdcp.prev$TBics)[-1],value=brkt(tmp$M,tmp$L,tmp$H,ndp=1))
 fwrite(CDO.tb,file=gh('graphs/cascades/{fixprev}{disc.ratetxt}CDO.tb{postpend}{bia}.csv'))
 
+
+## calculate TB dependent cascade parameters - specificity of presuming
+tbdcp.spec <- computeCascadePSASpec(D,tbdcp.prev$TBP)
+save(tbdcp.spec,file=gh('graphs/cascades/data/{fixprev}{disc.ratetxt}tbdcp.spec{postpend}{bia}.Rdata')) #NOTE for reporting
+
 ## add these results back into D:
 D[,c("d.TBprev.ICS.u5","d.TBprev.ICS.o5","phi"):=tbdcp.prev$TBics[,.(tbu5,tbo5,phi)]]
 D$spec.clin <- D$spec.clinCXR.soc <- pmin(1,1-D$phi)
 D[,c("d.OR.dh.if.TB.idh.u5","d.OR.dh.if.TB.iph.u5","d.OR.dh.if.TB.soc.u5",
      "d.OR.dh.if.TB.soc.o5","d.OR.dh.if.TB.idh.o5","d.OR.dh.if.TB.iph.o5"):=
      tbdcp.prev$TBics[,.(ORu5,ORu5,ORu5,ORo5,ORo5,ORo5)]]
-
-## calculate TB dependent cascade parameters - specificity of presuming
-tbdcp.spec <- computeCascadePSASpec(D,tbdcp.prev$TBP)
-save(tbdcp.spec,file=gh('graphs/cascades/data/{fixprev}{disc.ratetxt}tbdcp.spec{postpend}{bia}.Rdata')) #NOTE for reporting
 
 ## add these results back into D:
 D[,c(
@@ -258,13 +259,12 @@ tmp <- tmp[,lapply(.SD,function(x)x*1e2),.SDcols=names(tmp)]; tmp <- MLH(tmp)
 CDO.spec <- data.table(quantity=names(tbdcp.spec)[-1],value=brkt(tmp$M,tmp$L,tmp$H,ndp=1))
 fwrite(CDO.spec,file=gh('graphs/cascades/{fixprev}{disc.ratetxt}CDO.spec{postpend}{bia}.csv'))
 
-## TODO check idh
 
 ## this computes and saves out the average accuracy of dx cascades
 if(!file.exists(here('graphs'))) dir.create(here('graphs'))
 if(!file.exists(here('graphs/test'))) dir.create(here('graphs/test'))
-tdr <- here('graphs/test')
 
+tdr <- here('graphs/test')
 ## ----- record parameters for posterity -------
 ## direct cascade parms
 fwrite(PDx,file=here('graphs/PZ.cascademeta.csv'))
@@ -320,10 +320,17 @@ ASW <- dcast(CO$woTB,arm+age+location~stage,value.var = 'vpl')
 ASW <- ASW[,.(arm,age,location,BoA=screened/presented,CoB=presumed/screened,DoC=treated/presumed)]
 fwrite(ASW,file=gh('graphs/{fixprev}{disc.ratetxt}{bia}cascaderatios_{prevapproach}.{postpend}.csv'))
 
-## Treated true TB per 100K presented by arm
-TTB <- AS[stage=='treated' & TB=='TB',.(TTBpl=1e5*sum(mid)),by=arm]
-fwrite(TTB,file=gh('graphs/{fixprev}{disc.ratetxt}{bia}TTB_{prevapproach}.{postpend}.csv'))
+if(fixprev=='' && disc.rate==0.03 && bia=='' && postpend=='DECENT'){
+  cat('saving cascade data...\n')
+  CT <- computeCascadeData(D,PSA=TRUE)
+  save(CT,file=gh('graphs/CT_{prevapproach}.Rdata'))
+}
 
+
+
+## Treated true TB per 100K presented by arm
+TTB <- AS[stage=='treated' & TB=='TB',.(TTBpl=1e5*sum(mid)),by=arm] #
+fwrite(TTB,file=gh('graphs/{fixprev}{disc.ratetxt}{bia}TTB_{prevapproach}.{postpend}.csv'))
 
 
 ## --- run over different countries
@@ -356,7 +363,7 @@ idh.sc <- grep('idh',costsbystg,value=TRUE); pidh.sc <- paste0('perATT.',idh.sc)
 
 ## containers & loop
 allout <- allpout <- allscout <- flout <- list() #tabular outputs
-ceacl <- NMB <- list()             #CEAC outputs etc
+COIL <- ceacl <- NMB <- list()             #CEAC outputs etc
 ## cn <- isoz[1]
 for(cn in isoz){
   cat('running model for:',cn,'\n')
@@ -372,6 +379,9 @@ for(cn in isoz){
   D <- merge(D,LYKc[iso3==cn,.(age,LYS,LYS0)],by='age',all.x = TRUE)        #merge into PSA
   ## --- run model (quietly)
   invisible(capture.output(D <- runallfuns(D,arm=notIPD)))
+  ## for revising graph
+  COIL[[cn]] <- computeCascadeData(D,PSA=TRUE)
+  COIL[[cn]][,iso3:=cn]
   ## --- grather outcomes
   out <- D[,..toget]
   out[,c(lyarm):=.(LYS*deaths.soc,LYS*deaths.idh,LYS*deaths.iph,
@@ -428,6 +438,7 @@ allpout <- rbindlist(allpout)
 allscout <- rbindlist(allscout)
 ceacl <- rbindlist(ceacl)
 NMB <- rbindlist(NMB)
+COIL <- rbindlist(COIL)
 
 ## checks
 out[,.(att.iph/att.soc,att.idh/att.soc)]
@@ -449,7 +460,7 @@ fwrite(allpout,file=gh('graphs/{fixprev}{disc.ratetxt}{bia}allpout_{prevapproach
 save(ceacl,file=gh('graphs/{fixprev}{disc.ratetxt}{bia}ceacl_{prevapproach}.{postpend}.Rdata'))
 save(NMB,file=gh('graphs/{fixprev}{disc.ratetxt}{bia}NMB_{prevapproach}.{postpend}.Rdata'))
 save(allscout,file=gh('graphs/{fixprev}{disc.ratetxt}{bia}allscout_{prevapproach}.{postpend}.Rdata'))
-
+save(COIL,file=gh('graphs/{fixprev}{disc.ratetxt}{bia}COIL_{prevapproach}.{postpend}.Rdata'))
 
 
 

@@ -700,10 +700,22 @@ CB <- rbindlist(list(CB[,.(Arm='SOC',location,mid,lo,hi)],
                      CB[,.(Arm='IDH',location,mid,lo,hi)]
                      ))
 
-## 3) treatment = D/C
+## 3) treatment = D/C NOTE this is actually not D/C BUG - but not sure used for anything apart grph VV?
 ## TODO check which used
 DC <- fread(here('graphs/cascades/data/TOSA.csv'))
+
+fn <- here(glue('graphs/cascades/data/TPS.csv'))
+tmp <- fread(fn)
+DC <- tmp[Age=='0-4'] #NOTE rough for now
+## tmp <- tmp[Arm=='IPH']   #NOTE we use IPH for TB prev calculating
+## tmp <- tmp[,.(nm=paste0('DoC_',Age),mid,lo,hi)]
+DC[,Age:=NULL]
+
+
 DC[,type:=NULL]
+
+
+
 
 ## join
 BA[,step:='screening']
@@ -714,6 +726,12 @@ E <- rbindlist(list(BA,CB,DC),use.names = TRUE)
 EW <- dcast(E[,.(Arm,location,step,mid,SD=(hi-lo)/3.92)],
             Arm + location ~ step,
             value.var = c('mid','SD'))
+
+## NOTE fill in
+tmp <- EW[Arm=='IPH',mid_treating]
+EW[Arm=='SOC',mid_treating:=tmp]
+tmp <- EW[Arm=='IPH',SD_treating]
+EW[Arm=='SOC',SD_treating:=tmp]
 
 
 ## 0
@@ -773,3 +791,5 @@ ggplot(EW,aes(step,1e5*m,fill=location))+
   xlab('') + ylab('Number (square root scale)')
 
 ggsave(here('graphs/cascades/all_cascade.png'),w=15,h=6)
+
+## TODO collate other TODOs on this graph
