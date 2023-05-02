@@ -34,8 +34,8 @@ if(nargs>=3){
   if(nargs==4){
     disc.rate <- as.numeric(args[4])
     cat('...setting discount rate to',disc.rate,' \n')
-    if(disc.rate!='0.03')
-      disc.ratetxt <- args[4]
+    ## if(disc.rate!='0.03')
+    disc.ratetxt <- args[4]
   }
 } else {
   fixprev <- ''

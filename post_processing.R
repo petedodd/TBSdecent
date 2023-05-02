@@ -146,7 +146,7 @@ CTT <- dcast(CTS0,arml+agel~stage,value.var = 'value')
 CTT[,treated:=format(round(1e2*treated/presumed,1),nsmall = 1)]
 CTT[,presumed:=format(round(1e2*presumed/screened,1),nsmall = 1)]
 CTT[,screened:=format(round(1e2*screened/presented,1),nsmall = 1)]
-CTT[,presented:=paste0(100)]
+CTT[,presented:='']
 CTT <- melt(CTT,id=c('arml','agel'))
 CTT[,stagel:='Presented at health facility']
 CTT[variable=='screened',stagel:='Screened for tuberculosis']
@@ -179,6 +179,8 @@ GP <- ggplot(CTS,aes(stagel,value,group=arml,fill=arml,label=txt))+
   theme(legend.position = 'top') + labs(fill=NULL)+rot45
 fn <- gh('graphs/model_cascade.png')
 ggsave(GP,file=fn,h=7,w=14)
+fn <- gh('graphs/model_cascade.pdf')
+ggsave(GP,file=fn,h=7,w=14)
 
 chk <- CT[,.(value=mean(value)),by=.(arm,stage,age)]
 chk <- chk[age=='0-14']
@@ -186,3 +188,27 @@ chk <- dcast(chk,arm~stage,value.var = 'value')
 chk[arm=='iph',treated]/chk[arm=='soc',treated]
 chk[arm=='idh',treated]/chk[arm=='soc',treated]
 chk[arm=='idh',treated]/chk[arm=='iph',treated]
+
+
+## grabbing sensitivity analysis results
+
+## prev = c(500,200,50)
+## disr = c(0,0.03,0.06)
+## DH, PH vs iso3
+
+prev <- c('0.005','0.002','5e-04')
+disr <- c('0.00','0.03','0.06')
+ans <- list()
+for(pv in prev){
+  for(dr in disr){
+    fn <- gh('graphs/{pv}{dr}tab1_iphbased.DECENT.csv')
+    tmp <- fread(fn)
+    tmp <- tmp[variable %in% c('ICER.idh','ICER.iph')]
+    tmp[,prev:=pv]
+    tmp[,discount.rate:=dr]
+    ans[[paste(pv,dr)]] <- tmp
+  }
+}
+ans <- rbindlist(ans)
+ans <- ans[order(variable,prev,discount.rate)]
+fwrite(ans,file=gh('graphs/sensitivity_tab1_iphbased.DECENT.csv'))
