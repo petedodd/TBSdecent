@@ -61,15 +61,29 @@ allm2[,ARM:=factor(ARM,levels = c('SOC','DH-focussed','PHC-focussed'),ordered = 
 ## make graphs
 ## first by stage/level/arm
 gd1 <- allm[,.(value=sum(value)),by=.(iso3,`stage/level`,ARM)]
+gd1[,ARM:=gsub('ssed','sed',ARM)]
+gd1$ARM <- factor(gd1$ARM,levels=unique(gd1$ARM),ordered = TRUE)
+gd1 <- gd1[iso3 != 'ZMB']
+gd1[,lbl:=paste0('US$',round(value))]
+gdt <- gd1[,.(value=sum(value)),by=.(iso3,ARM)]
+gdt[,lbl:=paste0('US$',round(value))]
+gdt[,`stage/level`:=NA]
+gd1[,tot:=sum(value),by=.(iso3,ARM)]
+gd1[,pclbl:=paste0(round(1e2*value/tot,1),'%')]
+gd1[,pc:=value/tot]
 
 ## absolute
-GP <- ggplot(gd1,aes(iso3,value,fill=`stage/level`))+
+GP <- ggplot(gd1,aes(iso3,value,fill=`stage/level`,label=lbl))+
   geom_bar(stat = 'identity')+
   facet_wrap(~ARM)+
-  xlab('Country')+ylab('Cost per child treated (USD)')+
-  rot45
+  xlab('Country')+ylab('Cost per child treated (US$)')+
+  geom_text(position = position_stack(vjust = 0.5))+
+  geom_text(data=gdt,vjust = -0.2,fontface='bold')+
+  ggthemes::scale_fill_few()+
+  theme_linedraw()
+GP
 
-ggsave(GP,file=gh('graphs/pp_stagecosts_full.png'),w=7,h=5)
+ggsave(GP,file=gh('graphs/pp_stagecosts_full.png'),w=15,h=10)
 
 
 ## proportional
@@ -77,36 +91,58 @@ GP <- ggplot(gd1,aes(iso3,value,fill=`stage/level`))+
   geom_bar(stat = 'identity',position='fill')+
   scale_y_continuous(label=percent)+
   facet_wrap(~ARM)+
-  xlab('Country')+ylab('Proportion of cost per child treated (USD)')+
-  rot45
+  ggthemes::scale_fill_few()+
+  geom_text(aes(x=iso3,y=pc,label=pclbl),position = position_stack(vjust = 0.5))+
+  xlab('Country')+ylab('Proportion of cost per child treated (US$)')+
+  theme_linedraw()
+GP
 
-ggsave(GP,file=gh('graphs/pp_stagecosts_pc.png'),w=7,h=5)
+ggsave(GP,file=gh('graphs/pp_stagecosts_pc.png'),w=15,h=10)
 
 
 ## versions that work by stage
 ## gd2 <- allm[,.(value=sum(value)),by=.(iso3,ARM,activity=tolower(stratum))]
 gd2 <- allm2
-gd2[,activity:=tolower(stratum)]
+gd2[,`cost category`:=tolower(stratum)]
+gd2[,ARM:=gsub('ssed','sed',ARM)]
+gd2$ARM <- factor(gd2$ARM,levels=unique(gd2$ARM),ordered = TRUE)
+gd2 <- gd2[iso3 != 'ZMB']
+gd2[,lbl:=paste0('US$',round(value))]
+gd2t <- gd2[,.(value=sum(value)),by=.(iso3,ARM)]
+gd2t[,lbl:=paste0('US$',round(value))]
+gd2t[,`cost category`:=NA]
+gd2[,tot:=sum(value),by=.(iso3,ARM)]
+gd2[,pclbl:=paste0(round(1e2*value/tot,1),'%')]
+gd2[,pc:=value/tot]
+
 
 ## absolute
-GP <- ggplot(gd2,aes(iso3,value,fill=activity))+
+GP <- ggplot(gd2,aes(iso3,value,fill=`cost category`,label=lbl))+
   geom_bar(stat = 'identity')+
   facet_wrap(~ARM)+
-  xlab('Country')+ylab('Cost per child treated (USD)')+
-  rot45
+  xlab('Country')+ylab('Cost per child treated (US$)')+
+  geom_text(position = position_stack(vjust = 0.5))+
+  geom_text(data=gd2t,vjust = -0.2,fontface='bold')+
+  ggthemes::scale_fill_few()+
+  theme_linedraw()
+GP
 
-ggsave(GP,file=gh('graphs/pp_actcosts_full.png'),w=7,h=5)
+ggsave(GP,file=gh('graphs/pp_actcosts_full.png'),w=15,h=10)
 
 
 ## proportional
-GP <- ggplot(gd2,aes(iso3,value,fill=activity))+
+GP <- ggplot(gd2,aes(iso3,value,fill=`cost category`))+
   geom_bar(stat = 'identity',position='fill')+
   scale_y_continuous(label=percent)+
   facet_wrap(~ARM)+
-  xlab('Country')+ylab('Proportion of cost per child treated (USD)')+
-  rot45
+  xlab('Country')+ylab('Proportion of cost per child treated (US$)')+
+  ggthemes::scale_fill_few()+
+  geom_text(aes(x=iso3,y=pc,label=pclbl),position = position_stack(vjust = 0.5))+
+  xlab('Country')+ylab('Proportion of cost per child treated (US$)')+
+  theme_linedraw()
+GP
 
-ggsave(GP,file=gh('graphs/pp_actcosts_pc.png'),w=7,h=5)
+ggsave(GP,file=gh('graphs/pp_actcosts_pc.png'),w=15,h=10)
 
 
 ## check

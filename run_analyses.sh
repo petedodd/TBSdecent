@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # CEA with restricted costs
-# R --slave --vanilla --args <decent_run.R CEA DECENT_EQUIPMENT
-# R --slave --vanilla --args <decent_run.R CEA DECENT_PERSONNEL
-# R --slave --vanilla --args <decent_run.R CEA DECENT_SUPPLY
-# R --slave --vanilla --args <decent_run.R CEA DECENT_TRAINING
+R --slave --vanilla --args <decent_run.R CEA DECENT_EQUIPMENT &
+R --slave --vanilla --args <decent_run.R CEA DECENT_PERSONNEL &
+R --slave --vanilla --args <decent_run.R CEA DECENT_SUPPLY &
+R --slave --vanilla --args <decent_run.R CEA DECENT_TRAINING &
 
 
 # main CEA
