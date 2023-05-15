@@ -440,7 +440,7 @@ reformatCosts <- function(rcsts){
   names(rcsts)[1:length(nnmz)] <- nnmz
   drop <- grep('drop',names(rcsts),value=TRUE)
   rcsts[,c(drop):=NULL]
-  rcsts[is.na(rcsts)] <- 0.1 #dummy
+  rcsts[is.na(rcsts)] <- 0.0
   ## drop the extra columns if existing
   if(ncol(rcsts)>(which(names(rcsts)=='ZMB.hi')+1)){
     drop <- (which(names(rcsts)=='ZMB.hi')+1):ncol(rcsts)

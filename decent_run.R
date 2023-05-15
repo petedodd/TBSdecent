@@ -48,6 +48,7 @@ if(nargs>=3){
 ## fixprev <- ''
 ## disc.rate <- 0.03
 ## disc.ratetxt <- ''
+## postpend <- 'DECENT_TRAINING'
 ## 
 ## postpend <- 'DECENT_PERSONNEL'
 ## postpend <- 'DECENT_SUPPLY'
@@ -109,6 +110,7 @@ allcosts <- reformatCosts(rcsts)
 allcosts[cost.sd==0,cost.sd:=cost.m/40]        #SD such that 95% UI ~ 10% of mean
 C <- MakeCostData(allcosts[iso3=='CIV'],nreps)               #make cost PSA NOTE using CIV cost data
 
+
 ## prior parameters
 PD0 <- read.csv(here('indata/DecentParms - distributions.csv')) #read in
 ## parameters to be determined from cascade data
@@ -152,8 +154,8 @@ D <- makePSA(nreps,P,dbls = list(c('cfrhivor','cfrartor')))
 ## rename other parms based on Px
 D[,d.F.u5:=Fu5] #age mix
 ICS.nmz <- c("d.idh.pphc.u5","d.iph.pphc.u5","d.ipd.pphc.u5",
-               "d.soc.pphc.u5","d.idh.pphc.o5","d.iph.pphc.o5",
-               "d.ipd.pphc.o5","d.soc.pphc.o5")
+             "d.soc.pphc.u5","d.idh.pphc.o5","d.iph.pphc.o5",
+             "d.ipd.pphc.o5","d.soc.pphc.o5")
 D[,c(ICS.nmz):=F_ICS] #ICS
 SOC.boa.nmz <- c("d.soc.dh.assess.u5","d.soc.dh.assess.o5",
                  "d.soc.phc.assess.u5","d.soc.phc.assess.o5")
@@ -195,6 +197,7 @@ addon[,id:=1:nreps]
 DxAZ <- merge(DxAZ,addon,by=c('id'),all.x=TRUE)
 ## DxAZ[(arm=='idh' & location=='PHC')] #NOTE check
 DxAZ <- DxAZ[!(arm=='idh' & location=='PHC')] #NOTE check
+
 
 ## linear approx for algorithm specificity as fn of phi
 ## 1-spec = a + b*phi
