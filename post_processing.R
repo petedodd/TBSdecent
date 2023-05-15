@@ -14,7 +14,7 @@ cstrata <- c('DECENT_EQUIPMENT',
 ## load data
 all <- list()
 for(cst in cstrata){
-  fn <- gh('graphs/allscout_gm.{cst}.Rdata')
+  fn <- gh('graphs/allscout_iphbased.{cst}.Rdata')
   load(fn)
   allscout[,stratum:=gsub('DECENT_','',cst)]
   all[[cst]] <- allscout
@@ -40,7 +40,7 @@ allm[,ARM:=factor(ARM,levels = c('SOC','DH-focussed','PHC-focussed'),ordered = T
 ## load data by activity from CSV
 all2 <- list()
 for(cst in cstrata){
-  fn <- gh('graphs/allout_gm.{cst}.csv')
+  fn <- gh('graphs/allout_iphbased.{cst}.csv')
   tmp <- fread(fn)
   tmp[,stratum:=gsub('DECENT_','',cst)]
   all2[[cst]] <- tmp
