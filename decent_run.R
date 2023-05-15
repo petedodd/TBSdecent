@@ -360,6 +360,12 @@ soc.sc <- grep('soc',costsbystg,value=TRUE); psoc.sc <- paste0('perATT.',soc.sc)
 iph.sc <- grep('iph',costsbystg,value=TRUE); piph.sc <- paste0('perATT.',iph.sc)
 idh.sc <- grep('idh',costsbystg,value=TRUE); pidh.sc <- paste0('perATT.',idh.sc)
 
+## CET data
+CET1 <- fread(here('indata/CET.csv'))
+CET2 <- copy(CET1)
+CET1[,intervention:='IPH']
+CET2[,intervention:='IDH']
+CET <- rbind(CET1,CET2)
 
 ## containers & loop
 allout <- allpout <- allscout <- flout <- list() #tabular outputs
@@ -431,6 +437,20 @@ for(cn in isoz){
                             iph=make.ceac(out[,.(Q=-DLYL.iph,P=Dcost.iph)],lz),
                             idh=make.ceac(out[,.(Q=-DLYL.idh,P=Dcost.idh)],lz),
                             threshold=lz)
+  if(cn %in% CET$iso3){ #data for table 7
+    CET[iso3==cn & intervention=='IPH',
+        c('pOchaleck.Low','pOchaleck.High','pWoods.Low','pWoods.High'):=
+          out[,.(mean(Ochaleck.Low*(-DLYL.iph)-Dcost.iph>0),
+                 mean(Ochaleck.High*(-DLYL.iph)-Dcost.iph>0),
+                 mean(Woods.Low*(-DLYL.iph)-Dcost.iph>0),
+                 mean(Woods.High*(-DLYL.iph)-Dcost.iph>0))]]
+    CET[iso3==cn & intervention=='IDH',
+        c('pOchaleck.Low','pOchaleck.High','pWoods.Low','pWoods.High'):=
+          out[,.(mean(Ochaleck.Low*(-DLYL.idh)-Dcost.idh>0),
+                 mean(Ochaleck.High*(-DLYL.idh)-Dcost.idh>0),
+                 mean(Woods.Low*(-DLYL.idh)-Dcost.idh>0),
+                 mean(Woods.High*(-DLYL.idh)-Dcost.idh>0))]]
+  }
 }
 flout <- rbindlist(flout)
 allout <- rbindlist(allout)
@@ -461,7 +481,7 @@ save(ceacl,file=gh('graphs/{fixprev}{disc.ratetxt}{bia}ceacl_{prevapproach}.{pos
 save(NMB,file=gh('graphs/{fixprev}{disc.ratetxt}{bia}NMB_{prevapproach}.{postpend}.Rdata'))
 save(allscout,file=gh('graphs/{fixprev}{disc.ratetxt}{bia}allscout_{prevapproach}.{postpend}.Rdata'))
 save(COIL,file=gh('graphs/{fixprev}{disc.ratetxt}{bia}COIL_{prevapproach}.{postpend}.Rdata'))
-
+fwrite(CET,gh('graphs/{fixprev}{disc.ratetxt}{bia}CET_{prevapproach}.{postpend}.csv'))
 
 
 ## CEAC plot
