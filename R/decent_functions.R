@@ -810,12 +810,19 @@ outsummary <- function(out){
 }
 
 ## make table 1
-make.table1 <- function(flout){
+make.table1 <- function(flout,undiscounted=FALSE){
   ## SOC
   ## DH-focussed
   ## PHC-focussed
   ## X
   ## ATT, deaths, cost, DALYs
+  lflout <- copy(flout)
+  if(undiscounted){
+    lflout[,c("LYL.soc","LYL.idh","LYL.iph"):=.(
+              LYL0.soc,LYL0.idh,LYL0.iph)]
+    lflout[,c("DLYL.idh","DLYL.iph"):=.(
+              DLYL0.idh,DLYL0.iph)]
+  }
 
   keep <- c(
     ## 'full'
@@ -831,11 +838,11 @@ make.table1 <- function(flout){
   )
 
   keepl <- c('iso3',keep)
-  tmp <- flout[,..keepl]
+  tmp <- lflout[,..keepl]
 
   ## bounds
   tmpl <- list()
-  for(cn in flout[,unique(iso3)]){
+  for(cn in lflout[,unique(iso3)]){
     tmpr <- tmp[iso3==cn,..keep]
     tt <- MLH(tmpr)
     tt <- cbind(tt$M,tt$L,tt$H)

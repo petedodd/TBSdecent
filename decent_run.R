@@ -472,9 +472,12 @@ allout[,.(costperATT.iph.mid-costperATT.soc.mid,DcostperATT.iph.mid)]
 
 ## table 1
 tab1 <- make.table1(flout)
+tab1ud <- make.table1(flout,undiscounted = TRUE)
+
 
 ## write out
 fwrite(tab1,file=gh('graphs/{fixprev}{disc.ratetxt}{bia}tab1_{prevapproach}.{postpend}.csv'))
+fwrite(tab1ud,file=gh('graphs/{fixprev}{disc.ratetxt}{bia}tab1undiscounted_{prevapproach}.{postpend}.csv'))
 fwrite(allout,file=gh('graphs/{fixprev}{disc.ratetxt}{bia}allout_{prevapproach}.{postpend}.csv'))
 fwrite(allpout,file=gh('graphs/{fixprev}{disc.ratetxt}{bia}allpout_{prevapproach}.{postpend}.csv'))
 save(ceacl,file=gh('graphs/{fixprev}{disc.ratetxt}{bia}ceacl_{prevapproach}.{postpend}.Rdata'))
