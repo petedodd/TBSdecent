@@ -192,6 +192,7 @@ CTT[variable=='treated',stagel:='Treated for tuberculosis']
 ## final dataset
 CTS <- CT[,.(value=mean(value)),by=.(arml,stagel,agel)]
 CTS <- merge(CTS,CTT[,.(arml,stagel,agel,txt=paste0(value,'%'))],by=c('arml','stagel','agel'))
+CTS[txt=='NA%',txt:='']
 CTS$stagel <- factor(CTS$stagel,levels=c('Presented at health facility',
                                        'Screened for tuberculosis',
                                        'Assessed as presumptive tuberculosis',
@@ -213,6 +214,8 @@ GP <- ggplot(CTS,aes(stagel,value,group=arml,fill=arml,label=txt))+
   ylab('Proportion of all chilren presenting (square root scale)')+
   xlab('Cascade stage')+
   theme(legend.position = 'top') + labs(fill=NULL)+rot45
+GP
+
 fn <- gh('graphs/model_cascade.png')
 ggsave(GP,file=fn,h=7,w=14)
 fn <- gh('graphs/model_cascade.pdf')
