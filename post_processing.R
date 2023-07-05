@@ -228,6 +228,27 @@ chk[arm=='iph',treated]/chk[arm=='soc',treated]
 chk[arm=='idh',treated]/chk[arm=='soc',treated]
 chk[arm=='idh',treated]/chk[arm=='iph',treated]
 
+## simpler version
+w <- 0.8
+dg <- position_dodge(w)
+GP <- ggplot(CTS[agel=='0-14 years'],
+             aes(stagel,value,group=arml,fill=arml,label=txt))+
+  geom_bar(stat='identity',position=dg,width = w)+
+  ggthemes::scale_fill_few()+
+  scale_y_sqrt(label=percent)+
+  geom_text(position=dg,vjust=-0.25,size=2.5)+
+  theme_linedraw()+
+  ylab('Proportion of all chilren presenting (square root scale)')+
+  xlab('Cascade stage')+
+  theme(legend.position = 'top') + labs(fill=NULL)+rot45
+GP
+
+fn <- gh('graphs/model_cascade_simple.png')
+ggsave(GP,file=fn,h=7,w=7)
+fn <- gh('graphs/model_cascade_simple.pdf')
+ggsave(GP,file=fn,h=7,w=7)
+
+
 
 ## grabbing sensitivity analysis results
 
