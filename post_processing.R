@@ -32,9 +32,9 @@ allm[,variable:=gsub('\\.mid','',variable)]
 allm[,c('clinic level','stage','arm'):=tstrsplit(variable,split='\\.')]
 allm[,`stage/level`:=paste(stage,`clinic level`,sep='/')]
 allm[,ARM:='SOC']
-allm[arm=='idh',ARM:='DH-focussed']
-allm[arm=='iph',ARM:='PHC-focussed']
-allm[,ARM:=factor(ARM,levels = c('SOC','DH-focussed','PHC-focussed'),ordered = TRUE)]
+allm[arm=='idh',ARM:='DH-focused']
+allm[arm=='iph',ARM:='PHC-focused']
+allm[,ARM:=factor(ARM,levels = c('SOC','DH-focused','PHC-focused'),ordered = TRUE)]
 
 
 ## load data by activity from CSV
@@ -53,9 +53,9 @@ allm2 <- melt(all2,id=c('iso3','stratum'))
 allm2[,variable:=gsub('costperATT\\.','',variable)]
 allm2[,variable:=gsub('\\.mid','',variable)]
 allm2[,ARM:='SOC']
-allm2[variable=='idh',ARM:='DH-focussed']
-allm2[variable=='iph',ARM:='PHC-focussed']
-allm2[,ARM:=factor(ARM,levels = c('SOC','DH-focussed','PHC-focussed'),ordered = TRUE)]
+allm2[variable=='idh',ARM:='DH-focused']
+allm2[variable=='iph',ARM:='PHC-focused']
+allm2[,ARM:=factor(ARM,levels = c('SOC','DH-focused','PHC-focused'),ordered = TRUE)]
 
 
 ## make graphs
@@ -170,11 +170,11 @@ CT$stagel <- factor(CT$stagel,levels=c('Presented at health facility',
 CT[,agel:=paste0(age,' years')]
 CT$agel <- factor(CT$agel,levels=c('0-14 years','0-4 years','5-14 years'),ordered = TRUE)
 CT[,arml:='Standard of care']
-CT[arm=='idh',arml:='DH-focussed intervention']
-CT[arm=='iph',arml:='PH-focussed intervention']
+CT[arm=='idh',arml:='DH-focused intervention']
+CT[arm=='iph',arml:='PH-focused intervention']
 CT$arml <- factor(CT$arml,levels=c('Standard of care',
-                                   'DH-focussed intervention',
-                                   'PH-focussed intervention'),ordered = TRUE)
+                                   'DH-focused intervention',
+                                   'PH-focused intervention'),ordered = TRUE)
 
 ## text summaries of step-downs
 CTS0 <- CT[,.(value=mean(value)),by=.(arml,stage,agel)]
@@ -198,8 +198,8 @@ CTS$stagel <- factor(CTS$stagel,levels=c('Presented at health facility',
                                        'Assessed as presumptive tuberculosis',
                                        'Treated for tuberculosis'),ordered = TRUE)
 CTS$arml <- factor(CTS$arml,levels=c('Standard of care',
-                                     'DH-focussed intervention',
-                                     'PH-focussed intervention'),ordered = TRUE)
+                                     'DH-focused intervention',
+                                     'PH-focused intervention'),ordered = TRUE)
 CTS$agel <- factor(CTS$agel,levels=c('0-14 years','0-4 years','5-14 years'),ordered = TRUE)
 
 w <- 0.8
@@ -211,7 +211,7 @@ GP <- ggplot(CTS,aes(stagel,value,group=arml,fill=arml,label=txt))+
   scale_y_sqrt(label=percent)+
   geom_text(position=dg,vjust=-0.25,size=2.5)+
   theme_linedraw()+
-  ylab('Proportion of all chilren presenting (square root scale)')+
+  ylab('Proportion of all children presenting (square root scale)')+
   xlab('Cascade stage')+
   theme(legend.position = 'top') + labs(fill=NULL)+rot45
 GP
@@ -238,7 +238,7 @@ GP <- ggplot(CTS[agel=='0-14 years'],
   scale_y_sqrt(label=percent)+
   geom_text(position=dg,vjust=-0.25,size=2.5)+
   theme_linedraw()+
-  ylab('Proportion of all chilren presenting (square root scale)')+
+  ylab('Proportion of all children presenting (square root scale)')+
   xlab('Cascade stage')+
   theme(legend.position = 'top') + labs(fill=NULL)+rot45
 GP
