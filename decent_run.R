@@ -494,7 +494,7 @@ fwrite(CET,gh('graphs/{fixprev}{disc.ratetxt}{bia}CET_{prevapproach}.{postpend}.
 cbPalette <- c("#999999", "#E69F00", "#56B4E9","#009E73",
                "#F0E442", "#0072B2","#D55E00", "#CC79A7")
 ceaclm <- melt(ceacl,id=c('iso3','threshold'))
-ceaclm[,Intervention:=ifelse(variable=='iph','PHC-focussed','DH-focussed')]
+ceaclm[,Intervention:=ifelse(variable=='iph','PHC-focused','DH-focused')]
 ## name key
 ckey <- data.table(iso3=c('KHM','CMR','CIV','MOZ','SLE','UGA','ZMB'),
                    country=c('Cambodia','Cameroon',"C\u00F4te d'Ivoire",
