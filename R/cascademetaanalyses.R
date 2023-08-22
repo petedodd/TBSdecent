@@ -366,7 +366,7 @@ ggplot(CS7f,aes(location,y=mid,ymin=lo,ymax=hi,group=paste(type),col=type))+
   scale_y_continuous(label=percent)+
   geom_pointrange(position=position_dodge(0.1),shape=1)+
   coord_flip()+
-  ylab('Fraction of screening at DH') + theme_classic()+ggpubr::grids()+theme(legend.position = 'top')
+  ylab('Proportion of screening at DH') + theme_classic()+ggpubr::grids()+theme(legend.position = 'top')
 
 ggsave(here('graphs/cascades/F_Omega_model_flat.png'),w=5,h=6)
 
