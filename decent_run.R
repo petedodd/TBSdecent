@@ -356,7 +356,7 @@ heur <- c('id','value','deaths.iph','deaths.soc')
 out <- D[,..heur]
 out <- out[,lapply(.SD,function(x) sum(x*value)),.SDcols=c('deaths.iph','deaths.soc'),by=id] #sum against popn
 ## topl <- 0.25/out[,mean(deaths.soc-deaths.iph)]
-topl <- 2500 ## 300 #100
+topl <- 2000 ## 300 #100
 lz <- seq(from = 0,to=topl,length.out = 500) #threshold vector for CEACs
 ## staged costs by arm
 soc.sc <- grep('soc',costsbystg,value=TRUE); psoc.sc <- paste0('perATT.',soc.sc)
