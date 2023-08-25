@@ -356,7 +356,7 @@ heur <- c('id','value','deaths.iph','deaths.soc')
 out <- D[,..heur]
 out <- out[,lapply(.SD,function(x) sum(x*value)),.SDcols=c('deaths.iph','deaths.soc'),by=id] #sum against popn
 ## topl <- 0.25/out[,mean(deaths.soc-deaths.iph)]
-topl <- 2500 ## 300 #100
+topl <- 2000 ## 300 #100
 lz <- seq(from = 0,to=topl,length.out = 500) #threshold vector for CEACs
 ## staged costs by arm
 soc.sc <- grep('soc',costsbystg,value=TRUE); psoc.sc <- paste0('perATT.',soc.sc)
@@ -494,7 +494,7 @@ fwrite(CET,gh('graphs/{fixprev}{disc.ratetxt}{bia}CET_{prevapproach}.{postpend}.
 cbPalette <- c("#999999", "#E69F00", "#56B4E9","#009E73",
                "#F0E442", "#0072B2","#D55E00", "#CC79A7")
 ceaclm <- melt(ceacl,id=c('iso3','threshold'))
-ceaclm[,Intervention:=ifelse(variable=='iph','PHC-focussed','DH-focussed')]
+ceaclm[,Intervention:=ifelse(variable=='iph','PHC-focused','DH-focused')]
 ## name key
 ckey <- data.table(iso3=c('KHM','CMR','CIV','MOZ','SLE','UGA','ZMB'),
                    country=c('Cambodia','Cameroon',"C\u00F4te d'Ivoire",
