@@ -171,10 +171,10 @@ CT[,agel:=paste0(age,' years')]
 CT$agel <- factor(CT$agel,levels=c('0-14 years','0-4 years','5-14 years'),ordered = TRUE)
 CT[,arml:='Standard of care']
 CT[arm=='idh',arml:='DH-focused intervention']
-CT[arm=='iph',arml:='PH-focused intervention']
+CT[arm=='iph',arml:='PHC-focused intervention']
 CT$arml <- factor(CT$arml,levels=c('Standard of care',
                                    'DH-focused intervention',
-                                   'PH-focused intervention'),ordered = TRUE)
+                                   'PHC-focused intervention'),ordered = TRUE)
 
 ## text summaries of step-downs
 CTS0 <- CT[,.(value=mean(value)),by=.(arml,stage,agel)]
@@ -199,7 +199,7 @@ CTS$stagel <- factor(CTS$stagel,levels=c('Presented at health facility',
                                        'Treated for tuberculosis'),ordered = TRUE)
 CTS$arml <- factor(CTS$arml,levels=c('Standard of care',
                                      'DH-focused intervention',
-                                     'PH-focused intervention'),ordered = TRUE)
+                                     'PHC-focused intervention'),ordered = TRUE)
 CTS$agel <- factor(CTS$agel,levels=c('0-14 years','0-4 years','5-14 years'),ordered = TRUE)
 
 w <- 0.8
@@ -246,6 +246,34 @@ GP
 fn <- gh('graphs/model_cascade_simple.png')
 ggsave(GP,file=fn,h=7,w=7)
 fn <- gh('graphs/model_cascade_simple.pdf')
+ggsave(GP,file=fn,h=7,w=7)
+
+
+## both sets of numbers on graph
+ndp <- 1
+CTS[,ctxt:=paste0(format(round(1e2*value,ndp),nsmall = ndp),'%')]
+CTS[,txtb:=paste0('(',txt,')')]
+CTS[txt=='',c('ctxt','txtb'):='']
+
+
+w <- 0.8
+dg <- position_dodge(w)
+GP <- ggplot(CTS[agel=='0-14 years'],
+             aes(stagel,value,group=arml,fill=arml,label=ctxt))+
+  geom_bar(stat='identity',position=dg,width = w)+
+  ggthemes::scale_fill_few()+
+  scale_y_sqrt(label=percent)+
+  geom_text(position=dg,vjust=-0.25,size=2.5)+
+  geom_text(position=dg,vjust=1.5,size=2.5,aes(label=txtb),fontface='italic')+
+  theme_linedraw()+
+  ylab('Proportion of all children presenting (square root scale)')+
+  xlab('Cascade stage')+
+  theme(legend.position = 'top') + labs(fill=NULL)+rot45
+GP
+
+fn <- gh('graphs/model_cascade_simple2.png')
+ggsave(GP,file=fn,h=7,w=7)
+fn <- gh('graphs/model_cascade_simple2.pdf')
 ggsave(GP,file=fn,h=7,w=7)
 
 
